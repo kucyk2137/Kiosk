@@ -1,0 +1,11 @@
+﻿@page
+@model Kiosk.Pages.Admin.AddCategoryModel
+<h2>Dodaj kategorię</h2>
+
+<form method="post">
+    <label>Nazwa:</label>
+    <input asp-for="Category.Name" />
+    <button type="submit">Dodaj</button>
+</form>
+
+<p style="color:green">@Model.Message</p>

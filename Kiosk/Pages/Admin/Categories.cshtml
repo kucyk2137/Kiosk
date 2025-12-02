@@ -1,0 +1,31 @@
+﻿@page
+@model Kiosk.Pages.Admin.CategoriesModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<h2>Kategorie</h2>
+
+<a asp-page="AddCategory">Dodaj kategorię</a>
+
+<table>
+    <thead>
+        <tr>
+            <th>Nazwa</th>
+            <th>Opcje</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var cat in Model.Categories)
+        {
+            <tr>
+                <td>@cat.Name</td>
+                <td>
+                    <a asp-page="EditCategory" asp-route-id="@cat.Id">Edytuj</a>
+                    <form method="post" asp-page-handler="Delete" style="display:inline;">
+                        <input type="hidden" name="CategoryId" value="@cat.Id" />
+                        <button type="submit">Usuń</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

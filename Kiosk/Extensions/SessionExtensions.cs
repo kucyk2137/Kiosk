@@ -15,12 +15,5 @@ namespace Kiosk.Extensions
             var value = session.GetString(key);
             return value == null ? default(T) : JsonSerializer.Deserialize<T>(value);
         }
-
-        public static T GetObjectFromJson<T>(this ISession session)
-        {
-            var key = typeof(T).Name;
-            var value = session.GetString(key);
-            return value == null ? default(T) : JsonSerializer.Deserialize<T>(value);
-        }
     }
 }
