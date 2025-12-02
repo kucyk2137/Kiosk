@@ -1,22 +1,135 @@
-html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
+/* Podstawowe ustawienia */
 body {
-  margin-bottom: 60px;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
 }
+
+/* Strony blokuj¹ce i g³ówne layouty */
+.lock-screen, .menu-page, .cart-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+/* Przyciski ogólne */
+button, .btn, .category-btn, .cart-btn, .btn-update, .btn-checkout, .btn-remove {
+    font-size: 1rem;
+    padding: 0.6rem 1.2rem;
+    margin: 5px;
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    transition: background-color 0.3s;
+}
+
+    button:hover, .btn:hover, .category-btn:hover, .cart-btn:hover, .btn-update:hover, .btn-checkout:hover, .btn-remove:hover {
+        opacity: 0.85;
+    }
+
+/* Menu – przyciski kategorii */
+.category-btn {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    background-color: #2196f3;
+    color: white;
+    cursor: pointer;
+}
+
+    .category-btn:hover {
+        background-color: #1976d2;
+    }
+
+/* Koszyk – przycisk */
+.cart-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 5px;
+    background-color: #4caf50;
+    color: white;
+}
+
+    .cart-btn:hover {
+        background-color: #388e3c;
+    }
+
+/* Koszyk – tabela */
+.cart-table {
+    width: 90%;
+    max-width: 800px;
+    border-collapse: collapse;
+    margin: 15px 0;
+    background-color: white;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+    .cart-table th, .cart-table td {
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .cart-table th {
+        background-color: #f0f0f0;
+    }
+
+/* Input iloœci */
+.quantity-input {
+    width: 60px;
+    text-align: center;
+    padding: 4px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+/* Przyciski w koszyku */
+.btn-update {
+    background-color: #0078d4;
+    color: white;
+}
+
+.btn-checkout {
+    background-color: #4caf50;
+    color: white;
+}
+
+.btn-remove {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Popup zamówienia */
+.popup {
+    border: 1px solid #000;
+    padding: 20px;
+    margin-top: 20px;
+    background-color: #f8f8f8;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    width: 300px;
+    text-align: center;
+    border-radius: 8px;
+}
+
+/* Koszyk p³ywaj¹cy (jeœli chcesz u¿yæ w prawym dolnym rogu) */
+.floating-cart-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    padding: 12px 16px;
+    background-color: #4caf50;
+    color: white;
+    border-radius: 50px;
+    font-size: 18px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    cursor: pointer;
+}
+
+    .floating-cart-btn:hover {
+        background-color: #388e3c;
+    }

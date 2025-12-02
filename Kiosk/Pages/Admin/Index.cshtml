@@ -1,0 +1,30 @@
+﻿@page
+@model Kiosk.Pages.Admin.IndexModel
+
+<h2>Lista produktów</h2>
+
+<a asp-page="AddProduct">Dodaj nowy produkt</a>
+
+<table>
+    <thead>
+        <tr>
+            <th>Nazwa</th>
+            <th>Kategoria</th>
+            <th>Cena</th>
+            <th>Opcje</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.MenuItems)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Category</td>
+                <td>@item.Price</td>
+                <td>
+                    <!-- później: link do edycji/usunięcia -->
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

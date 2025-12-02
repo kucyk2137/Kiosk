@@ -1,0 +1,58 @@
+﻿@page
+@model Kiosk.Pages.CartModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Koszyk";
+}
+
+<h2>Twój koszyk</h2>
+
+@if (Model.Cart.Count == 0)
+{
+    <p>Twój koszyk jest pusty.</p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Produkt</th>
+                <th>Cena</th>
+                <th>Ilość</th>
+                <th>Razem</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Cart)
+            {
+                <tr>
+                    <td>@item.MenuItem?.Name ?? "Produkt niedostępny"</td>
+                    <td>@(item.MenuItem?.Price.ToString("0.00") ?? "0.00") zł</td>
+                    <td>@item.Quantity</td>
+                    <td>@((item.MenuItem?.Price ?? 0) * item.Quantity).ToString("0.00") zł</td>
+                </tr>
+            }
+            }
+        </tbody>
+    </table>
+
+    <h3>Suma: @Model.Total.ToString("0.00") zł</h3>
+
+    <form method="post">
+        <label>Wybierz metodę płatności:</label>
+        <select asp-for="PaymentMethod">
+            <option value="Gotówka">Gotówka</option>
+            <option value="Karta">Karta</option>
+        </select>
+        <button type="submit">Zapłać</button>
+    </form>
+}
+
+@if (Model.OrderId > 0)
+{
+    <div id="popup" style="border:1px solid #000; padding:20px; margin-top:20px; background-color:#f8f8f8;">
+        <h3>Zamówienie złożone!</h3>
+        <p>Numer zamówienia: <strong>@Model.OrderId</strong></p>
+        <p>Dziękujemy za zamówienie!</p>
+    </div>
+}

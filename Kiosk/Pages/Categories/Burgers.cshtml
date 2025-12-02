@@ -1,0 +1,21 @@
+﻿@page
+@model Kiosk.Pages.Categories.DrinksModel
+<link rel="stylesheet" href="~/css/site.css" />
+
+<h1>Burgery</h1>
+
+<div class="products">
+    @foreach (var item in Model.Products)
+    {
+        <div class="product-card" style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+            <h3>@item.Name</h3>
+            <img src="@item.ImageUrl" alt="@item.Name" style="width:100px; height:100px;" />
+            <p>@item.Description</p>
+            <p>Cena: @item.Price.ToString("C")</p>
+            <form method="post">
+                <input type="hidden" name="MenuItemId" value="@item.Id" />
+                <button type="submit" asp-page-handler="AddToCart">Dodaj do koszyka</button>
+            </form>
+        </div>
+    }
+</div>
