@@ -133,3 +133,43 @@ button, .btn, .category-btn, .cart-btn, .btn-update, .btn-checkout, .btn-remove 
     .floating-cart-btn:hover {
         background-color: #388e3c;
     }
+
+.add-btn {
+    display: inline-block;
+    margin-bottom: 10px;
+    padding: 8px 15px;
+    background-color: #2196f3;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+    .add-btn:hover {
+        background-color: #1976d2;
+    }
+
+.delete-btn {
+    padding: 5px 10px;
+    background-color: #e53935;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+    .delete-btn:hover {
+        background-color: #b71c1c;
+    }
+
+.edit-btn {
+    padding: 5px 10px;
+    margin-left: 5px;
+    background-color: #ff9800;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+    .edit-btn:hover {
+        background-color: #f57c00;
+    }

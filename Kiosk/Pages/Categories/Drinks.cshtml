@@ -7,7 +7,7 @@
 <div class="products">
     @foreach (var item in Model.Products)
     {
-        <div class="product-card" style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+        <div class="product-card">
             <h3>@item.Name</h3>
             <img src="@item.ImageUrl" alt="@item.Name" style="width:100px; height:100px;" />
             <p>@item.Description</p>

@@ -1,33 +1,29 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Kiosk.Data;
 using Kiosk.Models;
-using Kiosk.Extensions;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Kiosk.Pages.Categories
 {
     public class DrinksModel : PageModel
     {
         private readonly KioskDbContext _context;
-        public DrinksModel(KioskDbContext context) => _context = context;
 
+        public DrinksModel(KioskDbContext context)
+        {
+            _context = context;
+        }
+
+        // Lista napojów dla widoku
         public List<MenuItem> Products { get; set; } = new();
 
+        // Jedyna metoda OnGet
         public void OnGet()
         {
             Products = _context.MenuItems
-                .Where(m => m.Category == "Drinks")
-                .ToList();
-        }
-
-        public IActionResult OnPostAddToCart(int MenuItemId)
-        {
-            var cart = HttpContext.Session.GetObjectFromJson<List<OrderItem>>("Cart") ?? new List<OrderItem>();
-            var existingItem = cart.FirstOrDefault(x => x.MenuItemId == MenuItemId);
-            if (existingItem != null) existingItem.Quantity++;
-            else cart.Add(new OrderItem { MenuItemId = MenuItemId, Quantity = 1 });
-            HttpContext.Session.SetObjectAsJson("Cart", cart);
-            return RedirectToPage();
+                               .Where(m => m.Category == "Drinks")
+                               .ToList();
         }
     }
 }

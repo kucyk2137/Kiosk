@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Kiosk.Data;
 using Kiosk.Models;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Kiosk.Pages.Admin
 {
@@ -16,14 +18,21 @@ namespace Kiosk.Pages.Admin
 
         public List<MenuItem> MenuItems { get; set; } = new();
 
-        public IActionResult OnGet()
+        public void OnGet()
         {
-            // Sprawdzenie, czy admin jest zalogowany
-            if (HttpContext.Session.GetString("IsAdmin") != "true")
-                return RedirectToPage("/Admin/Login");
-
             MenuItems = _context.MenuItems.ToList();
-            return Page();
+        }
+
+        public IActionResult OnPostDelete(int MenuItemId)
+        {
+            var item = _context.MenuItems.FirstOrDefault(m => m.Id == MenuItemId);
+            if (item != null)
+            {
+                _context.MenuItems.Remove(item);
+                _context.SaveChanges();
+            }
+
+            return RedirectToPage();
         }
     }
 }
