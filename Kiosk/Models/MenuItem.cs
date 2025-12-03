@@ -18,6 +18,6 @@ public class MenuItem
     public string ImageUrl { get; set; }
 
     [Required(ErrorMessage = "Kategoria jest wymagana")]
-    public int? CategoryId { get; set; }
+    public int CategoryId { get; set; }
     public Category Category { get; set; }
 }

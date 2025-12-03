@@ -1,4 +1,5 @@
 using Kiosk.Data;
+using Kiosk.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -8,7 +9,6 @@ public class AddProductModel : PageModel
 {
     private readonly KioskDbContext _context;
     public AddProductModel(KioskDbContext context) => _context = context;
-
     [BindProperty]
     public MenuItem MenuItem { get; set; }
 
@@ -27,18 +27,19 @@ public class AddProductModel : PageModel
         CategorySelectList = new SelectList(_context.Categories.OrderBy(c => c.Name), "Id", "Name");
         ;
 
-
         if (!ModelState.IsValid)
         {
-            Message = "Formularz zawiera b³êdy!";
+            _context.MenuItems.Add(MenuItem);
+            _context.SaveChanges();
+
+            Message = "Produkt zosta³ dodany!";
+            MenuItem = new MenuItem();
             return Page();
         }
 
-        _context.MenuItems.Add(MenuItem);
-        _context.SaveChanges();
-
-        Message = "Produkt zosta³ dodany!";
-        MenuItem = new MenuItem();
+       
+        Message = "Formularz zawiera b³êdy!";
         return Page();
     }
+
 }

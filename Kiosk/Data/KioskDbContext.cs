@@ -9,5 +9,6 @@ namespace Kiosk.Data
 
         public DbSet<MenuItem> MenuItems { get; set; }
         public DbSet<Category> Categories { get; set; }
+
     }
 }
