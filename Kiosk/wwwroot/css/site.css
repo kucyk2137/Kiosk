@@ -5,7 +5,7 @@ body {
     background-color: #f5f5f5;
 }
 
-/* Strony blokuj¹ce i g³ówne layouty */
+/* Strony blokujÂ¹ce i gÂ³Ã³wne layouty */
 .lock-screen, .menu-page, .cart-page {
     display: flex;
     flex-direction: column;
@@ -14,7 +14,7 @@ body {
     min-height: 100vh;
 }
 
-/* Przyciski ogólne */
+/* Przyciski ogÃ³lne */
 button, .btn, .category-btn, .cart-btn, .btn-update, .btn-checkout, .btn-remove {
     font-size: 1rem;
     padding: 0.6rem 1.2rem;
@@ -29,7 +29,7 @@ button, .btn, .category-btn, .cart-btn, .btn-update, .btn-checkout, .btn-remove 
         opacity: 0.85;
     }
 
-/* Menu – przyciski kategorii */
+/* Menu â€“ przyciski kategorii */
 .category-btn {
     width: 100%;
     padding: 10px;
@@ -44,7 +44,7 @@ button, .btn, .category-btn, .cart-btn, .btn-update, .btn-checkout, .btn-remove 
         background-color: #1976d2;
     }
 
-/* Koszyk – przycisk */
+/* Koszyk â€“ przycisk */
 .cart-btn {
     width: 100%;
     padding: 12px;
@@ -58,7 +58,7 @@ button, .btn, .category-btn, .cart-btn, .btn-update, .btn-checkout, .btn-remove 
         background-color: #388e3c;
     }
 
-/* Koszyk – tabela */
+/* Koszyk â€“ tabela */
 .cart-table {
     width: 90%;
     max-width: 800px;
@@ -78,7 +78,7 @@ button, .btn, .category-btn, .cart-btn, .btn-update, .btn-checkout, .btn-remove 
         background-color: #f0f0f0;
     }
 
-/* Input iloœci */
+/* Input iloÅ“ci */
 .quantity-input {
     width: 60px;
     text-align: center;
@@ -103,7 +103,7 @@ button, .btn, .category-btn, .cart-btn, .btn-update, .btn-checkout, .btn-remove 
     color: white;
 }
 
-/* Popup zamówienia */
+/* Popup zamÃ³wienia */
 .popup {
     border: 1px solid #000;
     padding: 20px;
@@ -115,7 +115,7 @@ button, .btn, .category-btn, .cart-btn, .btn-update, .btn-checkout, .btn-remove 
     border-radius: 8px;
 }
 
-/* Koszyk p³ywaj¹cy (jeœli chcesz u¿yæ w prawym dolnym rogu) */
+/* Koszyk pÂ³ywajÂ¹cy (jeÅ“li chcesz uÂ¿yÃ¦ w prawym dolnym rogu) */
 .floating-cart-btn {
     position: fixed;
     bottom: 20px;
@@ -132,44 +132,4 @@ button, .btn, .category-btn, .cart-btn, .btn-update, .btn-checkout, .btn-remove 
 
     .floating-cart-btn:hover {
         background-color: #388e3c;
-    }
-
-.add-btn {
-    display: inline-block;
-    margin-bottom: 10px;
-    padding: 8px 15px;
-    background-color: #2196f3;
-    color: white;
-    border-radius: 5px;
-    text-decoration: none;
-}
-
-    .add-btn:hover {
-        background-color: #1976d2;
-    }
-
-.delete-btn {
-    padding: 5px 10px;
-    background-color: #e53935;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-    .delete-btn:hover {
-        background-color: #b71c1c;
-    }
-
-.edit-btn {
-    padding: 5px 10px;
-    margin-left: 5px;
-    background-color: #ff9800;
-    color: white;
-    border-radius: 5px;
-    text-decoration: none;
-}
-
-    .edit-btn:hover {
-        background-color: #f57c00;
     }
