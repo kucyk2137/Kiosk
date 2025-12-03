@@ -1,0 +1,41 @@
+﻿@page
+@model Kiosk.Pages.MenuModel
+@using Kiosk.Models
+@using Kiosk.Extensions
+<link rel="stylesheet" href="~/css/site.css" />
+
+<div class="menu-page" style="display:flex; height: 100vh;">
+    <!-- Lewa kolumna – kategorie jako przyciski z suwakiem -->
+    <div class="categories" style="width: 200px; border-right: 1px solid #ccc; padding: 10px; overflow-y: auto; position: relative;">
+        <h3>Kategorie</h3>
+        <div class="category-buttons" style="display:flex; flex-direction: column; gap: 10px;">
+            <form method="get" asp-page="/Categories/Drinks">
+                <button type="submit" class="category-btn">Napoje</button>
+            </form>
+            <form method="get" asp-page="/Categories/Sets">
+                <button type="submit" class="category-btn">Zestawy</button>
+            </form>
+            <form method="get" asp-page="/Categories/Burgers">
+                <button type="submit" class="category-btn">Burgery</button>
+            </form>
+            <form method="get" asp-page="/Categories/Pizza">
+                <button type="submit" class="category-btn">Pizza</button>
+            </form>
+            <form method="get" asp-page="/Categories/Desserts">
+                <button type="submit" class="category-btn">Desery</button>
+            </form>
+        </div>
+
+        <!-- Pływający przycisk koszyka -->
+        <form method="get" asp-page="/Cart" style="position:absolute; bottom:10px; right:10px; width:calc(100% - 20px);">
+            <button type="submit" class="cart-btn">
+                🛒 Koszyk (@(HttpContext.Session.GetObjectFromJson<List<OrderItem>>("Cart")?.Count ?? 0))
+            </button>
+        </form>
+    </div>
+
+    <!-- Prawa kolumna – wszystkie produkty lub domyślne -->
+    <div class="products" style="flex:1; padding: 20px; overflow-y: auto;">
+        <h2>Wybierz kategorię z lewej strony</h2>
+    </div>
+</div>

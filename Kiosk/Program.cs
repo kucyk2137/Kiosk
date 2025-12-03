@@ -1,25 +1,37 @@
+using Kiosk.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Add services
 builder.Services.AddRazorPages();
+builder.Services.AddDbContext<KioskDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("KioskDb")));
+
+// Session
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Ensure database created
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<KioskDbContext>();
+    db.Database.EnsureCreated();
+}
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession();
+// Middleware
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-
-app.UseRouting();
-
-app.UseAuthorization();
-
 app.MapRazorPages();
-
+app.MapFallbackToPage("/LockScreen");
+app.UseStaticFiles();
+app.UseRouting();
+app.UseSession();
+app.MapRazorPages();
 app.Run();

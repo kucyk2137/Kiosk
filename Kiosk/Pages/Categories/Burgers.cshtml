@@ -1,0 +1,20 @@
+﻿@page
+@model Kiosk.Pages.Categories.BurgersModel
+<h2>Burgery</h2>
+
+<div class="products">
+    @foreach (var item in Model.Burgers)
+    {
+        <div class="menu-item">
+            
+            <h3>@item.Name</h3>
+            <img src="@item.ImageUrl" alt="@item.Name" style="width:100px; height:100px;" />
+            <p>@item.Description</p>
+            <p>@item.Price.ToString("0.00") zł</p>
+            <form method="post" asp-page="/Menu">
+                <input type="hidden" name="MenuItemId" value="@item.Id" />
+                <button type="submit">Dodaj do koszyka</button>
+            </form>
+        </div>
+    }
+</div>

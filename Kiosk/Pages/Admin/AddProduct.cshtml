@@ -1,0 +1,37 @@
+﻿@page
+@model Kiosk.Pages.Admin.AddProductModel
+@{
+    ViewData["Title"] = "Dodaj produkt";
+}
+
+<h2>Dodaj produkt</h2>
+
+<form method="post">
+    <div>
+        <label>Nazwa:</label>
+        <input asp-for="MenuItem.Name" />
+    </div>
+    <div>
+        <label>Opis:</label>
+        <textarea asp-for="MenuItem.Description"></textarea>
+    </div>
+    <div>
+        <label>Cena:</label>
+        <input asp-for="MenuItem.Price" />
+    </div>
+    <div>
+        <label>Obraz (URL):</label>
+        <input asp-for="MenuItem.ImageUrl" />
+    </div>
+    <div>
+        <label>Kategoria:</label>
+        <select asp-for="MenuItem.Category">
+            <option value="Pizza">Pizza</option>
+            <option value="Burgery">Burgery</option>
+            <option value="Napoje">Napoje</option>
+            <option value="Desery">Desery</option>
+        </select>
+    </div>
+    <button type="submit">Dodaj produkt</button>
+</form>
+<p style="color:green">@Model.Message</p>
