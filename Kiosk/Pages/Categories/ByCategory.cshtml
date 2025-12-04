@@ -3,6 +3,7 @@
 <link rel="stylesheet" href="~/css/site.css" />
 
 <h2>@Model.Category.Name</h2>
+<a asp-page="/Menu" class="back-btn">Powrót</a>
 
 <div class="products">
     @foreach (var item in Model.Products)
@@ -12,8 +13,9 @@
             <h3>@item.Name</h3>
             <p>@item.Description</p>
             <p>Cena: @item.Price zł</p>
-            <form method="post" asp-page="/Menu">
+            <form method="post">
                 <input type="hidden" name="MenuItemId" value="@item.Id" />
+                <input type="hidden" name="categoryId" value="@Model.Category.Id" />
                 <button type="submit">Dodaj do koszyka</button>
             </form>
         </div>
