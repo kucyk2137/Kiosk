@@ -1,0 +1,11 @@
+﻿@page "{id:int}"
+@model Kiosk.Pages.Admin.EditCategoryModel
+<h2>Edytuj kategorię</h2>
+
+<form method="post">
+    <input type="hidden" asp-for="Category.Id" />
+    <label>Nazwa:</label>
+    <input asp-for="Category.Name" />
+    <button type="submit">Zapisz zmiany</button>
+    <a asp-page="Categories">Powrót do listy</a>
+</form>

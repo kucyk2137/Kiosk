@@ -5,6 +5,7 @@
 <h2>Lista produktów</h2>
 
 <a asp-page="AddProduct" class="add-btn">Dodaj nowy produkt</a>
+<a asp-page="Categories" class="add-btn">Zarządzaj kategoriami</a>
 
 <table>
     <thead>
@@ -20,15 +21,20 @@
         {
             <tr>
                 <td>@item.Name</td>
+
                 <td>@item.Category</td>
                 <td>@item.Price.ToString("0.00") zł</td>
                 <td>
-                    <!-- Przycisk usuwania -->
+
+                <td>@item.Category.Name</td>
+                <td>@item.Price.ToString("0.00") zł</td>
+                <td>
+                    <a asp-page="EditProduct" asp-route-id="@item.Id" class="edit-btn">Edytuj</a>
+
                     <form method="post" asp-page-handler="Delete" style="display:inline;">
                         <input type="hidden" name="MenuItemId" value="@item.Id" />
                         <button type="submit" class="delete-btn">Usuń</button>
                     </form>
-
                     <!-- Opcjonalnie link do edycji -->
                     <a asp-page="EditProduct" asp-route-id="@item.Id" class="edit-btn">Edytuj</a>
                 </td>

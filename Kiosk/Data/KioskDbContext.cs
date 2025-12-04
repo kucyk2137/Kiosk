@@ -1,5 +1,5 @@
-﻿using Kiosk.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Kiosk.Models;
 
 namespace Kiosk.Data
 {
@@ -8,7 +8,7 @@ namespace Kiosk.Data
         public KioskDbContext(DbContextOptions<KioskDbContext> options) : base(options) { }
 
         public DbSet<MenuItem> MenuItems { get; set; }
-        public DbSet<Order> Orders { get; set; }
-        public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<Category> Categories { get; set; }
+
     }
 }

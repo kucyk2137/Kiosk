@@ -1,9 +1,11 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc;
 using Kiosk.Data;
 using Kiosk.Models;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace Kiosk.Pages.Admin
 {
@@ -20,7 +22,11 @@ namespace Kiosk.Pages.Admin
 
         public void OnGet()
         {
+
             MenuItems = _context.MenuItems.ToList();
+
+            MenuItems = _context.MenuItems.Include(m => m.Category).ToList();
+
         }
 
         public IActionResult OnPostDelete(int MenuItemId)

@@ -1,8 +1,8 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Kiosk.Data;
 using Kiosk.Models;
 using Kiosk.Extensions;
+using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,55 +17,16 @@ namespace Kiosk.Pages
             _context = context;
         }
 
-        public List<OrderItem> Cart { get; set; } = new();
-        [BindProperty]
-        public string PaymentMethod { get; set; }
-        public decimal Total => Cart.Sum(x => x.MenuItem?.Price * x.Quantity ?? 0);
-        public int OrderId { get; set; }
+        public List<(MenuItem Item, int Quantity)> CartItems { get; set; } = new();
 
         public void OnGet()
         {
-            var sessionCart = HttpContext.Session.GetObjectFromJson<List<OrderItem>>("Cart") ?? new List<OrderItem>();
+            var cart = HttpContext.Session.GetObjectFromJson<List<OrderItem>>("Cart") ?? new List<OrderItem>();
 
-            Cart = sessionCart
-                .Select(x =>
-                {
-                    x.MenuItem = _context.MenuItems.FirstOrDefault(m => m.Id == x.MenuItemId);
-                    return x;
-                })
-                .Where(x => x.MenuItem != null)
+            CartItems = cart
+                .Select(ci => (Item: _context.MenuItems.FirstOrDefault(m => m.Id == ci.MenuItemId), Quantity: ci.Quantity))
+                .Where(x => x.Item != null)
                 .ToList();
-        }
-
-        public IActionResult OnPost()
-        {
-            Cart = HttpContext.Session.GetObjectFromJson<List<OrderItem>>("Cart") ?? new List<OrderItem>();
-
-            if (Cart.Count == 0)
-            {
-                ModelState.AddModelError(string.Empty, "Koszyk jest pusty");
-                return Page();
-            }
-
-            var order = new Order
-            {
-                PaymentMethod = PaymentMethod,
-                Items = Cart
-                    .Where(x => x.MenuItem != null)
-                    .Select(x => new OrderItem
-                    {
-                        MenuItemId = x.MenuItemId,
-                        Quantity = x.Quantity
-                    }).ToList()
-            };
-
-            _context.Orders.Add(order);
-            _context.SaveChanges();
-
-            OrderId = order.Id;
-            HttpContext.Session.SetObjectAsJson("Cart", new List<OrderItem>());
-
-            return Page();
         }
     }
 }

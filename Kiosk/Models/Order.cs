@@ -6,8 +6,9 @@ namespace Kiosk.Models
     public class Order
     {
         public int Id { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public string PaymentMethod { get; set; } // np. "Karta", "Gotówka"
+        public string PaymentMethod { get; set; }
+        public DateTime OrderDate { get; set; } = DateTime.Now;
+
         public List<OrderItem> Items { get; set; } = new();
     }
 }

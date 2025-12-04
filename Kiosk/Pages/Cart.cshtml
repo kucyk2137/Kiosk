@@ -1,13 +1,15 @@
-﻿@page
+﻿
+@page
+@using Kiosk.Models
+@using Kiosk.Extensions
+@using Microsoft.AspNetCore.Http
+
 @model Kiosk.Pages.CartModel
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@{
-    ViewData["Title"] = "Koszyk";
-}
+<link rel="stylesheet" href="~/css/site.css" />
 
-<h2>Twój koszyk</h2>
+<h2>Koszyk</h2>
 
-@if (Model.Cart.Count == 0)
+@if (Model.CartItems.Count == 0)
 {
     <p>Twój koszyk jest pusty.</p>
 }
@@ -20,39 +22,25 @@ else
                 <th>Cena</th>
                 <th>Ilość</th>
                 <th>Razem</th>
+                <th>Usuń</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model.Cart)
+            @foreach (var ci in Model.CartItems)
             {
                 <tr>
-                    <td>@item.MenuItem?.Name ?? "Produkt niedostępny"</td>
-                    <td>@(item.MenuItem?.Price.ToString("0.00") ?? "0.00") zł</td>
-                    <td>@item.Quantity</td>
-                    <td>@((item.MenuItem?.Price ?? 0) * item.Quantity).ToString("0.00") zł</td>
+                    <td>@ci.Item.Name</td>
+                    <td>@ci.Item.Price.ToString("0.00") zł</td>
+                    <td>@ci.Quantity</td>
+                    <td>@(ci.Item.Price* ci.Quantity).ToString("0.00") zł</td>
+                    <td>
+                        <form method="post" asp-page-handler="Remove">
+                            <input type="hidden" name="MenuItemId" value="@ci.Item.Id" />
+                            <button type="submit">Usuń</button>
+                        </form>
+                    </td>
                 </tr>
-            }
             }
         </tbody>
     </table>
-
-    <h3>Suma: @Model.Total.ToString("0.00") zł</h3>
-
-    <form method="post">
-        <label>Wybierz metodę płatności:</label>
-        <select asp-for="PaymentMethod">
-            <option value="Gotówka">Gotówka</option>
-            <option value="Karta">Karta</option>
-        </select>
-        <button type="submit">Zapłać</button>
-    </form>
-}
-
-@if (Model.OrderId > 0)
-{
-    <div id="popup" style="border:1px solid #000; padding:20px; margin-top:20px; background-color:#f8f8f8;">
-        <h3>Zamówienie złożone!</h3>
-        <p>Numer zamówienia: <strong>@Model.OrderId</strong></p>
-        <p>Dziękujemy za zamówienie!</p>
-    </div>
 }
