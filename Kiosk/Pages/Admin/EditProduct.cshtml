@@ -14,17 +14,7 @@
 
     <div>
         <label>Kategoria:</label>
-<<<<<<< HEAD
-        <select asp-for="Product.Category">
-            <option value="Drinks">Napoje</option>
-            <option value="Sets">Zestawy</option>
-            <option value="Burgers">Burgery</option>
-            <option value="Pizza">Pizza</option>
-            <option value="Desserts">Desery</option>
-        </select>
-=======
         <select asp-for="Product.CategoryId" asp-items="Model.CategorySelectList"></select>
->>>>>>> Nowa_nap
     </div>
 
     <div>
@@ -40,6 +30,16 @@
     <div>
         <label>URL obrazka:</label>
         <input asp-for="Product.ImageUrl" />
+    </div>
+
+    <div>
+        <label>Domyślne składniki (jeden na linię):</label>
+        <textarea asp-for="DefaultIngredientsInput"></textarea>
+    </div>
+
+    <div>
+        <label>Opcjonalne dodatki (jeden na linię):</label>
+        <textarea asp-for="OptionalIngredientsInput"></textarea>
     </div>
 
     <button type="submit">Zapisz zmiany</button>

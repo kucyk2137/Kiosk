@@ -11,6 +11,7 @@ namespace Kiosk.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<MenuItemIngredient> MenuItemIngredients { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -23,6 +24,12 @@ namespace Kiosk.Data
                 .HasOne(oi => oi.MenuItem)
                 .WithMany()
                 .HasForeignKey(oi => oi.MenuItemId);
+
+            modelBuilder.Entity<MenuItemIngredient>()
+                .HasOne(mi => mi.MenuItem)
+                .WithMany(m => m.Ingredients)
+                .HasForeignKey(mi => mi.MenuItemId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             base.OnModelCreating(modelBuilder);
         }
