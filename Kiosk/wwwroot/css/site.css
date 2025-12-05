@@ -354,3 +354,7 @@ body {
         padding: 18px 16px 24px;
     }
 }
+.modal-content,
+.modal-content * {
+    color: #000 !important;
+}

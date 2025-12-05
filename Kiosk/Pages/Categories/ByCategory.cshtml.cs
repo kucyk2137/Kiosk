@@ -29,12 +29,30 @@ namespace Kiosk.Pages.Categories
 
             Products = _context.MenuItems
                                .Where(m => m.CategoryId == categoryId)
+                               .Select(m => new MenuItem
+                               {
+                                   Id = m.Id,
+                                   Name = m.Name,
+                                   Description = m.Description,
+                                   Price = m.Price,
+                                   ImageUrl = m.ImageUrl,
+                                   CategoryId = m.CategoryId,
+                                   Ingredients = m.Ingredients
+                                       .Select(i => new MenuItemIngredient
+                                       {
+                                           Id = i.Id,
+                                           Name = i.Name,
+                                           IsDefault = i.IsDefault,
+                                           MenuItemId = i.MenuItemId
+                                       })
+                                       .ToList()
+                               })
                                .ToList();
 
             return Page();
         }
 
-        public IActionResult OnPost(int menuItemId, int categoryId)
+        public IActionResult OnPost(int menuItemId, int categoryId, string selectedIngredients, int quantity)
         {
             var product = _context.MenuItems.FirstOrDefault(m => m.Id == menuItemId && m.CategoryId == categoryId);
             if (product == null)
@@ -42,25 +60,51 @@ namespace Kiosk.Pages.Categories
                 return RedirectToPage("/Menu");
             }
 
+            selectedIngredients = string.IsNullOrWhiteSpace(selectedIngredients) ? "[]" : selectedIngredients;
+            if (quantity < 1) quantity = 1;
+
             var cart = HttpContext.Session.GetObjectFromJson<List<OrderItem>>("Cart") ?? new List<OrderItem>();
-            var existingItem = cart.FirstOrDefault(ci => ci.MenuItemId == menuItemId);
+
+            var existingItem = cart.FirstOrDefault(ci =>
+                ci.MenuItemId == menuItemId &&
+                (ci.SelectedIngredients ?? "[]") == selectedIngredients);
 
             if (existingItem != null)
             {
-                existingItem.Quantity++;
+                existingItem.Quantity += quantity;
             }
             else
             {
                 cart.Add(new OrderItem
                 {
                     MenuItemId = menuItemId,
-                    Quantity = 1
+                    Quantity = quantity,
+                    SelectedIngredients = selectedIngredients
                 });
             }
 
             HttpContext.Session.SetObjectAsJson("Cart", cart);
 
             return RedirectToPage(new { categoryId });
+        }
+
+        public IActionResult OnGetIngredients(int menuItemId)
+        {
+            var product = _context.MenuItems
+                .Where(m => m.Id == menuItemId)
+                .Select(m => new
+                {
+                    defaults = m.Ingredients.Where(i => i.IsDefault).Select(i => i.Name).ToList(),
+                    optionals = m.Ingredients.Where(i => !i.IsDefault).Select(i => i.Name).ToList()
+                })
+                .FirstOrDefault();
+
+            if (product == null)
+            {
+                return new JsonResult(new { defaults = new List<string>(), optionals = new List<string>() });
+            }
+
+            return new JsonResult(product);
         }
     }
 }

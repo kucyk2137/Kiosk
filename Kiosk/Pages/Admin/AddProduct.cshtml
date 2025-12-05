@@ -4,7 +4,6 @@
 <h2>Dodaj produkt</h2>
 <a asp-page="Categories" class="back-btn">Powrót</a>
 
-
 <form method="post">
     <div>
         <label>Nazwa:</label>
@@ -36,7 +35,18 @@
             <option value="">-- Wybierz kategorię --</option>
         </select>
         <span asp-validation-for="MenuItem.CategoryId" class="text-danger"></span>
+    </div>
 
+    <div>
+        <label>Domyślne składniki (jeden na linię):</label>
+        <textarea asp-for="DefaultIngredientsInput" placeholder="np. pomidor
+ogórek"></textarea>
+    </div>
+
+    <div>
+        <label>Opcjonalne dodatki (jeden na linię):</label>
+        <textarea asp-for="OptionalIngredientsInput" placeholder="np. bekon
+sos BBQ"></textarea>
     </div>
 
     <button type="submit">Dodaj produkt</button>
