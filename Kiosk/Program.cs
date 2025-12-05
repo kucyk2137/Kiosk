@@ -35,7 +35,8 @@ app.MapGet("/api/orders", async (KioskDbContext db) =>
                 {
                     DishName = i.MenuItem.Name,
                     Quantity = i.Quantity,
-                    UnitPrice = i.MenuItem.Price
+                    UnitPrice = i.MenuItem.Price,
+                    Ingredients = i.SelectedIngredients
                 })
                 .ToList()
         })
