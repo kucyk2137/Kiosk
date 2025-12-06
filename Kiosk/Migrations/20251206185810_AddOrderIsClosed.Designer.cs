@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Kiosk.Migrations
 {
     [DbContext(typeof(KioskDbContext))]
-    [Migration("20251206130145_pierwsza")]
-    partial class pierwsza
+    [Migration("20251206185810_AddOrderIsClosed")]
+    partial class AddOrderIsClosed
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -110,6 +110,9 @@ namespace Kiosk.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsClosed")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");

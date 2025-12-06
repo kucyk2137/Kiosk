@@ -1,0 +1,123 @@
+﻿@page
+@model Kiosk.Pages.KitchenModel
+@{
+    ViewData["Title"] = "Kuchnia";
+    ViewData["HidePageHeader"] = true;
+}
+
+<div class="kitchen-screen">
+    <div class="kitchen-topbar">
+        <div>
+            <p class="eyebrow">Panel kuchni</p>
+            <h1>Oczekujące zamówienia</h1>
+            <p class="muted">Nowe zamówienia pojawiają się automatycznie – kliknij "Gotowe" gdy wydasz potrawy.</p>
+        </div>
+        <div class="kitchen-actions">
+            <div id="order-count" class="pill">0 w kolejce</div>
+            <button id="refresh-orders" type="button" class="ghost-btn">Odśwież</button>
+        </div>
+    </div>
+
+    <div id="orders-grid" class="kitchen-grid">
+        <div class="empty-state">
+            <p class="eyebrow">Brak zamówień</p>
+            <h3>Wszystkie zamówienia zostały zrealizowane</h3>
+            <p class="muted">Nowe zamówienia pokażą się tutaj natychmiast po złożeniu.</p>
+        </div>
+    </div>
+
+    <a class="history-fab" href="/KitchenHistory">Historia zamówień</a>
+</div>
+
+@section Scripts {
+    <script>
+        const ordersGrid = document.getElementById('orders-grid');
+        const orderCount = document.getElementById('order-count');
+        const refreshButton = document.getElementById('refresh-orders');
+
+        const formatTime = (dateString) => {
+            const date = new Date(dateString);
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        };
+
+        const renderOrders = (orders) => {
+            ordersGrid.innerHTML = '';
+
+            if (!orders.length) {
+                ordersGrid.innerHTML = `
+                    <div class="empty-state">
+                        <p class="eyebrow">Brak zamówień</p>
+                        <h3>Wszystkie zamówienia zostały zrealizowane</h3>
+                        <p class="muted">Nowe zamówienia pokażą się tutaj natychmiast po złożeniu.</p>
+                    </div>`;
+            }
+
+            orderCount.textContent = `${orders.length} w kolejce`;
+
+            orders.forEach(order => {
+                const card = document.createElement('article');
+                card.className = 'kitchen-card';
+                card.innerHTML = `
+                    <header class="card-head">
+                        <div>
+                            <div class="eyebrow">${order.orderType || 'Na miejscu'}</div>
+                            <div class="order-time">${formatTime(order.orderDate)}</div>
+                        </div>
+                        <div class="badge-row">
+                            <span class="pill pill--accent">${order.paymentMethod}</span>
+                        </div>
+                    </header>
+                    <div class="card-body">
+                        ${order.items.map(item => `
+                            <div class="order-item">
+                                <span class="qty">${item.quantity}x</span>
+                                <div class="item-details">
+                                    <div class="item-name">${item.dishName}</div>
+                                    ${item.ingredients ? `<div class=\"item-ingredients\">${item.ingredients}</div>` : ''}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <footer class="card-actions">
+                        <button class="done-btn" data-order-id="${order.orderId}">Gotowe</button>
+                    </footer>`;
+
+                card.querySelector('.done-btn').addEventListener('click', () => markDone(order.orderId, card));
+                ordersGrid.appendChild(card);
+            });
+        };
+
+        const markDone = async (orderId, card) => {
+            card.classList.add('is-processing');
+            try {
+                const response = await fetch(`/api/orders/${orderId}/complete`, { method: 'POST' });
+                if (!response.ok) {
+                    const payload = await response.json().catch(() => ({}));
+                    alert(payload.message || 'Nie udało się zamknąć zamówienia.');
+                }
+                await loadOrders();
+            } catch (err) {
+                alert('Wystąpił błąd podczas zamykania zamówienia.');
+            } finally {
+                card.classList.remove('is-processing');
+            }
+        };
+
+        const loadOrders = async () => {
+            ordersGrid.classList.add('is-loading');
+            try {
+                const response = await fetch('/api/orders');
+                const data = await response.json();
+                renderOrders(data);
+            } catch (err) {
+                ordersGrid.innerHTML = '<p class="muted">Nie udało się pobrać zamówień.</p>';
+            } finally {
+                ordersGrid.classList.remove('is-loading');
+            }
+        };
+
+        refreshButton.addEventListener('click', loadOrders);
+        loadOrders();
+        setInterval(loadOrders, 10000);
+    </script>
+}

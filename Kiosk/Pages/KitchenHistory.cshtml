@@ -1,0 +1,94 @@
+﻿@page
+@model Kiosk.Pages.KitchenHistoryModel
+@{
+    ViewData["Title"] = "Historia zamówień";
+    ViewData["HidePageHeader"] = true;
+}
+
+<div class="kitchen-screen">
+    <div class="kitchen-topbar">
+        <div>
+            <p class="eyebrow">Panel kuchni</p>
+            <h1>Historia zamówień</h1>
+            <p class="muted">Zamówienia oznaczone jako gotowe. Najnowsze na górze.</p>
+        </div>
+        <div class="kitchen-actions">
+            <a href="/Kitchen" class="ghost-btn">Wróć do bieżących</a>
+        </div>
+    </div>
+
+    <div id="history-grid" class="kitchen-grid kitchen-grid--history history-grid">
+        <div class="empty-state">
+            <p class="eyebrow">Brak historii</p>
+            <h3>Nie zamknięto jeszcze żadnych zamówień</h3>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const historyGrid = document.getElementById('history-grid');
+
+        const formatDate = (dateString) => {
+            const date = new Date(dateString);
+            return `${date.toLocaleDateString()} • ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+        };
+
+        const renderHistory = (orders) => {
+            historyGrid.innerHTML = '';
+
+            if (!orders.length) {
+                historyGrid.innerHTML = `
+                    <div class="empty-state">
+                        <p class="eyebrow">Brak historii</p>
+                        <h3>Nie zamknięto jeszcze żadnych zamówień</h3>
+                    </div>`;
+                return;
+            }
+
+            orders.forEach(order => {
+                const card = document.createElement('article');
+                card.className = 'kitchen-card kitchen-card--history';
+                card.innerHTML = `
+                    <header class="card-head">
+                        <div>
+                            <div class="eyebrow">${order.orderType || 'Na miejscu'}</div>
+                            <div class="order-time">${formatDate(order.orderDate)}</div>
+                        </div>
+                        <div class="badge-row">
+                            <span class="pill">${order.paymentMethod}</span>
+                            <span class="pill pill--success">Zamknięte</span>
+                        </div>
+                    </header>
+                    <div class="card-body">
+                        ${order.items.map(item => `
+                            <div class="order-item">
+                                <span class="qty">${item.quantity}x</span>
+                                <div class="item-details">
+                                    <div class="item-name">${item.dishName}</div>
+                                    ${item.ingredients ? `<div class=\"item-ingredients\">${item.ingredients}</div>` : ''}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>`;
+
+                historyGrid.appendChild(card);
+            });
+        };
+
+        const loadHistory = async () => {
+            historyGrid.classList.add('is-loading');
+            try {
+                const response = await fetch('/api/orders/history');
+                const data = await response.json();
+                renderHistory(data);
+            } catch (err) {
+                historyGrid.innerHTML = '<p class="muted">Nie udało się pobrać historii.</p>';
+            } finally {
+                historyGrid.classList.remove('is-loading');
+            }
+        };
+
+        loadHistory();
+    </script>
+}
