@@ -29,6 +29,7 @@ app.MapGet("/api/orders", async (KioskDbContext db) =>
             OrderId = o.Id,
             OrderDate = o.OrderDate,
             PaymentMethod = o.PaymentMethod,
+            OrderType = o.OrderType,
             Items = o.Items
                 .Where(i => i.MenuItem != null)
                 .Select(i => new KitchenOrderItemDto

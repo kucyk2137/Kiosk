@@ -1,0 +1,20 @@
+﻿@page
+@model Kiosk.Pages.OrderTypeModel
+<link rel="stylesheet" href="~/css/site.css" />
+
+<div class="order-type-page">
+    <h1>Wybierz rodzaj zamówienia</h1>
+    <p>Wskaż czy chcesz zjeść na miejscu czy zabrać zamówienie ze sobą.</p>
+
+    <div class="order-type-buttons">
+        <form method="post">
+            <input type="hidden" name="orderType" value="Na miejscu" />
+            <button type="submit" class="order-type-btn onsite">Na miejscu</button>
+        </form>
+
+        <form method="post">
+            <input type="hidden" name="orderType" value="Na wynos" />
+            <button type="submit" class="order-type-btn takeaway">Na wynos</button>
+        </form>
+    </div>
+</div>

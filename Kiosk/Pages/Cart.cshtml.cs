@@ -67,6 +67,7 @@ namespace Kiosk.Pages
             var order = new Order
             {
                 PaymentMethod = "Card",
+                OrderType = HttpContext.Session.GetString("OrderType"),
                 Items = cart
                     .Select(ci => new OrderItem
                     {
@@ -81,6 +82,7 @@ namespace Kiosk.Pages
             _context.SaveChanges();
 
             HttpContext.Session.Remove("Cart");
+            HttpContext.Session.Remove("OrderType");
             TempData["OrderMessage"] = "Zamówienie zosta³o z³o¿one.";
 
             return RedirectToPage();
