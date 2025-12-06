@@ -1,15 +1,24 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Kiosk.Data;
 using Kiosk.Models;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Collections.Generic;
-using System.Linq;
 
 public class AddProductModel : PageModel
 {
     private readonly KioskDbContext _context;
-    public AddProductModel(KioskDbContext context) => _context = context;
+    private readonly IWebHostEnvironment _environment;
+    public AddProductModel(KioskDbContext context, IWebHostEnvironment environment)
+    {
+        _context = context;
+        _environment = environment;
+    }
 
     [BindProperty]
     public MenuItem MenuItem { get; set; }
@@ -20,7 +29,11 @@ public class AddProductModel : PageModel
     [BindProperty]
     public string OptionalIngredientsInput { get; set; }
 
+    [BindProperty]
+    public IFormFile ImageFile { get; set; }
+
     public SelectList CategorySelectList { get; set; }
+
     public string Message { get; set; }
 
     public void OnGet()
@@ -32,6 +45,8 @@ public class AddProductModel : PageModel
     {
         CategorySelectList = new SelectList(_context.Categories.OrderBy(c => c.Name), "Id", "Name");
 
+        ModelState.Remove("MenuItem.Image");
+
         if (!ModelState.IsValid)
         {
             var allErrors = ModelState
@@ -41,6 +56,24 @@ public class AddProductModel : PageModel
             Message = "Formularz zawiera b³êdy: " + string.Join(" | ", allErrors);
             return Page();
         }
+
+        if (ImageFile == null || ImageFile.Length == 0)
+        {
+            ModelState.AddModelError(nameof(ImageFile), "Plik obrazu jest wymagany.");
+            return Page();
+        }
+
+        var uploadsFolder = Path.Combine(_environment.WebRootPath, "images", "products");
+        Directory.CreateDirectory(uploadsFolder);
+        var fileName = $"{Guid.NewGuid()}{Path.GetExtension(ImageFile.FileName)}";
+        var filePath = Path.Combine(uploadsFolder, fileName);
+
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            ImageFile.CopyTo(stream);
+        }
+
+        MenuItem.Image = $"/images/products/{fileName}";
 
         _context.MenuItems.Add(MenuItem);
         _context.SaveChanges();

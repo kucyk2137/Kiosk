@@ -4,7 +4,7 @@
 <h2>Dodaj produkt</h2>
 <a asp-page="Categories" class="back-btn">Powrót</a>
 
-<form method="post">
+<form method="post" enctype="multipart/form-data">
     <div>
         <label>Nazwa:</label>
         <input asp-for="MenuItem.Name" />
@@ -24,9 +24,9 @@
     </div>
 
     <div>
-        <label>Obraz (URL):</label>
-        <input asp-for="MenuItem.ImageUrl" />
-        <span asp-validation-for="MenuItem.ImageUrl" class="text-danger"></span>
+        <label>Obraz (plik):</label>
+        <input asp-for="ImageFile" type="file" accept="image/*" />
+        <span asp-validation-for="ImageFile" class="text-danger"></span>
     </div>
 
     <div>

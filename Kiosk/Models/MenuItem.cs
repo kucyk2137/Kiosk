@@ -18,7 +18,7 @@ namespace Kiosk.Models
         public decimal Price { get; set; }
 
         [Required(ErrorMessage = "Adres obrazu jest wymagany")]
-        public string ImageUrl { get; set; }
+        public string? Image { get; set; }
 
         [Required(ErrorMessage = "Kategoria jest wymagana")]
         public int CategoryId { get; set; }

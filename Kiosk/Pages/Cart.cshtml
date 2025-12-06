@@ -3,84 +3,113 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 <link rel="stylesheet" href="~/css/site.css" />
 
-<h2>Koszyk</h2>
-
-@if (TempData["OrderMessage"] != null)
-{
-    <p class="success-message">@TempData["OrderMessage"]</p>
+@{
+    ViewData["Title"] = "Koszyk";
+    ViewData["PageHeaderTitle"] = "Koszyk";
 }
 
-<div asp-validation-summary="All"></div>
+<div class="cart-page">
+    @if (TempData["OrderMessage"] != null)
+    {
+        <p class="success-message">@TempData["OrderMessage"]</p>
+    }
 
-@if (Model.CartItems.Count == 0)
-{
-    <p>Twój koszyk jest pusty.</p>
-}
-else
-{
-    <div class="cart-container">
-        <table class="cart-table">
-            <thead>
-                <tr>
-                    <th>Produkt</th>
-                    <th>Składniki</th>
-                    <th>Ilość</th>
-                    <th>Cena</th>
-                    <th>Razem</th>
-                    <th>Akcje</th>
-                </tr>
-            </thead>
-            <tbody>
+    <div asp-validation-summary="All"></div>
+
+    @if (Model.CartItems.Count == 0)
+    {
+        <div class="empty-cart">
+            <p>Twój koszyk jest pusty.</p>
+            <a asp-page="/Menu" class="primary-btn">Przejdź do menu</a>
+        </div>
+    }
+    else
+    {
+        <div class="cart-layout">
+            <div class="cart-items-grid">
                 @foreach (var ci in Model.CartItems)
                 {
-                    <tr>
-                        <td>@ci.Item.Name</td>
-                        <td>
-                            @if (!string.IsNullOrWhiteSpace(ci.Ingredients))
-                            {
-                                <ul>
-                                    @foreach (var ingredient in System.Text.Json.JsonSerializer.Deserialize<List<string>>(ci.Ingredients ?? "[]"))
-                                    {
-                                        <li>@ingredient</li>
-                                    }
-                                </ul>
-                            }
-                            else
-                            {
-                                <span>Domyślne składniki</span>
-                            }
-                        </td>
-                        <td>@ci.Quantity</td>
-                        <td>@ci.Item.Price.ToString("0.00") zł</td>
-                        <td>@(ci.Item.Price* ci.Quantity).zł</td>
-                        <td class="cart-actions-cell">
-                            <button type="button"
-                                    class="edit-item-btn"
-                                    data-menu-item-id="@ci.Item.Id"
-                                    data-selected-ingredients="@ci.Ingredients"
-                                    data-quantity="@ci.Quantity">
-                                Edytuj
-                            </button>
+                    var ingredients = System.Text.Json.JsonSerializer.Deserialize<List<string>>(ci.Ingredients ?? "[]") ?? new List<string>();
+                    <div class="cart-card">
+                        <div class="cart-card-media">
+                            <img src="@ci.Item.Image" alt="@ci.Item.Name" />
+                        </div>
+                        <div class="cart-card-content">
+                            <div class="cart-card-header">
+                                <div>
+                                    <p class="item-category">Pozycja w koszyku</p>
+                                    <h3>@ci.Item.Name</h3>
+                                    <p class="item-ingredients">
+                                        @(ingredients.Any() ? string.Join(", ", ingredients) : "Domyślne składniki")
+                                    </p>
+                                </div>
+                                <div class="price-tag">@ci.Item.Price.ToString("0.00") zł</div>
+                            </div>
 
-                            <form method="post" asp-page-handler="Remove" class="inline-form">
-                                <input type="hidden" name="MenuItemId" value="@ci.Item.Id" />
-                                <input type="hidden" name="selectedIngredients" value="@ci.Ingredients" />
-                                <button type="submit" class="remove-btn">Usuń</button>
-                            </form>
-                        </td>
-                    </tr>
+                            <div class="cart-card-footer">
+                                <div class="quantity-control">
+                                    <form method="post" asp-page-handler="Update">
+                                        <input type="hidden" name="MenuItemId" value="@ci.Item.Id" />
+                                        <input type="hidden" name="oldSelectedIngredients" value="@ci.Ingredients" />
+                                        <input type="hidden" name="newSelectedIngredients" value="@ci.Ingredients" />
+                                        <input type="hidden" name="quantity" value="@(Math.Max(1, ci.Quantity - 1))" />
+                                        <button type="submit" class="qty-btn" @(ci.Quantity <= 1 ? "disabled" : null)>−</button>
+                                    </form>
+                                    <span class="qty-value">@ci.Quantity</span>
+                                    <form method="post" asp-page-handler="Update">
+                                        <input type="hidden" name="MenuItemId" value="@ci.Item.Id" />
+                                        <input type="hidden" name="oldSelectedIngredients" value="@ci.Ingredients" />
+                                        <input type="hidden" name="newSelectedIngredients" value="@ci.Ingredients" />
+                                        <input type="hidden" name="quantity" value="@(ci.Quantity + 1)" />
+                                        <button type="submit" class="qty-btn">+</button>
+                                    </form>
+                                </div>
+
+                                <div class="cart-actions">
+                                    <button type="button"
+                                            class="edit-item-btn ghost-btn"
+                                            data-menu-item-id="@ci.Item.Id"
+                                            data-selected-ingredients="@ci.Ingredients"
+                                            data-quantity="@ci.Quantity">
+                                        Edytuj
+                                    </button>
+
+                                    <form method="post" asp-page-handler="Remove" class="inline-form">
+                                        <input type="hidden" name="MenuItemId" value="@ci.Item.Id" />
+                                        <input type="hidden" name="selectedIngredients" value="@ci.Ingredients" />
+                                        <button type="submit" class="remove-btn">Usuń</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 }
-            </tbody>
-        </table>
+            </div>
+ <div class="payment-box">
+            <div class="cart-summary-card">
+                <h4>Podsumowanie</h4>
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span>@Model.TotalPrice.ToString("0.00") zł</span>
+                </div>
+                <div class="summary-row muted">
+                    <span>Podatek</span>
+                    <span>0,00 zł</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Łącznie</span>
+                    <span>@Model.TotalPrice.ToString("0.00") zł</span>
+                </div>
+                <form method="post" asp-page-handler="Checkout">
+                    <button type="submit" class="checkout-btn">Zapłać</button>
+                </form>
 
-        <div class="cart-summary">
-            <p><strong>Łącznie:</strong> @Model.TotalPrice.ToString("0.00") zł</p>
-            <form method="post" asp-page-handler="Checkout">
-                <button type="submit" class="checkout-btn">Złóż zamówienie</button>
-            </form>
+                <a asp-page="/Menu" class="back-btn">Wróć do menu</a>
+            </div>
         </div>
-    </div>
-}
+ </div>
+    }
+</div>
 
 <!-- POPUP EDYCJI PRODUKTU W KOSZYKU -->
 <div id="edit-item-modal" class="modal" style="display:none;">

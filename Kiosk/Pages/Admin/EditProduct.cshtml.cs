@@ -62,7 +62,7 @@ namespace Kiosk.Pages.Admin
             productInDb.CategoryId = Product.CategoryId;
             productInDb.Price = Product.Price;
             productInDb.Description = Product.Description;
-            productInDb.ImageUrl = Product.ImageUrl;
+            productInDb.Image = Product.Image;
 
             var existingIngredients = _context.MenuItemIngredients.Where(i => i.MenuItemId == Product.Id);
             _context.MenuItemIngredients.RemoveRange(existingIngredients);
