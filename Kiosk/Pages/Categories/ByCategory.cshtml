@@ -3,6 +3,12 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 <link rel="stylesheet" href="~/css/site.css" />
 
+@{
+    var categoryTitle = Model.Category?.Name ?? "Menu";
+    ViewData["Title"] = categoryTitle;
+    ViewData["PageHeaderTitle"] = categoryTitle;
+}
+
 <h2>@Model.Category.Name</h2>
 <a asp-page="/Menu" class="back-btn">Powrót</a>
 
@@ -10,7 +16,7 @@
     @foreach (var item in Model.Products)
     {
         <div class="menu-item">
-            <img src="@item.ImageUrl" alt="@item.Name" width="100" />
+            <img src="@item.Image" alt="@item.Name" width="100" />
             <h3>@item.Name</h3>
             <p>@item.Description</p>
             <p>Cena: @item.Price.ToString("0.00") zł</p>

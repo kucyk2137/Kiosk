@@ -6,14 +6,21 @@
 @model Kiosk.Pages.MenuModel
 <link rel="stylesheet" href="~/css/site.css" />
 
+@{
+    ViewData["Title"] = "Menu";
+    ViewData["PageHeaderTitle"] = "Menu";
+}
+
 <div class="menu-page">
     <div class="categories">
-        <h3>Kategorie</h3>
         @foreach (var category in Model.Categories)
         {
             <form method="get">
                 <input type="hidden" name="categoryId" value="@category.Id" />
-                <button type="submit" class="category-btn">@category.Name</button>
+                <button type="submit" class="category-btn">
+                    <img src="@category.Image" alt="@category.Name" class="category-icon" width="25" height="25"/>
+                    <span>@category.Name</span>
+                </button>
             </form>
         }
         <form method="get" asp-page="/Cart">
@@ -26,12 +33,12 @@
     <div class="products">
         @if (Model.SelectedCategory != null)
         {
-            <h2>@Model.SelectedCategory.Name</h2>
+            
             <div class="products-grid">
                 @foreach (var item in Model.Products)
                 {
                     <div class="menu-item">
-                        <img src="@item.ImageUrl" alt="@item.Name" width="100" />
+                        <img src="@item.Image" alt="@item.Name" width="100" />
                         <h3>@item.Name</h3>
                         <p>@item.Description</p>
                         <p>Cena: @item.Price.ToString("0.00") zł</p>

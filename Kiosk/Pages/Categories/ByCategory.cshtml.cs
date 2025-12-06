@@ -35,7 +35,7 @@ namespace Kiosk.Pages.Categories
                                    Name = m.Name,
                                    Description = m.Description,
                                    Price = m.Price,
-                                   ImageUrl = m.ImageUrl,
+                                   Image = m.Image,
                                    CategoryId = m.CategoryId,
                                    Ingredients = m.Ingredients
                                        .Select(i => new MenuItemIngredient

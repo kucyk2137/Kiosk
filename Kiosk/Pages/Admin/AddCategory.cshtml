@@ -4,9 +4,12 @@
 <a asp-page="Categories" class="back-btn">Powrót</a>
 
 
-<form method="post">
+<form method="post" enctype="multipart/form-data">
     <label>Nazwa:</label>
     <input asp-for="Category.Name" />
+    <label>Obraz kategorii:</label>
+    <input asp-for="ImageFile" type="file" accept="image/*" />
+    <span asp-validation-for="ImageFile" class="text-danger"></span>
     <button type="submit">Dodaj</button>
 </form>
 
