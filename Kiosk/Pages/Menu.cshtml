@@ -1,5 +1,4 @@
-﻿
-@page
+﻿@page
 @using Kiosk.Models
 @using Kiosk.Extensions
 @using Microsoft.AspNetCore.Http
@@ -12,7 +11,7 @@
         <h3>Kategorie</h3>
         @foreach (var category in Model.Categories)
         {
-            <form method="get" asp-page="/Categories/ByCategory">
+            <form method="get">
                 <input type="hidden" name="categoryId" value="@category.Id" />
                 <button type="submit" class="category-btn">@category.Name</button>
             </form>
@@ -25,6 +24,294 @@
     </div>
 
     <div class="products">
-        
+        @if (Model.SelectedCategory != null)
+        {
+            <h2>@Model.SelectedCategory.Name</h2>
+            <div class="products-grid">
+                @foreach (var item in Model.Products)
+                {
+                    <div class="menu-item">
+                        <img src="@item.ImageUrl" alt="@item.Name" width="100" />
+                        <h3>@item.Name</h3>
+                        <p>@item.Description</p>
+                        <p>Cena: @item.Price.ToString("0.00") zł</p>
+
+                        <form method="post" class="add-to-cart-form">
+                            <input type="hidden" name="menuItemId" value="@item.Id" />
+                            <input type="hidden" name="categoryId" value="@Model.SelectedCategory.Id" />
+                            <input type="hidden" name="selectedIngredients" value="" />
+                            <input type="hidden" name="quantity" value="1" />
+                            <button type="button"
+                                    class="open-ingredient-modal"
+                                    data-menu-item-id="@item.Id">
+                                Dodaj do koszyka
+                            </button>
+                        </form>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p>Wybierz kategorię, aby zobaczyć produkty.</p>
+        }
     </div>
 </div>
+
+<!-- POPUP WYBORU SKŁADNIKÓW (IDENTYCZNY STYL JAK W KOSZYKU) -->
+<div id="add-item-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <h3>Dodaj produkt</h3>
+
+        <div class="edit-modal-section">
+            <label>Ilość:</label>
+            <div class="qty-control">
+                <button type="button" id="qty-minus">−</button>
+                <span id="qty-value">1</span>
+                <button type="button" id="qty-plus">+</button>
+            </div>
+        </div>
+
+        <div class="edit-modal-section">
+            <h4>Składniki główne</h4>
+            <div id="add-default-ingredients" class="ingredients-list"></div>
+        </div>
+
+        <div class="edit-modal-section">
+            <h4>Dodatki</h4>
+            <div id="add-optional-ingredients" class="ingredients-list"></div>
+        </div>
+
+        <div class="modal-actions">
+            <button type="button" id="add-cancel">Anuluj</button>
+            <button type="button" id="add-confirm">Dodaj do koszyka</button>
+        </div>
+    </div>
+</div>
+<style>
+    .products {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .menu-item {
+        border-radius: 10px;
+        padding: 12px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        background: #fff;
+        width: 220px;
+        color: #000;
+    }
+
+        .menu-item button {
+            width: 100%;
+            padding: 10px 0;
+            border-radius: 8px;
+            border: none;
+            background: #007bff;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+    /* POPUP – ten sam styl co w koszyku */
+
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    .modal-content {
+        background: #fff;
+        padding: 24px;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 600px;
+    }
+
+        .modal-content,
+        .modal-content * {
+            color: #000 !important;
+        }
+
+    .edit-modal-section {
+        margin-bottom: 16px;
+    }
+
+    .ingredients-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .ingredient-chip {
+        border: 1px solid #ccc;
+        border-radius: 999px;
+        padding: 10px 16px;
+        font-size: 18px;
+        cursor: pointer;
+        user-select: none;
+        min-width: 120px;
+        text-align: center;
+    }
+
+        .ingredient-chip.selected {
+            background: #007bff;
+            color: #fff !important;
+            border-color: #007bff;
+        }
+
+    .qty-control {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        font-size: 20px;
+    }
+
+        .qty-control button {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: none;
+            font-size: 26px;
+            cursor: pointer;
+            background: #f0f0f0;
+        }
+
+    .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+        .modal-actions button {
+            padding: 10px 18px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+    #add-cancel {
+        background: #e0e0e0;
+    }
+
+    #add-confirm {
+        background: #28a745;
+        color: #fff;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        const addModal = document.getElementById('add-item-modal');
+        const defaultContainer = document.getElementById('add-default-ingredients');
+        const optionalContainer = document.getElementById('add-optional-ingredients');
+        const qtyMinus = document.getElementById('qty-minus');
+        const qtyPlus = document.getElementById('qty-plus');
+        const qtyValue = document.getElementById('qty-value');
+        const addCancel = document.getElementById('add-cancel');
+        const addConfirm = document.getElementById('add-confirm');
+
+        let currentForm = null;
+        let currentMenuItemId = null;
+
+        function createChip(name, selected) {
+            const div = document.createElement('div');
+            div.classList.add('ingredient-chip');
+            if (selected) div.classList.add('selected');
+            div.textContent = name;
+            div.dataset.name = name;
+
+            div.addEventListener('click', () => {
+                div.classList.toggle('selected');
+            });
+
+            return div;
+        }
+
+        document.querySelectorAll('.open-ingredient-modal').forEach(btn => {
+            btn.addEventListener('click', () => {
+                currentForm = btn.closest('form');
+                currentMenuItemId = btn.dataset.menuItemId;
+
+                // ilość zawsze startuje od 1 przy dodawaniu
+                qtyValue.textContent = '1';
+
+                defaultContainer.innerHTML = '';
+                optionalContainer.innerHTML = '';
+
+                fetch(`?handler=Ingredients&menuItemId=${currentMenuItemId}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        const defaults = data.defaults || data.Defaults || [];
+                        const optionals = data.optionals || data.Optionals || [];
+
+                        // główne składniki domyślnie zaznaczone
+                        defaults.forEach(name => {
+                            const chip = createChip(name, true);
+                            defaultContainer.appendChild(chip);
+                        });
+
+                        // dodatki domyślnie odznaczone
+                        optionals.forEach(name => {
+                            const chip = createChip(name, false);
+                            optionalContainer.appendChild(chip);
+                        });
+
+                        addModal.style.display = 'flex';
+                    });
+            });
+        });
+
+        qtyMinus.addEventListener('click', () => {
+            let q = parseInt(qtyValue.textContent || "1");
+            if (q > 1) q--;
+            qtyValue.textContent = q;
+        });
+
+        qtyPlus.addEventListener('click', () => {
+            let q = parseInt(qtyValue.textContent || "1");
+            q++;
+            qtyValue.textContent = q;
+        });
+
+        addCancel.addEventListener('click', () => {
+            addModal.style.display = 'none';
+            currentForm = null;
+            currentMenuItemId = null;
+        });
+
+        addConfirm.addEventListener('click', () => {
+            if (!currentForm) return;
+
+            const selected = [];
+
+            defaultContainer.querySelectorAll('.ingredient-chip.selected').forEach(chip => {
+                selected.push(chip.dataset.name);
+            });
+
+            optionalContainer.querySelectorAll('.ingredient-chip.selected').forEach(chip => {
+                selected.push(chip.dataset.name);
+            });
+
+            const selectedJson = JSON.stringify(selected);
+
+            currentForm.querySelector('input[name="selectedIngredients"]').value = selectedJson;
+            currentForm.querySelector('input[name="quantity"]').value = parseInt(qtyValue.textContent || "1");
+
+            addModal.style.display = 'none';
+            currentForm.submit();
+        });
+    </script>
+}
