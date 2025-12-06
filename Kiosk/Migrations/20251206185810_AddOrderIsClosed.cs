@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Kiosk.Migrations
 {
     /// <inheritdoc />
-    public partial class pierwsza : Migration
+    public partial class AddOrderIsClosed : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,7 +33,8 @@ namespace Kiosk.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PaymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    OrderType = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    OrderType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsClosed = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
