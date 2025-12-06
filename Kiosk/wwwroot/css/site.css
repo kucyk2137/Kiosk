@@ -183,7 +183,7 @@ body {
 }
 
     .category-btn::before {
-        content: "•";
+        content: "â€¢";
         font-size: 1.3rem;
         color: var(--accent);
         width: 18px;
@@ -420,7 +420,7 @@ body {
     }
 }
 /* =======================
-   WYBÓR RODZAJU ZAMÓWIENIA
+   WYBÃ“R RODZAJU ZAMÃ“WIENIA
    ======================= */
 .order-type-page {
     min-height: 100vh;
