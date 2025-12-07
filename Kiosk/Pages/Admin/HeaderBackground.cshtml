@@ -5,10 +5,13 @@
 
 <div class="admin-shell narrow">
     <div class="admin-heading centered">
-        <div>
+        <div>            
             <p class="eyebrow">Panel administracyjny</p>
             <h2>Tło nagłówka</h2>
-            <p class="muted">Prześlij zdjęcie, które będzie wyświetlane w tle sekcji nagłówka.</p>
+            <p class="muted">Prześlij zdjęcie, które będzie wyświetlane w tle sekcji nagłówka.</p>   
+            <div class="admin-actions">
+                <a asp-page="Index" class="btn ghost">Powrót</a>
+            </div>
         </div>
     </div>
 
@@ -18,7 +21,7 @@
                 <p class="eyebrow">Wygląd</p>
                 <h3>Zdjęcie nagłówka</h3>
             </div>
-            <a asp-page="Index" class="btn ghost">Wróć do listy produktów</a>
+            <a asp-page="Index" class="btn ghost">Powrót</a>
         </div>
 
         @if (TempData["StatusMessage"] is string statusMessage)

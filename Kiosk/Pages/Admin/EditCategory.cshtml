@@ -19,13 +19,33 @@
             <h3>@Model.Category.Name</h3>
         </div>
 
-        <form method="post" class="admin-form">
+        <form method="post" class="admin-form" enctype="multipart/form-data">
             <input type="hidden" asp-for="Category.Id" />
             <div class="form-grid">
                 <div class="form-field full-width">
                     <label>Nazwa</label>
                     <input asp-for="Category.Name" />
                     <span asp-validation-for="Category.Name" class="text-danger"></span>
+                </div>
+
+                <div class="form-field full-width">
+                    <label>Aktualne zdjęcie</label>
+                    <div class="muted">
+                        @if (!string.IsNullOrWhiteSpace(Model.Category.Image))
+                        {
+                            <a href="@Model.Category.Image" target="_blank">@Model.Category.Image</a>
+                        }
+                        else
+                        {
+                            <span>Brak</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="form-field full-width">
+                    <label>Nowe zdjęcie kategorii (opcjonalnie)</label>
+                    <input type="file" asp-for="ImageFile" accept="image/*" />
+                    <small class="muted">Pozostaw puste, aby zachować obecne zdjęcie.</small>
                 </div>
             </div>
 

@@ -20,7 +20,7 @@
             <h3>@Model.Product.Name</h3>
         </div>
 
-        <form method="post" class="admin-form">
+        <form method="post" class="admin-form" enctype="multipart/form-data">
             <input type="hidden" asp-for="Product.Id" />
             <div class="form-grid">
                 <div class="form-field">
@@ -45,6 +45,12 @@
                     <label>URL obrazka</label>
                     <input asp-for="Product.Image" />
                     <span asp-validation-for="Product.Image" class="text-danger"></span>
+                </div>
+
+                <div class="form-field">
+                    <label>Nowe zdjęcie produktu (opcjonalnie)</label>
+                    <input type="file" asp-for="ImageFile" accept="image/*" />
+                    <small class="muted">Pozostaw puste, aby zachować obecne zdjęcie lub podany URL.</small>
                 </div>
 
                 <div class="form-field full-width">
