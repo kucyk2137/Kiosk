@@ -62,6 +62,7 @@ static IQueryable<KitchenOrderDto> MapOrders(IQueryable<Order> queryable) => que
         OrderId = o.Id,
         OrderDate = o.OrderDate,
         PaymentMethod = o.PaymentMethod,
+        OrderNumber = o.OrderNumber,
         OrderType = o.OrderType,
         IsClosed = o.IsClosed,
         Items = o.Items
@@ -71,7 +72,15 @@ static IQueryable<KitchenOrderDto> MapOrders(IQueryable<Order> queryable) => que
                 DishName = i.MenuItem.Name,
                 Quantity = i.Quantity,
                 UnitPrice = i.MenuItem.Price,
-                Ingredients = i.SelectedIngredients
+                Ingredients = i.SelectedIngredients,
+                DefaultIngredients = i.MenuItem.Ingredients
+                    .Where(ing => ing.IsDefault)
+                    .Select(ing => ing.Name)
+                    .ToList(),
+                OptionalIngredients = i.MenuItem.Ingredients
+                    .Where(ing => !ing.IsDefault)
+                    .Select(ing => ing.Name)
+                    .ToList()
             })
             .ToList()
     });

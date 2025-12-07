@@ -64,30 +64,8 @@ namespace Kiosk.Pages
                 return Page();
             }
 
-            var order = new Order
-            {
-                PaymentMethod = "Card",
-                OrderType = HttpContext.Session.GetString("OrderType"),
-                Items = cart
-                    .Select(ci => new OrderItem
-                    {
-                        MenuItemId = ci.MenuItemId,
-                        Quantity = ci.Quantity,
-                        SelectedIngredients = ci.SelectedIngredients
-                    })
-                    .ToList()
-            };
-
-            _context.Orders.Add(order);
-            _context.SaveChanges();
-
-            HttpContext.Session.Remove("Cart");
-            HttpContext.Session.Remove("OrderType");
-            TempData["OrderMessage"] = "Zamówienie zosta³o z³o¿one.";
-
-            return RedirectToPage();
+            return RedirectToPage("/Payment");
         }
-
         // sk³adniki dla popupu edycji
         public IActionResult OnGetIngredients(int menuItemId)
         {
