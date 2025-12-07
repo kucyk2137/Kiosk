@@ -16,6 +16,7 @@ options.UseSqlServer(
 builder.Services.AddRazorPages();
 builder.Services.AddSession(); // potrzebne dla koszyka
 builder.Services.AddSingleton<OrderUpdateNotifier>(); //odœwie¿anie widoku orderdisplay
+builder.Services.AddScoped<SiteSettingsService>();
 var app = builder.Build();
 
 app.UseStaticFiles();

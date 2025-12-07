@@ -4,10 +4,19 @@
 @{
     ViewData["Title"] = "Home page";
     ViewData["HidePageHeader"] = true;
+    var backgroundStyle = !string.IsNullOrEmpty(Model.BackgroundImagePath)
+        ? $"--lockscreen-background: url('{Model.BackgroundImagePath}');"
+        : string.Empty;
 }
 
 
-<div class="lockscreen-page">
-    <h1>Witamy w Kiosku</h1>
-    <button onclick="location.href='OrderType'">Start Order</button>
+<div class="lockscreen-page" style="@backgroundStyle">
+    @if (!string.IsNullOrEmpty(Model.BackgroundImagePath))
+    {
+        <div class="lockscreen-background"></div>
+    }
+    <div class="lockscreen-pattern"></div>
+    <div class="lockscreen-content">
+        <button class="lockscreen-cta" onclick="location.href='OrderType'">Zacznij zamówienie</button>
+    </div>
 </div>

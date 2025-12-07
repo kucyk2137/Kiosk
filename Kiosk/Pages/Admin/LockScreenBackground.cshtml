@@ -1,0 +1,50 @@
+﻿@page
+@model Kiosk.Pages.Admin.LockScreenBackgroundModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+<link rel="stylesheet" href="~/css/admin.css" />
+
+<div class="admin-shell">
+    <div class="admin-heading">
+        <div>
+            <p class="eyebrow">Panel administracyjny</p>
+            <h2>Tło ekranu blokady</h2>
+            <p class="muted">Dodaj nowe zdjęcie tła, które zobaczą klienci na ekranie startowym.</p>
+        </div>
+        <div class="admin-actions">
+            <a asp-page="Index" class="btn ghost">Powrót</a>
+        </div>
+    </div>
+
+    <div class="admin-card">
+        <div class="card-heading">
+            <div>
+                <p class="eyebrow">Zdjęcie tła</p>
+                <h3>Prześlij nowe zdjęcie</h3>
+            </div>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" class="admin-form">
+            <div class="form-group">
+                <label for="ImageFile">Wybierz plik</label>
+                <input asp-for="ImageFile" type="file" accept="image/*" />
+                <span asp-validation-for="ImageFile" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn primary">Zapisz tło</button>
+            @if (!string.IsNullOrEmpty(Model.Message))
+            {
+                <p class="muted">@Model.Message</p>
+            }
+        </form>
+
+        @if (Model.CurrentBackground != null)
+        {
+            <div class="preview-section">
+                <p class="eyebrow">Aktualne tło</p>
+                <div class="lockscreen-preview">
+                    <img src="@Model.CurrentBackground.ImagePath" alt="Podgląd tła LockScreen" />
+                    <p class="muted">Ostatnia aktualizacja: @Model.CurrentBackground.UploadedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</p>
+                </div>
+            </div>
+        }
+    </div>
+</div>
