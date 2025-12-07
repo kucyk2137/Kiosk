@@ -17,7 +17,53 @@
             <a asp-page="HeaderBackground" class="btn ghost">Ustaw tło nagłówka</a>
         </div>
     </div>
+    <div class="admin-card">
+        <div class="card-heading">
+            <div>
+                <p class="eyebrow">Polecenia</p>
+                <h3>Polecane produkty</h3>
+            </div>
+        </div>
 
+        @if (Model.RecommendedMenuItems.Any())
+        {
+            <ul class="recommended-list">
+                @foreach (var item in Model.RecommendedMenuItems)
+                {
+                    <li class="recommended-row">
+                        <div>
+                            <div class="cell-title">@item.Name</div>
+                            <p class="muted">@item.Category?.Name</p>
+                        </div>
+                        <form method="post" asp-page-handler="RemoveRecommended" class="inline-form">
+                            <input type="hidden" name="menuItemId" value="@item.Id" />
+                            <button type="submit" class="btn danger">Usuń</button>
+                        </form>
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p class="muted">Nie dodano jeszcze żadnych produktów polecanych.</p>
+        }
+
+        <form method="post" asp-page-handler="AddRecommended" class="admin-form compact">
+            <div class="form-grid">
+                <div class="form-field">
+                    <label for="recommended-select">Dodaj produkt do polecanych</label>
+                    <select id="recommended-select" name="menuItemId" required>
+                        <option value="">Wybierz produkt</option>
+                        @foreach (var item in Model.AvailableForRecommendation)
+                        {
+                            <option value="@item.Id">@item.Name (@item.Category?.Name)</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="btn primary full-width">Dodaj do polecanych</button>
+        </form>
+    </div>
     <div class="admin-card">
         <div class="card-heading">
             <div>

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Kiosk.Migrations
 {
     /// <inheritdoc />
-    public partial class background : Migration
+    public partial class kiosk : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -142,6 +142,25 @@ namespace Kiosk.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "RecommendedProducts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MenuItemId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RecommendedProducts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RecommendedProducts_MenuItems_MenuItemId",
+                        column: x => x.MenuItemId,
+                        principalTable: "MenuItems",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_MenuItemIngredients_MenuItemId",
                 table: "MenuItemIngredients",
@@ -161,6 +180,12 @@ namespace Kiosk.Migrations
                 name: "IX_OrderItems_OrderId",
                 table: "OrderItems",
                 column: "OrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RecommendedProducts_MenuItemId",
+                table: "RecommendedProducts",
+                column: "MenuItemId",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -176,13 +201,16 @@ namespace Kiosk.Migrations
                 name: "OrderItems");
 
             migrationBuilder.DropTable(
+                name: "RecommendedProducts");
+
+            migrationBuilder.DropTable(
                 name: "SiteSettings");
 
             migrationBuilder.DropTable(
-                name: "MenuItems");
+                name: "Orders");
 
             migrationBuilder.DropTable(
-                name: "Orders");
+                name: "MenuItems");
 
             migrationBuilder.DropTable(
                 name: "Categories");
