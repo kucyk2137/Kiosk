@@ -1,0 +1,108 @@
+﻿@page
+@model Kiosk.Pages.PaymentModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+<link rel="stylesheet" href="~/css/site.css" />
+
+@{
+    ViewData["Title"] = "Płatność";
+    ViewData["PageHeaderTitle"] = "Płatność";
+}
+
+<div class="payment-page">
+    @if (!string.IsNullOrEmpty(Model.CreatedOrderNumber))
+    {
+        <div class="payment-success">
+            <p class="eyebrow">Dziękujemy za złożenie zamówienia</p>
+            <h1>Twój numer zamówienia to</h1>
+
+            <div class="order-number">@Model.CreatedOrderNumber</div>
+
+            <p class="muted">
+                Pokaż ten numer przy odbiorze. Zamówienie pojawi się od razu na ekranie kuchni.
+            </p>
+
+            <div class="summary-actions" style="justify-content:center; margin-top:12px;">
+                <button id="finish-btn" class="primary-btn"
+                        onclick="window.location.href='@Url.Page("/lockscreen")'">
+                    Zakończ
+                </button>
+            </div>
+
+            <p class="muted" style="margin-top:8px;">
+                Za chwilę wrócimy automatycznie do ekranu startowego.
+            </p>
+        </div>
+    }
+    else
+    {
+        <div class="payment-layout">
+            <div class="payment-header">
+                <div>
+                    <p class="eyebrow">Wybierz metodę płatności</p>
+                    <h1>Jak chcesz zapłacić?</h1>
+                </div>
+                <div class="pill">Do zapłaty: @Model.TotalPrice.ToString("0.00") zł</div>
+            </div>
+
+            <div asp-validation-summary="ModelOnly" class="validation-errors"></div>
+
+            <form method="post">
+                <input type="hidden" asp-for="SelectedPaymentMethod" />
+                <div class="payment-grid">
+                    <button type="button" class="payment-tile card" data-method="Karta">
+                        <div class="tile-label">Karta</div>
+                        <span class="muted">Płatność zbliżeniowa lub chip</span>
+                    </button>
+                    <button type="button" class="payment-tile cash" data-method="Gotówka">
+                        <div class="tile-label">Gotówka</div>
+                        <span class="muted">Zapłacisz przy kasie</span>
+                    </button>
+                    <button type="button" class="payment-tile blik" data-method="BLIK">
+                        <div class="tile-label">BLIK</div>
+                        <span class="muted">Przepisz kod z aplikacji</span>
+                    </button>
+                    <div class="payment-summary">
+                        <p class="eyebrow">Podsumowanie</p>
+                        <h3>Łącznie</h3>
+                        <div class="summary-amount">@Model.TotalPrice.ToString("0.00") zł</div>
+                        <p class="muted">Wybierz metodę płatności, a następnie zatwierdź zamówienie.</p>
+                        <div class="summary-actions">
+                            <a asp-page="/Cart" class="ghost-btn">Wróć do koszyka</a>
+                            <button type="submit" class="checkout-btn">Zapłać</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        const tiles = document.querySelectorAll('.payment-tile');
+        const paymentInput = document.querySelector('input[name="SelectedPaymentMethod"]');
+
+        tiles.forEach(tile => {
+            tile.addEventListener('click', () => {
+                tiles.forEach(t => t.classList.remove('is-selected'));
+                tile.classList.add('is-selected');
+                paymentInput.value = tile.dataset.method;
+            });
+        });
+
+        // AUTO-ZAMKNIĘCIE / POWRÓT PO 10 SEKUNDACH PO ZŁOŻENIU ZAMÓWIENIA
+        const hasOrderNumber = '@(string.IsNullOrEmpty(Model.CreatedOrderNumber) ? "false" : "true")' === 'true';
+
+        if (hasOrderNumber) {
+            setTimeout(() => {
+                const btn = document.getElementById('finish-btn');
+                if (btn) {
+                    btn.click(); // zadziała jak kliknięcie „Zakończ”
+                } else {
+                    // awaryjnie
+                    window.location.href = '@Url.Page("/lockscreen")';
+                }
+            }, 10000); // 10 000 ms = 10 sekund
+        }
+    </script>
+}

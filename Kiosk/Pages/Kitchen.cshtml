@@ -39,7 +39,55 @@
             const date = new Date(dateString);
             return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         };
+        const parseIngredients = (ingredients) => {
+            try {
+                const parsed = JSON.parse(ingredients || '[]');
+                return Array.isArray(parsed) ? parsed : [];
+            } catch {
+                return [];
+            }
+        };
 
+        const buildIngredientsMarkup = (item) => {
+            const selected = new Set(parseIngredients(item.ingredients));
+            const defaultIngredients = item.defaultIngredients || [];
+            const optionalIngredients = item.optionalIngredients || [];
+
+            const selectedDefaults = defaultIngredients.filter(name => selected.has(name));
+            const removedDefaults = defaultIngredients.filter(name => !selected.has(name));
+            const selectedOptionals = optionalIngredients.filter(name => selected.has(name));
+
+            const toEntries = (list, className = '') => list.map(text => ({ text, className }));
+            const renderEntries = (entries) => entries.length
+                ? entries.map(({ text, className }) => `<li${className ? ` class=\"${className}\"` : ''}>${text}</li>`).join('')
+                : '<li class="muted">Brak</li>';
+
+            const defaultEntries = [
+                ...toEntries(selectedDefaults),
+                ...toEntries(removedDefaults.map(name => `bez - ${name}`), 'removed-ingredient')
+            ];
+            const optionalEntries = toEntries(selectedOptionals);
+
+            if (!defaultEntries.length && !optionalEntries.length) {
+                return '';
+            }
+
+            return `
+                <div class="item-ingredients">
+                    <div class="ingredient-group">
+                        <div class="ingredient-label">Składniki podstawowe</div>
+                        <ul class="ingredient-list">
+                            ${renderEntries(defaultEntries)}
+                        </ul>
+                    </div>
+                    <div class="ingredient-group">
+                        <div class="ingredient-label">Dodatki</div>
+                        <ul class="ingredient-list">
+                            ${renderEntries(optionalEntries)}
+                        </ul>
+                    </div>
+                </div>`;
+        };
         const renderOrders = (orders) => {
             ordersGrid.innerHTML = '';
 
@@ -60,8 +108,8 @@
                 card.innerHTML = `
                     <header class="card-head">
                         <div>
-                            <div class="eyebrow">${order.orderType || 'Na miejscu'}</div>
-                            <div class="order-time">${formatTime(order.orderDate)}</div>
+                            <div class="eyebrow">Zamówienie ${order.orderNumber || `#${order.orderId}`}</div>
+                            <div class="order-time">${order.orderType || 'Na miejscu'} • ${formatTime(order.orderDate)}</div>
                         </div>
                         <div class="badge-row">
                             <span class="pill pill--accent">${order.paymentMethod}</span>
@@ -73,7 +121,7 @@
                                 <span class="qty">${item.quantity}x</span>
                                 <div class="item-details">
                                     <div class="item-name">${item.dishName}</div>
-                                    ${item.ingredients ? `<div class=\"item-ingredients\">${item.ingredients}</div>` : ''}
+                                    ${buildIngredientsMarkup(item)}
                                 </div>
                             </div>
                         `).join('')}

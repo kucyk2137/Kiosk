@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Kiosk.Migrations
 {
     [DbContext(typeof(KioskDbContext))]
-    [Migration("20251206185810_AddOrderIsClosed")]
-    partial class AddOrderIsClosed
+    [Migration("20251206233824_kiosk")]
+    partial class kiosk
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -116,6 +116,10 @@ namespace Kiosk.Migrations
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("OrderNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OrderType")
                         .IsRequired()

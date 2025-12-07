@@ -6,6 +6,7 @@ namespace Kiosk.Models
     public class KitchenOrderDto
     {
         public int OrderId { get; set; }
+        public string OrderNumber { get; set; }
         public DateTime OrderDate { get; set; }
         public string PaymentMethod { get; set; }
         public string OrderType { get; set; }
@@ -21,5 +22,7 @@ namespace Kiosk.Models
         public decimal UnitPrice { get; set; }
         public decimal TotalPrice => UnitPrice * Quantity;
         public string Ingredients { get; set; }
+        public List<string> DefaultIngredients { get; set; } = new();
+        public List<string> OptionalIngredients { get; set; } = new();
     }
 }

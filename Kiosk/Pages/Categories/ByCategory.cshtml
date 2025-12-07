@@ -57,6 +57,7 @@
 
         <div class="edit-modal-section">
             <h4>Dodatki</h4>
+            <div class="addon-counter">Wybrane dodatki: <span id="add-optional-count"></span>3</div>
             <div id="add-optional-ingredients" class="ingredients-list"></div>
         </div>
 
@@ -201,11 +202,19 @@
         const qtyValue = document.getElementById('qty-value');
         const addCancel = document.getElementById('add-cancel');
         const addConfirm = document.getElementById('add-confirm');
+        const addOptionalCount = document.getElementById('add-optional-count');
 
+        const maxOptionalAddons = 3;
+        let optionalSelectedCount = 0;
         let currentForm = null;
         let currentMenuItemId = null;
 
-        function createChip(name, selected) {
+        function updateOptionalCounter() {
+            addOptionalCount.textContent = optionalSelectedCount;
+        }
+
+        function createChip(name, selected, isOptional = false) 
+        {
             const div = document.createElement('div');
             div.classList.add('ingredient-chip');
             if (selected) div.classList.add('selected');
@@ -213,7 +222,16 @@
             div.dataset.name = name;
 
             div.addEventListener('click', () => {
-                div.classList.toggle('selected');
+                if (isOptional) {
+                    const alreadySelected = div.classList.contains('selected');
+                    if (!alreadySelected && optionalSelectedCount >= maxOptionalAddons) return;
+
+                    div.classList.toggle('selected');
+                    optionalSelectedCount += div.classList.contains('selected') ? 1 : -1;
+                    updateOptionalCounter();
+                } else {
+                    div.classList.toggle('selected');
+                }
             });
 
             return div;
@@ -226,6 +244,8 @@
 
                 // ilość zawsze startuje od 1 przy dodawaniu
                 qtyValue.textContent = '1';
+                optionalSelectedCount = 0;
+                updateOptionalCounter();
 
                 defaultContainer.innerHTML = '';
                 optionalContainer.innerHTML = '';
@@ -244,7 +264,7 @@
 
                         // dodatki domyślnie odznaczone
                         optionals.forEach(name => {
-                            const chip = createChip(name, false);
+                            const chip = createChip(name, false, true);
                             optionalContainer.appendChild(chip);
                         });
 
