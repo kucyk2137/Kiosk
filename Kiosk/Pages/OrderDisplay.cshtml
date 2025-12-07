@@ -74,5 +74,8 @@
             refreshBoard.addEventListener('click', loadOrders);
             loadOrders();
             setInterval(loadOrders, 8000);
+            const updates = new EventSource('/api/orders/updates');
+            updates.onmessage = () => loadOrders();
+            updates.onerror = () => updates.close();
         </script>
 }
