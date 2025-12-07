@@ -12,7 +12,8 @@ namespace Kiosk.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<MenuItemIngredient> MenuItemIngredients { get; set; }
-
+        public DbSet<LockScreenBackground> LockScreenBackgrounds { get; set; }
+        public DbSet<SiteSettings> SiteSettings { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<OrderItem>()
