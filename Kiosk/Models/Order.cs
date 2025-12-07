@@ -11,6 +11,7 @@ namespace Kiosk.Models
         public DateTime OrderDate { get; set; } = DateTime.Now;
         public string OrderType { get; set; }
 
+        public bool IsReady { get; set; }
         public bool IsClosed { get; set; }
         public List<OrderItem> Items { get; set; } = new();
     }

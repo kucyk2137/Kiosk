@@ -1,0 +1,81 @@
+﻿@page
+@model Kiosk.Pages.OrderDisplayModel
+@{
+    ViewData["Title"] = "Odbiór zamówień";
+    ViewData["HidePageHeader"] = true;
+}
+
+<div class="order-display-screen">
+    <div class="order-display__header">
+        <div>
+            <p class="eyebrow">Numerki zamówień</p>
+            <h1>Sprawdź status swojego zamówienia</h1>
+            <p class="muted">Gdy kuchnia oznaczy Twoje zamówienie jako gotowe, numer podświetli się na zielono.</p>
+        </div>
+        <button id="refresh-board" class="ghost-btn">Odśwież</button>
+    </div>
+
+    <div id="orders-board" class="order-display__grid">
+        <div class="empty-state">
+            <p class="eyebrow">Brak zamówień</p>
+            <h3>Listę zamówień uzupełnimy gdy pojawią się nowe.</h3>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+        <script>
+            const board = document.getElementById('orders-board');
+            const refreshBoard = document.getElementById('refresh-board');
+
+            const renderOrders = (orders) => {
+                const active = orders.filter(order => !order.isClosed);
+                board.innerHTML = '';
+
+                if (!active.length) {
+                    board.innerHTML = `
+                        <div class="empty-state">
+                            <p class="eyebrow">Brak zamówień</p>
+                            <h3>Listę zamówień uzupełnimy gdy pojawią się nowe.</h3>
+                            <p class="muted">Gdy tylko zamówienie trafi do kuchni, numer pokaże się na liście.</p>
+                        </div>`;
+                    return;
+                }
+
+                active.forEach(order => {
+                    const card = document.createElement('div');
+                    card.className = 'order-number-card';
+                    if (order.isReady) {
+                        card.classList.add('is-ready');
+                    }
+
+                    card.innerHTML = `
+                        <div class="order-number">${order.orderNumber || `#${order.orderId}`}</div>
+                        <div class="order-status">${order.isReady ? 'Gotowe do odbioru' : 'Przygotowywane'}</div>
+                    `;
+
+                    board.appendChild(card);
+                });
+            };
+
+            const loadOrders = async () => {
+                board.classList.add('is-loading');
+                try {
+                    const response = await fetch('/api/orders');
+                    const data = await response.json();
+                    renderOrders(data);
+                } catch (err) {
+                    board.innerHTML = '<p class="muted">Nie udało się pobrać listy zamówień.</p>';
+                } finally {
+                    board.classList.remove('is-loading');
+                }
+            };
+
+            refreshBoard.addEventListener('click', loadOrders);
+            loadOrders();
+            setInterval(loadOrders, 8000);
+            const updates = new EventSource('/api/orders/updates');
+            updates.onmessage = () => loadOrders();
+            updates.onerror = () => updates.close();
+        </script>
+}
