@@ -5,9 +5,12 @@
 @{
     ViewData["Title"] = "Rodzaj Zamówienia";
     ViewData["HidePageHeader"] = true;
+    var backgroundStyle = !string.IsNullOrEmpty(Model.BackgroundImagePath)
+       ? $"--order-type-background: url('{Model.BackgroundImagePath}');"
+       : string.Empty;
 }
 
-<div class="order-type-page">
+<div class="order-type-page" style="@backgroundStyle">
     <div class="order-type-card">
         <h1>Wybierz rodzaj zamówienia</h1>
         <p>Wskaż czy chcesz zjeść na miejscu czy zabrać zamówienie ze sobą.</p>

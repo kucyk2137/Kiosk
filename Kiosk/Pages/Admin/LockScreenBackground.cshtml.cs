@@ -58,6 +58,26 @@ namespace Kiosk.Pages.Admin
                 ImageFile.CopyTo(stream);
             }
 
+            var existingBackgrounds = _context.LockScreenBackgrounds.ToList();
+            foreach (var oldBackground in existingBackgrounds)
+            {
+                if (!string.IsNullOrWhiteSpace(oldBackground.ImagePath))
+                {
+                    var oldPhysicalPath = Path.Combine(_environment.WebRootPath, oldBackground.ImagePath.TrimStart('/')
+                        .Replace('/', Path.DirectorySeparatorChar));
+
+                    if (System.IO.File.Exists(oldPhysicalPath))
+                    {
+                        System.IO.File.Delete(oldPhysicalPath);
+                    }
+                }
+            }
+
+            if (existingBackgrounds.Any())
+            {
+                _context.LockScreenBackgrounds.RemoveRange(existingBackgrounds);
+            }
+
             var background = new LockScreenBackground
             {
                 ImagePath = $"/images/lockscreen/{fileName}",

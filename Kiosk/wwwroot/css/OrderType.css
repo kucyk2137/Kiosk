@@ -1,12 +1,13 @@
 ﻿.order-type-page {
+    --order-type-background: url('../images/products/6e810d53-8efd-4d03-8d3e-1162c25d7c0a.jpg');
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 32px 18px;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.9)), url('../images/products/6e810d53-8efd-4d03-8d3e-1162c25d7c0a.jpg') center/cover;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.9)), var(--order-type-background) center/cover;
+    background-repeat: no-repeat;
 }
-
 .order-type-card {
     width: min(960px, 100%);
     padding: 32px;

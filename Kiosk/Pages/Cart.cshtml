@@ -30,6 +30,10 @@
                 @foreach (var ci in Model.CartItems)
                 {
                     var ingredients = System.Text.Json.JsonSerializer.Deserialize<List<string>>(ci.Ingredients ?? "[]") ?? new List<string>();
+                    var formattedIngredients = ingredients
+                    .GroupBy(name => name)
+                    .Select(g => g.Count() > 1 ? $"{g.Count()}x {g.Key}" : g.Key)
+                    .ToList();
                     <div class="cart-card">
                         <div class="cart-card-media">
                             <img src="@ci.Item.Image" alt="@ci.Item.Name" />
@@ -40,7 +44,7 @@
                                     <p class="item-category">Pozycja w koszyku</p>
                                     <h3>@ci.Item.Name</h3>
                                     <p class="item-ingredients">
-                                        @(ingredients.Any() ? string.Join(", ", ingredients) : "Domyślne składniki")
+                                        @(formattedIngredients.Any() ? string.Join(", ", formattedIngredients) : "Domyślne składniki")
                                     </p>
                                 </div>
                                 <div class="price-tag">@ci.Item.Price.ToString("0.00") zł</div>
