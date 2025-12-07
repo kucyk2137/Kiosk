@@ -1,44 +1,60 @@
 ﻿@page
 @model Kiosk.Pages.Admin.IndexModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+<link rel="stylesheet" href="~/css/admin.css" />
 
-<h2>Lista produktów</h2>
+<div class="admin-shell">
+    <div class="admin-heading">
+        <div>
+            <p class="eyebrow">Panel administracyjny</p>
+            <h2>Lista produktów</h2>
+            <p class="muted">Dodawaj, edytuj i usuwaj pozycje menu z jednego miejsca.</p>
+        </div>
+        <div class="admin-actions">
+            <a asp-page="AddProduct" class="btn primary">Dodaj nowy produkt</a>
+            <a asp-page="Categories" class="btn ghost">Zarządzaj kategoriami</a>
+        </div>
+    </div>
 
-<a asp-page="AddProduct" class="add-btn">Dodaj nowy produkt</a>
-<a asp-page="Categories" class="add-btn">Zarządzaj kategoriami</a>
+    <div class="admin-card">
+        <div class="card-heading">
+            <div>
+                <p class="eyebrow">Menu</p>
+                <h3>Aktualne produkty</h3>
+            </div>
+        </div>
 
-<table>
-    <thead>
-        <tr>
-            <th>Nazwa</th>
-            <th>Kategoria</th>
-            <th>Cena</th>
-            <th>Opcje</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.MenuItems)
-        {
-            <tr>
-                <td>@item.Name</td>
-
-                <td>@item.Category</td>
-                <td>@item.Price.ToString("0.00") zł</td>
-                <td>
-
-                <td>@item.Category.Name</td>
-                <td>@item.Price.ToString("0.00") zł</td>
-                <td>
-                    <a asp-page="EditProduct" asp-route-id="@item.Id" class="edit-btn">Edytuj</a>
-
-                    <form method="post" asp-page-handler="Delete" style="display:inline;">
-                        <input type="hidden" name="MenuItemId" value="@item.Id" />
-                        <button type="submit" class="delete-btn">Usuń</button>
-                    </form>
-                    <!-- Opcjonalnie link do edycji -->
-                    <a asp-page="EditProduct" asp-route-id="@item.Id" class="edit-btn">Edytuj</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Nazwa</th>
+                    <th>Kategoria</th>
+                    <th>Cena</th>
+                    <th class="text-right">Opcje</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.MenuItems)
+                {
+                    <tr>
+                        <td>
+                            <div class="cell-title">@item.Name</div>
+                            <p class="muted">@item.Description</p>
+                        </td>
+                        <td>@item.Category.Name</td>
+                        <td>@item.Price.ToString("0.00") zł</td>
+                        <td class="text-right">
+                            <div class="table-actions">
+                                <a asp-page="EditProduct" asp-route-id="@item.Id" class="btn ghost">Edytuj</a>
+                                <form method="post" asp-page-handler="Delete" class="inline-form">
+                                    <input type="hidden" name="MenuItemId" value="@item.Id" />
+                                    <button type="submit" class="btn danger">Usuń</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,25 +1,33 @@
 ﻿@page
 @model Kiosk.Pages.OrderTypeModel
-<link rel="stylesheet" href="~/css/site.css" />
+<link rel="stylesheet" href="~/css/OrderType.css" />
 
 @{
-    ViewData["Title"] = "Rodzaj zamówienia";
-    ViewData["PageHeaderTitle"] = "Rodzaj zamówienia";
+    ViewData["Title"] = "Rodzaj Zamówienia";
+    ViewData["HidePageHeader"] = true;
 }
 
 <div class="order-type-page">
-    <h1>Wybierz rodzaj zamówienia</h1>
-    <p>Wskaż czy chcesz zjeść na miejscu czy zabrać zamówienie ze sobą.</p>
+    <div class="order-type-card">
+        <h1>Wybierz rodzaj zamówienia</h1>
+        <p>Wskaż czy chcesz zjeść na miejscu czy zabrać zamówienie ze sobą.</p>
 
-    <div class="order-type-buttons">
-        <form method="post">
-            <input type="hidden" name="orderType" value="Na miejscu" />
-            <button type="submit" class="order-type-btn onsite">Na miejscu</button>
-        </form>
+        <div class="order-type-buttons">
+            <form method="post">
+                <input type="hidden" name="orderType" value="Na miejscu" />
+                <button type="submit" class="order-type-btn onsite">
+                    <span class="order-type-icon" aria-hidden="true">🍽️</span>
+                    <span class="order-type-label">Na miejscu</span>
+                </button>
+            </form>
 
-        <form method="post">
-            <input type="hidden" name="orderType" value="Na wynos" />
-            <button type="submit" class="order-type-btn takeaway">Na wynos</button>
-        </form>
+            <form method="post">
+                <input type="hidden" name="orderType" value="Na wynos" />
+                <button type="submit" class="order-type-btn takeaway">
+                    <span class="order-type-icon" aria-hidden="true">🛍️</span>
+                    <span class="order-type-label">Na wynos</span>
+                </button>
+            </form>
+        </div>
     </div>
 </div>

@@ -1,0 +1,326 @@
+﻿html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+/* =======================
+   STRONA MENU  LAYOUT
+   ======================= */
+.menu-page {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    background: radial-gradient(circle at 15% 10%, rgba(255, 195, 141, 0.35) 0%, rgba(255, 195, 141, 0) 35%), linear-gradient(180deg, #ffffff 0%, #f5f7fb 100%);
+    padding: 18px 22px;
+    gap: 22px;
+}
+
+/* Lewy panel  kategorie */
+.categories {
+    width: 240px;
+    max-width: 260px;
+    padding: 22px 16px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: var(--bg-contrast);
+    border: 1px solid var(--panel-border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--panel-shadow);
+    position: relative;
+    overflow: hidden;
+}
+
+    .categories::before {
+        content: "";
+        position: absolute;
+        inset: 12px 8px auto 8px;
+        height: 120px;
+        border-radius: 18px;
+        background: linear-gradient(135deg, rgba(255, 122, 0, 0.22), rgba(255, 122, 0, 0.05));
+        filter: blur(24px);
+        pointer-events: none;
+    }
+
+    .categories h3 {
+        margin: 0 0 8px;
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: var(--text-muted);
+        text-align: center;
+    }
+
+.category-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+    z-index: 1;
+}
+
+    .category-buttons form {
+        margin: 0;
+    }
+
+.category-btn {
+    width: 100%;
+    padding: 14px 14px 14px 18px;
+    border-radius: 18px;
+    border: 1px solid var(--panel-border);
+    background: linear-gradient(135deg, #ffffff 0%, #f6f8fd 100%);
+    color: var(--text-main);
+    text-align: left;
+    font-size: 1.02rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 8px 18px rgba(59, 82, 128, 0.08);
+    transition: transform 0.1s ease-out, box-shadow 0.12s ease-out, border-color 0.12s ease-out;
+}
+
+    .category-btn::before {
+        content: "•";
+        font-size: 1.3rem;
+        color: var(--accent);
+        width: 18px;
+        text-align: center;
+    }
+
+    .category-btn:hover,
+    .category-btn:focus-visible {
+        border-color: #ffc48c;
+        box-shadow: 0 12px 24px rgba(255, 122, 0, 0.18);
+        transform: translateX(2px);
+        outline: none;
+    }
+
+    .category-btn.active {
+        background: linear-gradient(135deg, #fff5ea 0%, #ffe4c7 100%);
+        border-color: #ffba72;
+        box-shadow: 0 14px 28px rgba(255, 150, 58, 0.25);
+    }
+
+.cart-btn {
+    position: fixed;
+    right: 26px;
+    bottom: 26px;
+    min-width: 220px;
+    padding: 16px 18px;
+    border-radius: 18px;
+    border: none;
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 60%, #2ecc71 100%);
+    color: #f0fff5;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 18px 35px rgba(39, 174, 96, 0.35);
+    transition: transform 0.1s ease-out, box-shadow 0.12s ease-out, filter 0.12s ease-out;
+    z-index: 100;
+}
+
+    .cart-btn:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.06);
+        box-shadow: 0 22px 45px rgba(39, 174, 96, 0.45);
+    }
+
+    .cart-btn:active {
+        transform: translateY(1px) scale(0.99);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+.back-btn {
+    display: inline-block;
+    margin: 12px 0 20px;
+    padding: 10px 18px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #ff8b6b 0%, #ff5b5b 100%);
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    box-shadow: 0 12px 24px rgba(255, 126, 114, 0.35);
+    transition: transform 0.1s ease-out, box-shadow 0.12s ease-out, filter 0.12s ease-out;
+}
+
+    .back-btn:hover,
+    .back-btn:focus-visible {
+        filter: brightness(1.05);
+        transform: translateY(-2px);
+        box-shadow: 0 16px 32px rgba(255, 126, 114, 0.45);
+        outline: none;
+    }
+
+    .back-btn:active {
+        transform: translateY(1px) scale(0.99);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+/* =======================
+   PRAWA STRONA MENU
+   ======================= */
+.menu-page main[role="main"] {
+    flex: 1;
+    padding: 20px 28px;
+    overflow-y: auto;
+    color: var(--text-main);
+}
+
+.menu-page h1,
+.menu-page h2,
+.menu-page h3 {
+    color: var(--text-main);
+    text-shadow: none;
+}
+
+.menu-page h2 {
+    font-size: 2rem;
+    margin-bottom: 12px;
+}
+
+.products {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    padding: 8px 4px 24px;
+}
+
+.menu-item,
+.product-card {
+    background: var(--bg-contrast);
+    border-radius: var(--radius-lg);
+    padding: 14px 14px 18px;
+    border: 1px solid var(--panel-border);
+    box-shadow: 0 18px 35px rgba(59, 82, 128, 0.12);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: transform 0.12s ease-out, box-shadow 0.12s ease-out, border-color 0.12s ease-out;
+}
+
+    .menu-item:hover,
+    .product-card:hover {
+        transform: translateY(-4px);
+        border-color: #ffc48c;
+        box-shadow: 0 22px 45px rgba(255, 122, 0, 0.18);
+    }
+
+    .menu-item img,
+    .product-card img {
+        width: 100%;
+        max-height: 150px;
+        object-fit: cover;
+        border-radius: 16px;
+        background: #fff7ef;
+    }
+
+    .menu-item h3,
+    .product-card h3 {
+        margin: 6px 0 2px;
+        font-size: 1.1rem;
+        color: var(--text-main);
+    }
+
+    .menu-item p,
+    .product-card p {
+        margin: 0;
+        color: var(--text-muted);
+        line-height: 1.45;
+    }
+
+        .menu-item p strong,
+        .product-card p strong {
+            color: var(--text-main);
+        }
+
+    .menu-item form,
+    .product-card form {
+        margin-top: auto;
+    }
+
+    .menu-item button,
+    .product-card button {
+        width: 100%;
+        border: none;
+        border-radius: 14px;
+        padding: 12px;
+        background: linear-gradient(135deg, #ffd6a8 0%, #ff8a00 90%);
+        color: #2c1a00;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        cursor: pointer;
+        box-shadow: 0 14px 30px rgba(255, 122, 0, 0.25);
+        transition: transform 0.1s ease-out, box-shadow 0.12s ease-out, filter 0.12s ease-out;
+    }
+
+        .menu-item button:hover,
+        .product-card button:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.03);
+            box-shadow: 0 16px 36px rgba(255, 122, 0, 0.35);
+        }
+
+        .menu-item button:active,
+        .product-card button:active {
+            transform: translateY(1px) scale(0.99);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+
+@media (max-width: 1100px) {
+    .menu-page {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .categories {
+        width: 100%;
+        max-width: 100%;
+        flex-direction: row;
+        align-items: center;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 16px;
+        gap: 12px;
+    }
+
+        .categories h3 {
+            display: none;
+        }
+
+    .category-buttons {
+        flex-direction: row;
+        flex: 1;
+    }
+
+    .category-btn {
+        border-radius: 14px;
+        padding-inline: 16px;
+        white-space: nowrap;
+        font-size: 0.98rem;
+    }
+
+    .cart-btn {
+        min-width: 180px;
+        right: 18px;
+        bottom: 18px;
+    }
+
+    .menu-page main[role="main"] {
+        padding: 10px 12px 22px;
+    }
+}

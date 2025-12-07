@@ -1,31 +1,51 @@
 ﻿@page
 @model Kiosk.Pages.Admin.CategoriesModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+<link rel="stylesheet" href="~/css/admin.css" />
 
-<h2>Kategorie</h2>
+<div class="admin-shell">
+    <div class="admin-heading">
+        <div>
+            <p class="eyebrow">Panel administracyjny</p>
+            <h2>Kategorie</h2>
+            <p class="muted">Porządkuj menu i przypisuj produkty do właściwych działów.</p>
+        </div>
+        <div class="admin-actions">
+            <a asp-page="AddCategory" class="btn primary">Dodaj kategorię</a>
+            <a asp-page="Index" class="btn ghost">Powrót do produktów</a>
+        </div>
+    </div>
 
-<a asp-page="AddCategory">Dodaj kategorię</a>
+    <div class="admin-card">
+        <div class="card-heading">
+            <p class="eyebrow">Kategorie</p>
+            <h3>Lista kategorii</h3>
+        </div>
 
-<table>
-    <thead>
-        <tr>
-            <th>Nazwa</th>
-            <th>Opcje</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var cat in Model.Categories)
-        {
-            <tr>
-                <td>@cat.Name</td>
-                <td>
-                    <a asp-page="EditCategory" asp-route-id="@cat.Id">Edytuj</a>
-                    <form method="post" asp-page-handler="Delete" style="display:inline;">
-                        <input type="hidden" name="CategoryId" value="@cat.Id" />
-                        <button type="submit">Usuń</button>
-                    </form>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Nazwa</th>
+                    <th class="text-right">Opcje</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var cat in Model.Categories)
+                {
+                    <tr>
+                        <td>@cat.Name</td>
+                        <td class="text-right">
+                            <div class="table-actions">
+                                <a asp-page="EditCategory" asp-route-id="@cat.Id" class="btn ghost">Edytuj</a>
+                                <form method="post" asp-page-handler="Delete" class="inline-form">
+                                    <input type="hidden" name="CategoryId" value="@cat.Id" />
+                                    <button type="submit" class="btn danger">Usuń</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

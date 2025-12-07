@@ -1,16 +1,43 @@
 ﻿@page
 @model Kiosk.Pages.Admin.AddCategoryModel
-<h2>Dodaj kategorię</h2>
-<a asp-page="Categories" class="back-btn">Powrót</a>
+<link rel="stylesheet" href="~/css/admin.css" />
+<div class="admin-shell">
+    <div class="admin-heading">
+        <div>
+            <p class="eyebrow">Panel administracyjny</p>
+            <h2>Dodaj kategorię</h2>
+            <p class="muted">Stwórz nowy dział, aby uporządkować produkty.</p>
+        </div>
+        <div class="admin-actions">
+            <a asp-page="Categories" class="btn ghost">Powrót do listy</a>
+        </div>
+    </div>
 
+    <div class="admin-card">
+        <div class="card-heading">
+            <p class="eyebrow">Nowa kategoria</p>
+            <h3>Informacje</h3>
+        </div>
 
-<form method="post" enctype="multipart/form-data">
-    <label>Nazwa:</label>
-    <input asp-for="Category.Name" />
-    <label>Obraz kategorii:</label>
-    <input asp-for="ImageFile" type="file" accept="image/*" />
-    <span asp-validation-for="ImageFile" class="text-danger"></span>
-    <button type="submit">Dodaj</button>
-</form>
+        <form method="post" enctype="multipart/form-data" class="admin-form">
+            <div class="form-grid">
+                <div class="form-field full-width">
+                    <label>Nazwa</label>
+                    <input asp-for="Category.Name" />
+                    <span asp-validation-for="Category.Name" class="text-danger"></span>
+                </div>
 
-<p style="color:green">@Model.Message</p>
+                <div class="form-field full-width">
+                    <label>Obraz kategorii</label>
+                    <input asp-for="ImageFile" type="file" accept="image/*" />
+                    <span asp-validation-for="ImageFile" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn primary">Dodaj</button>
+                <p class="success">@Model.Message</p>
+            </div>
+        </form>
+    </div>
+</div>
