@@ -255,3 +255,21 @@
         object-fit: cover;
         margin-bottom: 8px;
     }
+.recommended-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.recommended-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    border: 1px solid #eef1f6;
+    border-radius: 12px;
+    background: #fff;
+}

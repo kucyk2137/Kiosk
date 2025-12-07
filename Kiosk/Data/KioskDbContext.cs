@@ -14,6 +14,7 @@ namespace Kiosk.Data
         public DbSet<MenuItemIngredient> MenuItemIngredients { get; set; }
         public DbSet<LockScreenBackground> LockScreenBackgrounds { get; set; }
         public DbSet<SiteSettings> SiteSettings { get; set; }
+        public DbSet<RecommendedProduct> RecommendedProducts { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<OrderItem>()
@@ -25,12 +26,20 @@ namespace Kiosk.Data
                 .HasOne(oi => oi.MenuItem)
                 .WithMany()
                 .HasForeignKey(oi => oi.MenuItemId);
-
             modelBuilder.Entity<MenuItemIngredient>()
                 .HasOne(mi => mi.MenuItem)
                 .WithMany(m => m.Ingredients)
                 .HasForeignKey(mi => mi.MenuItemId)
                 .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<RecommendedProduct>()
+                .HasOne(rp => rp.MenuItem)
+                .WithMany()
+                .HasForeignKey(rp => rp.MenuItemId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<RecommendedProduct>()
+                .HasIndex(rp => rp.MenuItemId)
+                .IsUnique();
 
             base.OnModelCreating(modelBuilder);
         }

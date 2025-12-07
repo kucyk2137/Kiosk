@@ -1,11 +1,13 @@
 using Kiosk.Data;
-using Kiosk.Extensions; // konieczne dla GetObjectFromJson
+using Kiosk.Extensions; // dla GetObjectFromJson / SetObjectAsJson
 using Kiosk.Models;
-using Microsoft.AspNetCore.Http; // konieczne dla ISession
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 
 namespace Kiosk.Pages
 {
@@ -21,10 +23,19 @@ namespace Kiosk.Pages
         public List<Category> Categories { get; set; } = new();
         public Category? SelectedCategory { get; set; }
         public List<MenuItem> Products { get; set; } = new();
+        public List<MenuItem> RecommendedItems { get; set; } = new();
 
         public void OnGet(int? categoryId)
         {
             Categories = _context.Categories.ToList();
+
+            // produkty polecane (globalnie)
+            RecommendedItems = _context.RecommendedProducts
+                .Include(rp => rp.MenuItem)!
+                .ThenInclude(m => m.Category)
+                .Where(rp => rp.MenuItem != null)
+                .Select(rp => rp.MenuItem!)
+                .ToList();
 
             if (categoryId.HasValue)
             {
@@ -56,42 +67,40 @@ namespace Kiosk.Pages
             }
         }
 
+        /// <summary>
+        /// Dodawanie produktu do koszyka (zarówno z widoku kategorii, jak i z popupu polecanych).
+        /// </summary>
         public IActionResult OnPost(int menuItemId, int categoryId, string selectedIngredients, int quantity)
         {
-            var product = _context.MenuItems.FirstOrDefault(m => m.Id == menuItemId && m.CategoryId == categoryId);
-            if (product == null)
+            // JEŒLI selectedIngredients jest puste (np. z produktu polecanego) ? uzupe³niamy domyœlne sk³adniki
+            if (string.IsNullOrWhiteSpace(selectedIngredients) || selectedIngredients == "[]")
             {
-                return RedirectToPage("/Menu");
-            }
+                var defaultIngredientNames = _context.MenuItemIngredients
+                    .Where(i => i.MenuItemId == menuItemId && i.IsDefault)
+                    .Select(i => i.Name)
+                    .ToList();
 
-            selectedIngredients = string.IsNullOrWhiteSpace(selectedIngredients) ? "[]" : selectedIngredients;
-            if (quantity < 1) quantity = 1;
+                selectedIngredients = JsonSerializer.Serialize(defaultIngredientNames);
+            }
 
             var cart = HttpContext.Session.GetObjectFromJson<List<OrderItem>>("Cart") ?? new List<OrderItem>();
 
-            var existingItem = cart.FirstOrDefault(ci =>
-                ci.MenuItemId == menuItemId &&
-                (ci.SelectedIngredients ?? "[]") == selectedIngredients);
-
-            if (existingItem != null)
+            // Proste dodanie pozycji do koszyka (mo¿na rozbudowaæ o ³¹czenie pozycji)
+            cart.Add(new OrderItem
             {
-                existingItem.Quantity += quantity;
-            }
-            else
-            {
-                cart.Add(new OrderItem
-                {
-                    MenuItemId = menuItemId,
-                    Quantity = quantity,
-                    SelectedIngredients = selectedIngredients
-                });
-            }
+                MenuItemId = menuItemId,
+                Quantity = quantity,
+                SelectedIngredients = selectedIngredients
+            });
 
             HttpContext.Session.SetObjectAsJson("Cart", cart);
 
             return RedirectToPage(new { categoryId });
         }
 
+        /// <summary>
+        /// Endpoint AJAX dla popupu wyboru sk³adników – zwraca listê domyœlnych i opcjonalnych.
+        /// </summary>
         public IActionResult OnGetIngredients(int menuItemId)
         {
             var product = _context.MenuItems

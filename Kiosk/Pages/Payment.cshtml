@@ -8,7 +8,7 @@
     ViewData["PageHeaderTitle"] = "Płatność";
 }
 
-<div class="payment-page">
+<div class="payment-page" data-has-order="@(!string.IsNullOrEmpty(Model.CreatedOrderNumber)).ToString().ToLower()" data-lockscreen-url="@Url.Page("/lockscreen")">
     @if (!string.IsNullOrEmpty(Model.CreatedOrderNumber))
     {
         <div class="payment-success">
@@ -32,6 +32,7 @@
                 Za chwilę wrócimy automatycznie do ekranu startowego.
             </p>
         </div>
+
     }
     else
     {
@@ -76,6 +77,32 @@
         </div>
     }
 </div>
+@section Scripts {
+    <script>
+        const tiles = document.querySelectorAll('.payment-tile');
+        const paymentInput = document.querySelector('input[name="SelectedPaymentMethod"]');
 
-<script src="~/js/Payment.js">
+        tiles.forEach(tile => {
+            tile.addEventListener('click', () => {
+                tiles.forEach(t => t.classList.remove('is-selected'));
+                tile.classList.add('is-selected');
+                paymentInput.value = tile.dataset.method;
+            });
+        });
+
+        // AUTO-ZAMKNIĘCIE / POWRÓT PO 10 SEKUNDACH PO ZŁOŻENIU ZAMÓWIENIA
+        const hasOrderNumber = '@(string.IsNullOrEmpty(Model.CreatedOrderNumber) ? "false" : "true")' === 'true';
+
+        if (hasOrderNumber) {
+            setTimeout(() => {
+                const btn = document.getElementById('finish-btn');
+                if (btn) {
+                    btn.click(); // zadziała jak kliknięcie „Zakończ”
+                } else {
+                    // awaryjnie
+                    window.location.href = '@Url.Page("/lockscreen")';
+                }
+            }, 10000); // 10 000 ms = 10 sekund
+        }
     </script>
+}

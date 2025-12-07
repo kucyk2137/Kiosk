@@ -184,6 +184,25 @@ namespace Kiosk.Migrations
                     b.ToTable("OrderItems");
                 });
 
+            modelBuilder.Entity("Kiosk.Models.RecommendedProduct", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("MenuItemId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MenuItemId")
+                        .IsUnique();
+
+                    b.ToTable("RecommendedProducts");
+                });
+
             modelBuilder.Entity("Kiosk.Models.SiteSettings", b =>
                 {
                     b.Property<int>("Id")
@@ -239,6 +258,17 @@ namespace Kiosk.Migrations
                     b.Navigation("MenuItem");
 
                     b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("Kiosk.Models.RecommendedProduct", b =>
+                {
+                    b.HasOne("Kiosk.Models.MenuItem", "MenuItem")
+                        .WithMany()
+                        .HasForeignKey("MenuItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MenuItem");
                 });
 
             modelBuilder.Entity("Kiosk.Models.MenuItem", b =>

@@ -9,6 +9,8 @@
 @{
     ViewData["Title"] = "Menu";
     ViewData["PageHeaderTitle"] = "Menu";
+    var cartItems = HttpContext.Session.GetObjectFromJson<List<OrderItem>>("Cart") ?? new List<OrderItem>();
+    var cartCount = cartItems.Count;
 }
 
 <div class="menu-page">
@@ -23,9 +25,9 @@
                 </button>
             </form>
         }
-        <form method="get" asp-page="/Cart">
-            <button type="submit" class="cart-btn">
-                Koszyk (@(HttpContext.Session.GetObjectFromJson<List<OrderItem>>("Cart")?.Count ?? 0))
+        <form method="get" asp-page="/Cart" id="cart-form">
+            <button type="button" class="cart-btn" id="cart-btn" data-cart-count="@cartCount">
+                Koszyk (@cartCount)
             </button>
         </form>
     </div>
@@ -64,7 +66,47 @@
         }
     </div>
 </div>
+@if (Model.RecommendedItems.Any())
+{
+    <div id="recommended-modal" class="modal" style="display:none;">
+        <div class="modal-content recommended-modal">
+            <div class="recommended-header">
+                <p class="eyebrow">Produkty polecane</p>
+                <h3>Co powiesz na coś dodatkowego?</h3>
+                <p class="muted">Dodaj jedną z naszych propozycji zanim przejdziesz do podsumowania.</p>
+            </div>
 
+            <div class="recommended-grid">
+                @foreach (var item in Model.RecommendedItems)
+                {
+                    <div class="recommended-card">
+                        <div class="recommended-media">
+                            <img src="@item.Image" alt="@item.Name" />
+                        </div>
+                        <div class="recommended-info">
+                            <div class="cell-title">@item.Name</div>
+                            <p class="muted">@item.Description</p>
+                            <div class="recommended-price">@item.Price.ToString("0.00") zł</div>
+
+                            <form method="post" class="recommended-add-form">
+                                <input type="hidden" name="menuItemId" value="@item.Id" />
+                                <input type="hidden" name="categoryId" value="@item.CategoryId" />
+                                <input type="hidden" name="selectedIngredients" value="[]" />
+                                <input type="hidden" name="quantity" value="1" />
+                                <button type="submit" class="recommend-add-btn">Dodaj do koszyka</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="modal-actions recommended-actions">
+                <button type="button" id="recommended-go-to-cart" class="recommend-cart-btn">Przejdź do koszyka</button>
+                <button type="button" id="recommended-continue" class="recommend-continue-btn">Kontynuuj zakupy</button>
+            </div>
+        </div>
+    </div>
+}
 <!-- POPUP WYBORU SKŁADNIKÓW (IDENTYCZNY STYL JAK W KOSZYKU) -->
 <div id="add-item-modal" class="modal" style="display:none;">
     <div class="modal-content">
@@ -96,5 +138,6 @@
         </div>
     </div>
 </div>
-<script src="~/js/ingredient.js">
+<script src="~/js/ingredient.js"></script>
+<script src="~/js/recommended.js">
     </script>
