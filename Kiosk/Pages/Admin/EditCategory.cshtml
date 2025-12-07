@@ -1,11 +1,37 @@
 ﻿@page "{id:int}"
 @model Kiosk.Pages.Admin.EditCategoryModel
-<h2>Edytuj kategorię</h2>
+<link rel="stylesheet" href="~/css/admin.css" />
+<div class="admin-shell">
+    <div class="admin-heading">
+        <div>
+            <p class="eyebrow">Panel administracyjny</p>
+            <h2>Edytuj kategorię</h2>
+            <p class="muted">Zaktualizuj nazwę kategorii, aby lepiej pasowała do oferty.</p>
+        </div>
+        <div class="admin-actions">
+            <a asp-page="Categories" class="btn ghost">Powrót do listy</a>
+        </div>
+    </div>
 
-<form method="post">
-    <input type="hidden" asp-for="Category.Id" />
-    <label>Nazwa:</label>
-    <input asp-for="Category.Name" />
-    <button type="submit">Zapisz zmiany</button>
-    <a asp-page="Categories">Powrót do listy</a>
-</form>
+    <div class="admin-card">
+        <div class="card-heading">
+            <p class="eyebrow">Edycja</p>
+            <h3>@Model.Category.Name</h3>
+        </div>
+
+        <form method="post" class="admin-form">
+            <input type="hidden" asp-for="Category.Id" />
+            <div class="form-grid">
+                <div class="form-field full-width">
+                    <label>Nazwa</label>
+                    <input asp-for="Category.Name" />
+                    <span asp-validation-for="Category.Name" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn primary">Zapisz zmiany</button>
+            </div>
+        </form>
+    </div>
+</div>

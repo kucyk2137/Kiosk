@@ -1,21 +1,34 @@
 ﻿@page
 @model Kiosk.Pages.Admin.LoginModel
+<link rel="stylesheet" href="~/css/admin.css" />
 @{
     ViewData["Title"] = "Logowanie Administratora";
     ViewData["PageHeaderTitle"] = "Logowanie Administratora";
 }
 
-<h2>Logowanie Administratora</h2>
+<div class="admin-shell narrow">
+    <div class="admin-heading centered">
+        <div>
+            <p class="eyebrow">Panel administracyjny</p>
+            <h2>Logowanie Administratora</h2>
+            <p class="muted">Podaj dane dostępowe, aby zarządzać treścią.</p>
+        </div>
+    </div>
 
-<form method="post">
-    <div>
-        <label>Login</label>
-        <input asp-for="Username" />
+    <div class="admin-card">
+        <form method="post" class="admin-form compact">
+            <div class="form-field full-width">
+                <label>Login</label>
+                <input asp-for="Username" />
+            </div>
+            <div class="form-field full-width">
+                <label>Hasło</label>
+                <input asp-for="Password" type="password" />
+            </div>
+            <div class="form-actions stacked">
+                <button type="submit" class="btn primary full-width">Zaloguj</button>
+                <p class="error">@Model.ErrorMessage</p>
+            </div>
+        </form>
     </div>
-    <div>
-        <label>Hasło</label>
-        <input asp-for="Password" type="password" />
-    </div>
-    <button type="submit">Zaloguj</button>
-    <p style="color:red">@Model.ErrorMessage</p>
-</form>
+</div>

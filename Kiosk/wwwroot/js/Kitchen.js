@@ -1,0 +1,136 @@
+﻿const ordersGrid = document.getElementById('orders-grid');
+const orderCount = document.getElementById('order-count');
+const refreshButton = document.getElementById('refresh-orders');
+
+const formatTime = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+};
+const parseIngredients = (ingredients) => {
+    try {
+        const parsed = JSON.parse(ingredients || '[]');
+        return Array.isArray(parsed) ? parsed : [];
+    } catch {
+        return [];
+    }
+};
+
+const buildIngredientsMarkup = (item) => {
+    const selected = new Set(parseIngredients(item.ingredients));
+    const defaultIngredients = item.defaultIngredients || [];
+    const optionalIngredients = item.optionalIngredients || [];
+
+    const selectedDefaults = defaultIngredients.filter(name => selected.has(name));
+    const removedDefaults = defaultIngredients.filter(name => !selected.has(name));
+    const selectedOptionals = optionalIngredients.filter(name => selected.has(name));
+
+    const toEntries = (list, className = '') => list.map(text => ({ text, className }));
+    const renderEntries = (entries) => entries.length
+        ? entries.map(({ text, className }) => `<li${className ? ` class=\"${className}\"` : ''}>${text}</li>`).join('')
+        : '<li class="muted">Brak</li>';
+
+    const defaultEntries = [
+        ...toEntries(selectedDefaults),
+        ...toEntries(removedDefaults.map(name => `bez - ${name}`), 'removed-ingredient')
+    ];
+    const optionalEntries = toEntries(selectedOptionals);
+
+    if (!defaultEntries.length && !optionalEntries.length) {
+        return '';
+    }
+
+    return `
+                <div class="item-ingredients">
+                    <div class="ingredient-group">
+                        <div class="ingredient-label">Składniki podstawowe</div>
+                        <ul class="ingredient-list">
+                            ${renderEntries(defaultEntries)}
+                        </ul>
+                    </div>
+                    <div class="ingredient-group">
+                        <div class="ingredient-label">Dodatki</div>
+                        <ul class="ingredient-list">
+                            ${renderEntries(optionalEntries)}
+                        </ul>
+                    </div>
+                </div>`;
+};
+const renderOrders = (orders) => {
+    ordersGrid.innerHTML = '';
+
+    if (!orders.length) {
+        ordersGrid.innerHTML = `
+                    <div class="empty-state">
+                        <p class="eyebrow">Brak zamówień</p>
+                        <h3>Wszystkie zamówienia zostały zrealizowane</h3>
+                        <p class="muted">Nowe zamówienia pokażą się tutaj natychmiast po złożeniu.</p>
+                    </div>`;
+    }
+
+    orderCount.textContent = `${orders.length} w kolejce`;
+
+    orders.forEach(order => {
+        const card = document.createElement('article');
+        card.className = 'kitchen-card';
+        card.innerHTML = `
+                    <header class="card-head">
+                        <div>
+                            <div class="eyebrow">Zamówienie ${order.orderNumber || `#${order.orderId}`}</div>
+                            <div class="order-time">${order.orderType || 'Na miejscu'} • ${formatTime(order.orderDate)}</div>
+                        </div>
+                        <div class="badge-row">
+                            <span class="pill pill--accent">${order.paymentMethod}</span>
+                        </div>
+                    </header>
+                    <div class="card-body">
+                        ${order.items.map(item => `
+                            <div class="order-item">
+                                <span class="qty">${item.quantity}x</span>
+                                <div class="item-details">
+                                    <div class="item-name">${item.dishName}</div>
+                                    ${buildIngredientsMarkup(item)}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <footer class="card-actions">
+                        <button class="done-btn" data-order-id="${order.orderId}">Gotowe</button>
+                    </footer>`;
+
+        card.querySelector('.done-btn').addEventListener('click', () => markDone(order.orderId, card));
+        ordersGrid.appendChild(card);
+    });
+};
+
+const markDone = async (orderId, card) => {
+    card.classList.add('is-processing');
+    try {
+        const response = await fetch(`/api/orders/${orderId}/complete`, { method: 'POST' });
+        if (!response.ok) {
+            const payload = await response.json().catch(() => ({}));
+            alert(payload.message || 'Nie udało się zamknąć zamówienia.');
+        }
+        await loadOrders();
+    } catch (err) {
+        alert('Wystąpił błąd podczas zamykania zamówienia.');
+    } finally {
+        card.classList.remove('is-processing');
+    }
+};
+
+const loadOrders = async () => {
+    ordersGrid.classList.add('is-loading');
+    try {
+        const response = await fetch('/api/orders');
+        const data = await response.json();
+        renderOrders(data);
+    } catch (err) {
+        ordersGrid.innerHTML = '<p class="muted">Nie udało się pobrać zamówień.</p>';
+    } finally {
+        ordersGrid.classList.remove('is-loading');
+    }
+};
+
+refreshButton.addEventListener('click', loadOrders);
+loadOrders();
+setInterval(loadOrders, 10000);

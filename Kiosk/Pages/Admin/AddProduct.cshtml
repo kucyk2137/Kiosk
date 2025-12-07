@@ -1,55 +1,74 @@
 ﻿@page
 @model AddProductModel
-
-<h2>Dodaj produkt</h2>
-<a asp-page="Categories" class="back-btn">Powrót</a>
-
-<form method="post" enctype="multipart/form-data">
-    <div>
-        <label>Nazwa:</label>
-        <input asp-for="MenuItem.Name" />
-        <span asp-validation-for="MenuItem.Name" class="text-danger"></span>
+<link rel="stylesheet" href="~/css/admin.css" />
+<div class="admin-shell">
+    <div class="admin-heading">
+        <div>
+            <p class="eyebrow">Panel administracyjny</p>
+            <h2>Dodaj produkt</h2>
+            <p class="muted">Uzupełnij szczegóły i dodaj nową pozycję do menu.</p>
+        </div>
+        <div class="admin-actions">
+            <a asp-page="Index" class="btn ghost">Powrót do listy</a>
+            <a asp-page="Categories" class="btn outline">Zarządzaj kategoriami</a>
+        </div>
     </div>
 
-    <div>
-        <label>Opis:</label>
-        <textarea asp-for="MenuItem.Description"></textarea>
-        <span asp-validation-for="MenuItem.Description" class="text-danger"></span>
+    <div class="admin-card">
+        <div class="card-heading">
+            <p class="eyebrow">Szczegóły produktu</p>
+            <h3>Nowa pozycja</h3>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" class="admin-form">
+            <div class="form-grid">
+                <div class="form-field">
+                    <label>Nazwa</label>
+                    <input asp-for="MenuItem.Name" />
+                    <span asp-validation-for="MenuItem.Name" class="text-danger"></span>
+                </div>
+
+                <div class="form-field">
+                    <label>Cena</label>
+                    <input asp-for="MenuItem.Price" type="number" step="0.01" />
+                    <span asp-validation-for="MenuItem.Price" class="text-danger"></span>
+                </div>
+
+                <div class="form-field">
+                    <label>Kategoria</label>
+                    <select asp-for="MenuItem.CategoryId" asp-items="Model.CategorySelectList">
+                        <option value="">-- Wybierz kategorię --</option>
+                    </select>
+                    <span asp-validation-for="MenuItem.CategoryId" class="text-danger"></span>
+                </div>
+
+                <div class="form-field">
+                    <label>Obraz (plik)</label>
+                    <input asp-for="ImageFile" type="file" accept="image/*" />
+                    <span asp-validation-for="ImageFile" class="text-danger"></span>
+                </div>
+
+                <div class="form-field full-width">
+                    <label>Opis</label>
+                    <textarea asp-for="MenuItem.Description" rows="3"></textarea>
+                    <span asp-validation-for="MenuItem.Description" class="text-danger"></span>
+                </div>
+
+                <div class="form-field full-width">
+                    <label>Domyślne składniki (jeden na linię)</label>
+                    <textarea asp-for="DefaultIngredientsInput" placeholder="np. pomidor&#x0a;ogórek" rows="3"></textarea>
+                </div>
+
+                <div class="form-field full-width">
+                    <label>Opcjonalne dodatki (jeden na linię)</label>
+                    <textarea asp-for="OptionalIngredientsInput" placeholder="np. bekon&#x0a;sos BBQ" rows="3"></textarea>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn primary">Dodaj produkt</button>
+                <p class="success">@Model.Message</p>
+            </div>
+        </form>
     </div>
-
-    <div>
-        <label>Cena:</label>
-        <input asp-for="MenuItem.Price" type="number" step="0.01" />
-        <span asp-validation-for="MenuItem.Price" class="text-danger"></span>
-    </div>
-
-    <div>
-        <label>Obraz (plik):</label>
-        <input asp-for="ImageFile" type="file" accept="image/*" />
-        <span asp-validation-for="ImageFile" class="text-danger"></span>
-    </div>
-
-    <div>
-        <label>Kategoria:</label>
-        <select asp-for="MenuItem.CategoryId" asp-items="Model.CategorySelectList">
-            <option value="">-- Wybierz kategorię --</option>
-        </select>
-        <span asp-validation-for="MenuItem.CategoryId" class="text-danger"></span>
-    </div>
-
-    <div>
-        <label>Domyślne składniki (jeden na linię):</label>
-        <textarea asp-for="DefaultIngredientsInput" placeholder="np. pomidor
-ogórek"></textarea>
-    </div>
-
-    <div>
-        <label>Opcjonalne dodatki (jeden na linię):</label>
-        <textarea asp-for="OptionalIngredientsInput" placeholder="np. bekon
-sos BBQ"></textarea>
-    </div>
-
-    <button type="submit">Dodaj produkt</button>
-</form>
-
-<p style="color:green">@Model.Message</p>
+</div>

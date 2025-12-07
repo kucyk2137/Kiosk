@@ -1,8 +1,8 @@
 ﻿@page
 @model Kiosk.Pages.CartModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-<link rel="stylesheet" href="~/css/site.css" />
-
+<link rel="stylesheet" href="~/css/Cart.css" />
+<link rel="stylesheet" href="~/css/popup.css" />
 @{
     ViewData["Title"] = "Koszyk";
     ViewData["PageHeaderTitle"] = "Koszyk";
@@ -85,29 +85,29 @@
                     </div>
                 }
             </div>
- <div class="payment-box">
-            <div class="cart-summary-card">
-                <h4>Podsumowanie</h4>
-                <div class="summary-row">
-                    <span>Subtotal</span>
-                    <span>@Model.TotalPrice.ToString("0.00") zł</span>
-                </div>
-                <div class="summary-row muted">
-                    <span>Podatek</span>
-                    <span>0,00 zł</span>
-                </div>
-                <div class="summary-row total">
-                    <span>Łącznie</span>
-                    <span>@Model.TotalPrice.ToString("0.00") zł</span>
-                </div>
-                <form method="post" asp-page-handler="Checkout">
-                    <button type="submit" class="checkout-btn">Zapłać</button>
-                </form>
+            <div class="payment-box">
+                <div class="cart-summary-card">
+                    <h4>Podsumowanie</h4>
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span>@Model.TotalPrice.ToString("0.00") zł</span>
+                    </div>
+                    <div class="summary-row muted">
+                        <span>Podatek</span>
+                        <span>0,00 zł</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Łącznie</span>
+                        <span>@Model.TotalPrice.ToString("0.00") zł</span>
+                    </div>
+                    <form method="post" asp-page-handler="Checkout">
+                        <button type="submit" class="checkout-btn">Zapłać</button>
+                    </form>
 
-                <a asp-page="/Menu" class="back-btn">Wróć do menu</a>
+                    <a asp-page="/Menu" class="back-btn">Wróć do menu</a>
+                </div>
             </div>
         </div>
- </div>
     }
 </div>
 
@@ -132,7 +132,7 @@
 
         <div class="edit-modal-section">
             <h4>Dodatki</h4>
-            <div class="addon-counter">Wybrane dodatki: <span id="edit-optional-count">0</span>/3</div>
+            <div class="addon-counter">Wybrane dodatki: <span id="edit-optional-count">0/3</span></div>
             <div id="edit-optional-ingredients" class="ingredients-list"></div>
         </div>
 
@@ -150,127 +150,5 @@
     </div>
 </div>
 
-@section Scripts {
-    <script>
-        const editModal = document.getElementById('edit-item-modal');
-        const defaultContainer = document.getElementById('edit-default-ingredients');
-        const optionalContainer = document.getElementById('edit-optional-ingredients');
-        const qtyMinus = document.getElementById('qty-minus');
-        const qtyPlus = document.getElementById('qty-plus');
-        const qtyValue = document.getElementById('qty-value');
-        const editCancel = document.getElementById('edit-cancel');
-        const editSave = document.getElementById('edit-save');
-        const editOptionalCount = document.getElementById('edit-optional-count');
-        const hiddenMenuItemId = document.getElementById('edit-menu-item-id');
-        const hiddenOldSelected = document.getElementById('edit-old-selected-ingredients');
-        const hiddenNewSelected = document.getElementById('edit-new-selected-ingredients');
-        const hiddenQuantity = document.getElementById('edit-quantity');
-        const maxOptionalAddons = 3;
-        let optionalSelectedCount = 0;
-
-        function updateOptionalCounter() {
-            editOptionalCount.textContent = `${optionalSelectedCount}/${maxOptionalAddons}`;
-        }
-        function createChip(name, selected) {
-            const div = document.createElement('div');
-            div.classList.add('ingredient-chip');
-            if (selected) div.classList.add('selected');
-            div.textContent = name;
-            div.dataset.name = name;
-
-            div.addEventListener('click', () => {
-                if (isOptional) {
-                    const alreadySelected = div.classList.contains('selected');
-                    if (!alreadySelected && optionalSelectedCount >= maxOptionalAddons) return;
-
-                    div.classList.toggle('selected');
-                    optionalSelectedCount += div.classList.contains('selected') ? 1 : -1;
-                    updateOptionalCounter();
-                } else {
-                    div.classList.toggle('selected');
-                }
-
-            return div;
-        }
-
-        document.querySelectorAll('.edit-item-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const menuItemId = btn.dataset.menuItemId;
-                const selectedIngredients = btn.dataset.selectedIngredients || "[]";
-                const quantity = parseInt(btn.dataset.quantity || "1");
-
-                hiddenMenuItemId.value = menuItemId;
-                hiddenOldSelected.value = selectedIngredients;
-
-                qtyValue.textContent = quantity;
-                hiddenQuantity.value = quantity;
-
-                let selectedList = [];
-                try {
-                    selectedList = JSON.parse(selectedIngredients || "[]");
-                } catch {
-                    selectedList = [];
-                }
-                optionalSelectedCount = 0;
-                updateOptionalCounter();
-                defaultContainer.innerHTML = '';
-                optionalContainer.innerHTML = '';
-
-                fetch(`?handler=Ingredients&menuItemId=${menuItemId}`)
-                    .then(r => r.json())
-                    .then(data => {
-                        const defaults = data.defaults || data.Defaults || [];
-                        const optionals = data.optionals || data.Optionals || [];
-
-                        defaults.forEach(name => {
-                            const chip = createChip(name, selectedList.includes(name));
-                            defaultContainer.appendChild(chip);
-                        });
-
-                        optionals.forEach(name => {
-                             const chip = createChip(name, selectedList.includes(name), true);
-                            if (selectedList.includes(name)) {
-                                optionalSelectedCount++;
-                                updateOptionalCounter();
-                            optionalContainer.appendChild(chip);
-                        });
-
-                        editModal.style.display = 'flex';
-                    });
-            });
-        });
-
-        qtyMinus.addEventListener('click', () => {
-            let q = parseInt(qtyValue.textContent || "1");
-            if (q > 1) q--;
-            qtyValue.textContent = q;
-            hiddenQuantity.value = q;
-        });
-
-        qtyPlus.addEventListener('click', () => {
-            let q = parseInt(qtyValue.textContent || "1");
-            q++;
-            qtyValue.textContent = q;
-            hiddenQuantity.value = q;
-        });
-
-        editCancel.addEventListener('click', () => {
-            editModal.style.display = 'none';
-        });
-
-        editSave.addEventListener('click', () => {
-            const selected = [];
-
-            defaultContainer.querySelectorAll('.ingredient-chip.selected').forEach(chip => {
-                selected.push(chip.dataset.name);
-            });
-
-            optionalContainer.querySelectorAll('.ingredient-chip.selected').forEach(chip => {
-                selected.push(chip.dataset.name);
-            });
-
-            hiddenNewSelected.value = JSON.stringify(selected);
-            document.getElementById('edit-item-form').submit();
-        });
+<script src="~/js/IngredientCart.js">
     </script>
-}

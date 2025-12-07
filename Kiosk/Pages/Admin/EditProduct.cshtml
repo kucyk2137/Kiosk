@@ -1,47 +1,72 @@
 ﻿@page "{id:int}"
 @model Kiosk.Pages.Admin.EditProductModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-
-<h2>Edytuj produkt</h2>
-
-<form method="post">
-    <input type="hidden" asp-for="Product.Id" />
-
-    <div>
-        <label>Nazwa:</label>
-        <input asp-for="Product.Name" />
+<link rel="stylesheet" href="~/css/admin.css" />
+<div class="admin-shell">
+    <div class="admin-heading">
+        <div>
+            <p class="eyebrow">Panel administracyjny</p>
+            <h2>Edytuj produkt</h2>
+            <p class="muted">Aktualizuj dane produktu, aby menu było zawsze na bieżąco.</p>
+        </div>
+        <div class="admin-actions">
+            <a asp-page="Index" class="btn ghost">Powrót do listy</a>
+        </div>
     </div>
 
-    <div>
-        <label>Kategoria:</label>
-        <select asp-for="Product.CategoryId" asp-items="Model.CategorySelectList"></select>
-    </div>
+    <div class="admin-card">
+        <div class="card-heading">
+            <p class="eyebrow">Edycja</p>
+            <h3>@Model.Product.Name</h3>
+        </div>
 
-    <div>
-        <label>Cena:</label>
-        <input asp-for="Product.Price" type="number" step="0.01" />
-    </div>
+        <form method="post" class="admin-form">
+            <input type="hidden" asp-for="Product.Id" />
+            <div class="form-grid">
+                <div class="form-field">
+                    <label>Nazwa</label>
+                    <input asp-for="Product.Name" />
+                    <span asp-validation-for="Product.Name" class="text-danger"></span>
+                </div>
 
-    <div>
-        <label>Opis:</label>
-        <textarea asp-for="Product.Description"></textarea>
-    </div>
+                <div class="form-field">
+                    <label>Kategoria</label>
+                    <select asp-for="Product.CategoryId" asp-items="Model.CategorySelectList"></select>
+                    <span asp-validation-for="Product.CategoryId" class="text-danger"></span>
+                </div>
 
-    <div>
-        <label>URL obrazka:</label>
-        <input asp-for="Product.Image" />
-    </div>
+                <div class="form-field">
+                    <label>Cena</label>
+                    <input asp-for="Product.Price" type="number" step="0.01" />
+                    <span asp-validation-for="Product.Price" class="text-danger"></span>
+                </div>
 
-    <div>
-        <label>Domyślne składniki (jeden na linię):</label>
-        <textarea asp-for="DefaultIngredientsInput"></textarea>
-    </div>
+                <div class="form-field">
+                    <label>URL obrazka</label>
+                    <input asp-for="Product.Image" />
+                    <span asp-validation-for="Product.Image" class="text-danger"></span>
+                </div>
 
-    <div>
-        <label>Opcjonalne dodatki (jeden na linię):</label>
-        <textarea asp-for="OptionalIngredientsInput"></textarea>
-    </div>
+                <div class="form-field full-width">
+                    <label>Opis</label>
+                    <textarea asp-for="Product.Description" rows="3"></textarea>
+                    <span asp-validation-for="Product.Description" class="text-danger"></span>
+                </div>
 
-    <button type="submit">Zapisz zmiany</button>
-    <a asp-page="Index">Powrót do listy</a>
-</form>
+                <div class="form-field full-width">
+                    <label>Domyślne składniki (jeden na linię)</label>
+                    <textarea asp-for="DefaultIngredientsInput" rows="3"></textarea>
+                </div>
+
+                <div class="form-field full-width">
+                    <label>Opcjonalne dodatki (jeden na linię)</label>
+                    <textarea asp-for="OptionalIngredientsInput" rows="3"></textarea>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn primary">Zapisz zmiany</button>
+            </div>
+        </form>
+    </div>
+</div>

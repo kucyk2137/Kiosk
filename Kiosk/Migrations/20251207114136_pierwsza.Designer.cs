@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Kiosk.Migrations
 {
     [DbContext(typeof(KioskDbContext))]
-    [Migration("20251206233824_kiosk")]
-    partial class kiosk
+    [Migration("20251207114136_pierwsza")]
+    partial class pierwsza
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

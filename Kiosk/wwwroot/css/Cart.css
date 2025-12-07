@@ -1,0 +1,335 @@
+﻿/* TŁO STRONY KOSZYKA  ----------------------------------------------------- */
+
+.cart-page {
+    min-height: calc(100vh - 80px);
+    padding: 24px 40px;
+    background: #fdf7f2;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: #3a2615;
+}
+
+/* GŁÓWNY UKŁAD: LEWA LISTA PRODUKTÓW + PRAWE PODSUMOWANIE ----------------- */
+
+.cart-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 260px;
+    gap: 24px;
+    align-items: flex-start;
+}
+
+/* LEWA KOLUMNA – KAFELKI PRODUKTÓW ---------------------------------------- */
+
+.cart-items-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+/* Pojedyncza karta produktu */
+.cart-card {
+    display: grid;
+    grid-template-columns: 110px minmax(0, 1fr);
+    gap: 16px;
+    padding: 14px 18px;
+    border-radius: 22px;
+    background: #ffffff;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06);
+    transition: box-shadow 0.18s ease, transform 0.18s ease, border 0.18s ease;
+    border: 2px solid transparent;
+}
+
+    /* “Zaznaczona” karta (np. po kliknięciu – dodaj klasę .selected w HTML) */
+    .cart-card.selected,
+    .cart-card:hover {
+        border-color: #1f8cff;
+        transform: translateY(-2px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.10);
+    }
+
+.cart-card-media {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .cart-card-media img {
+        max-width: 90px;
+        max-height: 90px;
+        object-fit: contain;
+    }
+
+/* Treść karty ------------------------------------------------------------- */
+
+.cart-card-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.cart-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.item-category {
+    margin: 0 0 4px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #ff914d;
+    font-weight: 600;
+}
+
+.cart-card h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.item-ingredients {
+    margin: 4px 0 0;
+    font-size: 12px;
+    color: #a18d80;
+}
+
+.price-tag {
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+    color: #ff7a1a;
+}
+
+/* STOPKA KARTY – ILOŚĆ + PRZYCISKI --------------------------------------- */
+
+.cart-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    gap: 10px;
+}
+
+/* Kontrola ilości */
+.quantity-control {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff6ee;
+    padding: 4px 10px;
+    border-radius: 999px;
+}
+
+.qty-btn {
+    border: none;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #ff8d39;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+}
+
+    .qty-btn:disabled {
+        opacity: 0.45;
+        cursor: default;
+        box-shadow: none;
+    }
+
+    .qty-btn:not(:disabled):hover {
+        transform: translateY(-1px);
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+    }
+
+.qty-value {
+    min-width: 20px;
+    text-align: center;
+    font-weight: 700;
+}
+
+/* Przyciski Edytuj / Usuń w karcie --------------------------------------- */
+
+.cart-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.edit-item-btn,
+.remove-btn {
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 12px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+/* “Edytuj” – pomarańczowa pigułka, jak na screenie */
+.edit-item-btn {
+    background: #ff8d39;
+    color: #ffffff;
+    box-shadow: 0 4px 8px rgba(255, 141, 57, 0.45);
+}
+
+    .edit-item-btn:hover {
+        background: #ff7a1a;
+        transform: translateY(-1px);
+    }
+
+/* “Usuń” – delikatny, tekstowy */
+.remove-btn {
+    background: transparent;
+    color: #c44444;
+    font-weight: 600;
+}
+
+    .remove-btn:hover {
+        background: rgba(196, 68, 68, 0.08);
+    }
+
+/* PRAWA KOLUMNA – PODSUMOWANIE ------------------------------------------- */
+
+.payment-box {
+    display: flex;
+    justify-content: flex-start;
+}
+
+/* Biała karta z subtotalem / podatkiem / sumą */
+.cart-summary-card {
+    width: 100%;
+    padding: 18px 20px;
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.07);
+    font-size: 14px;
+}
+
+    .cart-summary-card h4 {
+        margin: 0 0 12px;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+/* Wiersze w podsumowaniu */
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+    .summary-row.muted span:first-child {
+        color: #b4a39a;
+    }
+
+    .summary-row.total {
+        margin-top: 10px;
+        padding-top: 8px;
+        border-top: 1px solid #f1e2d8;
+        font-weight: 700;
+    }
+
+/* PRZYCISKI NA DOLNEJ CZĘŚCI KARTY -------------------------------------- */
+
+.cart-summary-card form {
+    margin-top: 16px;
+}
+
+/* Zapłać */
+.checkout-btn {
+    width: 100%;
+    border-radius: 999px;
+    border: none;
+    padding: 10px 0;
+    font-size: 15px;
+    font-weight: 700;
+    background: #ff8d39;
+    color: #ffffff;
+    cursor: pointer;
+    box-shadow: 0 8px 14px rgba(255, 141, 57, 0.6);
+    transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+    .checkout-btn:hover {
+        background: #ff7a1a;
+        transform: translateY(-1px);
+    }
+
+/* Wróć do menu */
+.back-btn {
+    display: inline-block;
+    margin: 12px 0 20px;
+    padding: 10px 18px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #ff8b6b 0%, #ff5b5b 100%);
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    box-shadow: 0 12px 24px rgba(255, 126, 114, 0.35);
+    transition: transform 0.1s ease-out, box-shadow 0.12s ease-out, filter 0.12s ease-out;
+}
+
+    .back-btn:hover,
+    .back-btn:focus-visible {
+        filter: brightness(1.05);
+        transform: translateY(-2px);
+        box-shadow: 0 16px 32px rgba(255, 126, 114, 0.45);
+        outline: none;
+    }
+
+    .back-btn:active {
+        transform: translateY(1px) scale(0.99);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+/* PUSTY KOSZYK ----------------------------------------------------------- */
+
+.empty-cart {
+    text-align: center;
+    margin-top: 80px;
+}
+
+    .empty-cart .primary-btn {
+        margin-top: 18px;
+    }
+
+/* MODAL EDYCJI PRODUKTU -------------------------------------------------- */
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 40;
+}
+
+.modal-content {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 20px 22px;
+    width: 460px;
+    max-width: 92vw;
+}
+
+.edit-modal-section {
+    margin-top: 14px;
+}
+
+.modal-actions {
+    margin-top: 16px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
