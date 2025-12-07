@@ -31,6 +31,27 @@ app.MapGet("/api/orders/history", async (KioskDbContext db) =>
     return Results.Ok(orders);
 });
 
+app.MapPost("/api/orders/{id:int}/ready", async (int id, KioskDbContext db) =>
+{
+    var order = await db.Orders.FirstOrDefaultAsync(o => o.Id == id);
+
+    if (order is null)
+    {
+        return Results.NotFound();
+    }
+
+    if (order.IsClosed)
+    {
+        return Results.BadRequest(new { message = "Zamówienie zosta³o ju¿ zamkniête." });
+    }
+
+    order.IsReady = true;
+    await db.SaveChangesAsync();
+
+    return Results.NoContent();
+});
+
+
 app.MapPost("/api/orders/{id:int}/complete", async (int id, KioskDbContext db) =>
 {
     var order = await db.Orders.FirstOrDefaultAsync(o => o.Id == id);
@@ -45,6 +66,7 @@ app.MapPost("/api/orders/{id:int}/complete", async (int id, KioskDbContext db) =
         return Results.BadRequest(new { message = "Zamówienie zosta³o ju¿ zamkniête." });
     }
 
+    order.IsReady = true;
     order.IsClosed = true;
     await db.SaveChangesAsync();
 
@@ -64,6 +86,7 @@ static IQueryable<KitchenOrderDto> MapOrders(IQueryable<Order> queryable) => que
         PaymentMethod = o.PaymentMethod,
         OrderNumber = o.OrderNumber,
         OrderType = o.OrderType,
+        IsReady = o.IsReady,
         IsClosed = o.IsClosed,
         Items = o.Items
             .Where(i => i.MenuItem != null)

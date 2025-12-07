@@ -105,6 +105,7 @@
             orders.forEach(order => {
                 const card = document.createElement('article');
                 card.className = 'kitchen-card';
+                card.classList.toggle('is-ready', order.isReady);
                 card.innerHTML = `
                     <header class="card-head">
                         <div>
@@ -113,6 +114,7 @@
                         </div>
                         <div class="badge-row">
                             <span class="pill pill--accent">${order.paymentMethod}</span>
+                                     ${order.isReady ? '<span class="pill pill--success">Gotowe do odbioru</span>' : ''}
                         </div>
                     </header>
                     <div class="card-body">
@@ -127,21 +129,21 @@
                         `).join('')}
                     </div>
                     <footer class="card-actions">
-                        <button class="done-btn" data-order-id="${order.orderId}">Gotowe</button>
+                                <button class="done-btn" data-order-id="${order.orderId}">${order.isReady ? 'Odebrane' : 'Gotowe'}</button>
                     </footer>`;
 
-                card.querySelector('.done-btn').addEventListener('click', () => markDone(order.orderId, card));
-                ordersGrid.appendChild(card);
+                card.querySelector('.done-btn').addEventListener('click', () => handleAction(order, card));
             });
         };
 
-        const markDone = async (orderId, card) => {
+        const handleAction = async (order, card) => {
             card.classList.add('is-processing');
             try {
-                const response = await fetch(`/api/orders/${orderId}/complete`, { method: 'POST' });
+                const endpoint = order.isReady ? `/api/orders/${order.orderId}/complete` : `/api/orders/${order.orderId}/ready`;
+                const response = await fetch(endpoint, { method: 'POST' });
                 if (!response.ok) {
                     const payload = await response.json().catch(() => ({}));
-                    alert(payload.message || 'Nie udało się zamknąć zamówienia.');
+                    alert(payload.message || 'Nie udało się zaktualizować zamówienia.');
                 }
                 await loadOrders();
             } catch (err) {

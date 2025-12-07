@@ -10,6 +10,7 @@ namespace Kiosk.Models
         public DateTime OrderDate { get; set; }
         public string PaymentMethod { get; set; }
         public string OrderType { get; set; }
+        public bool IsReady { get; set; }
 
         public bool IsClosed { get; set; }
         public List<KitchenOrderItemDto> Items { get; set; } = new();
