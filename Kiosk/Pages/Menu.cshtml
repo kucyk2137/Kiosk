@@ -11,6 +11,7 @@
     ViewData["PageHeaderTitle"] = "Menu";
     var cartItems = HttpContext.Session.GetObjectFromJson<List<OrderItem>>("Cart") ?? new List<OrderItem>();
     var cartCount = cartItems.Count;
+    var isSetCategory = Model.SelectedCategory?.Name?.Equals("Zestawy", StringComparison.OrdinalIgnoreCase) == true;
 }
 
 <div class="menu-page">
@@ -43,6 +44,10 @@
                         <img src="@item.Image" alt="@item.Name" width="100" />
                         <h3>@item.Name</h3>
                         <p>@item.Description</p>
+                        @if (Model.SetContents.ContainsKey(item.Id))
+                        {
+                            <p class="muted">W zestawie: @string.Join(", ", Model.SetContents[item.Id])</p>
+                        }
                         <p>Cena: @item.Price.ToString("0.00") zł</p>
 
                         <form method="post" class="add-to-cart-form">
@@ -52,7 +57,9 @@
                             <input type="hidden" name="quantity" value="1" />
                             <button type="button"
                                     class="open-ingredient-modal"
-                                    data-menu-item-id="@item.Id">
+                                    data-menu-item-id="@item.Id"
+                                    data-has-set="@Model.ProductsWithSets.Contains(item.Id).ToString().ToLower()"
+                                    data-is-set="@isSetCategory.ToString().ToLower()">
                                 Dodaj do koszyka
                             </button>
                         </form>
@@ -107,6 +114,26 @@
         </div>
     </div>
 }
+<div id="set-choice-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <h3>Jak dodać produkt?</h3>
+        <p class="muted">Możesz dodać pozycję osobno lub wybrać jeden z dostępnych zestawów.</p>
+        <div class="modal-actions">
+            <button type="button" id="set-without-btn">Bez zestawu</button>
+            <button type="button" id="set-with-btn" class="recommend-add-btn">Dodaj w zestawie</button>
+        </div>
+    </div>
+</div>
+<div id="set-list-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <h3>Wybierz zestaw</h3>
+        <p class="muted">Poniżej pokazujemy tylko zestawy zawierające wybrany produkt.</p>
+        <div id="set-list-container" class="recommended-grid"></div>
+        <div class="modal-actions">
+            <button type="button" id="set-list-close">Zamknij</button>
+        </div>
+    </div>
+</div>
 <!-- POPUP WYBORU SKŁADNIKÓW (IDENTYCZNY STYL JAK W KOSZYKU) -->
 <div id="add-item-modal" class="modal" style="display:none;">
     <div class="modal-content">

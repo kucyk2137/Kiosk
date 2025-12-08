@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Kiosk.Migrations
 {
     [DbContext(typeof(KioskDbContext))]
-    [Migration("20251208095203_pierwsza")]
-    partial class pierwsza
+    [Migration("20251208210519_KIOSK")]
+    partial class KIOSK
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -190,6 +190,47 @@ namespace Kiosk.Migrations
                     b.ToTable("OrderItems");
                 });
 
+            modelBuilder.Entity("Kiosk.Models.ProductSet", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("SetMenuItemId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SetMenuItemId");
+
+                    b.ToTable("ProductSets");
+                });
+
+            modelBuilder.Entity("Kiosk.Models.ProductSetItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("MenuItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductSetId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MenuItemId");
+
+                    b.HasIndex("ProductSetId");
+
+                    b.ToTable("ProductSetItems");
+                });
+
             modelBuilder.Entity("Kiosk.Models.RecommendedProduct", b =>
                 {
                     b.Property<int>("Id")
@@ -266,6 +307,36 @@ namespace Kiosk.Migrations
                     b.Navigation("Order");
                 });
 
+            modelBuilder.Entity("Kiosk.Models.ProductSet", b =>
+                {
+                    b.HasOne("Kiosk.Models.MenuItem", "SetMenuItem")
+                        .WithMany()
+                        .HasForeignKey("SetMenuItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SetMenuItem");
+                });
+
+            modelBuilder.Entity("Kiosk.Models.ProductSetItem", b =>
+                {
+                    b.HasOne("Kiosk.Models.MenuItem", "MenuItem")
+                        .WithMany()
+                        .HasForeignKey("MenuItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Kiosk.Models.ProductSet", "ProductSet")
+                        .WithMany("Items")
+                        .HasForeignKey("ProductSetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MenuItem");
+
+                    b.Navigation("ProductSet");
+                });
+
             modelBuilder.Entity("Kiosk.Models.RecommendedProduct", b =>
                 {
                     b.HasOne("Kiosk.Models.MenuItem", "MenuItem")
@@ -283,6 +354,11 @@ namespace Kiosk.Migrations
                 });
 
             modelBuilder.Entity("Kiosk.Models.Order", b =>
+                {
+                    b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("Kiosk.Models.ProductSet", b =>
                 {
                     b.Navigation("Items");
                 });

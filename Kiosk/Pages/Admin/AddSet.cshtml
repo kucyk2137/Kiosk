@@ -1,0 +1,80 @@
+﻿@page
+@model Kiosk.Pages.Admin.AddSetModel
+<link rel="stylesheet" href="~/css/admin.css" />
+<div class="admin-shell">
+    <div class="admin-heading">
+        <div>
+            <p class="eyebrow">Panel administracyjny</p>
+            <h2>Dodaj zestaw</h2>
+            <p class="muted">Połącz dostępne produkty w atrakcyjny zestaw.</p>
+        </div>
+        <div class="admin-actions">
+            <a asp-page="Categories" class="btn outline">Zarządzaj kategoriami</a>
+            <a asp-page="Index" class="btn ghost">Powrót</a>
+        </div>
+    </div>
+
+    <div class="admin-card">
+        <div class="card-heading">
+            <p class="eyebrow">Szczegóły zestawu</p>
+            <h3>Nowa kompozycja</h3>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" class="admin-form">
+            <div class="form-grid">
+                <div class="form-field">
+                    <label>Nazwa zestawu</label>
+                    <input asp-for="Name" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="form-field">
+                    <label>Cena zestawu</label>
+                    <input asp-for="Price" type="number" step="0.01" />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+
+                <div class="form-field">
+                    <label>Obraz (opcjonalnie)</label>
+                    <input asp-for="ImageFile" type="file" accept="image/*" />
+                    <span asp-validation-for="ImageFile" class="text-danger"></span>
+                </div>
+
+                <div class="form-field full-width">
+                    <label>Opis</label>
+                    <textarea asp-for="Description" rows="3" placeholder="Opisz zestaw lub pozostaw puste aby wygenerować listę produktów."></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="form-field full-width">
+                    <label>Produkty w zestawie (minimum 2)</label>
+                    <div class="checkbox-grid">
+                        @foreach (var product in Model.AvailableProducts)
+                        {
+                            <label class="checkbox-row">
+                                <input type="checkbox" name="SelectedProductIds" value="@product.Id" @(Model.SelectedProductIds.Contains(product.Id) ? "checked" : string.Empty) />
+                                <span>
+                                    <strong>@product.Name</strong>
+                                    <small class="muted">@product.Category?.Name</small>
+                                </span>
+                            </label>
+                        }
+                    </div>
+                    <span asp-validation-for="SelectedProductIds" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn primary">Dodaj zestaw</button>
+                @if (!string.IsNullOrWhiteSpace(Model.Message))
+                {
+                    <p class="success">@Model.Message</p>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.Error))
+                {
+                    <p class="text-danger">@Model.Error</p>
+                }
+            </div>
+        </form>
+    </div>
+</div>

@@ -24,11 +24,14 @@ namespace Kiosk.Pages
         public Category? SelectedCategory { get; set; }
         public List<MenuItem> Products { get; set; } = new();
         public List<MenuItem> RecommendedItems { get; set; } = new();
-
+        public Dictionary<int, List<string>> SetContents { get; set; } = new();
+        public HashSet<int> ProductsWithSets { get; set; } = new();
         public void OnGet(int? categoryId)
         {
             Categories = _context.Categories.ToList();
-
+            ProductsWithSets = _context.ProductSetItems
+               .Select(p => p.MenuItemId)
+               .ToHashSet();
             // produkty polecane (globalnie)
             RecommendedItems = _context.RecommendedProducts
                 .Include(rp => rp.MenuItem)!
@@ -64,6 +67,12 @@ namespace Kiosk.Pages
                                 .ToList()
                         })
                         .ToList();
+                    var displayedIds = Products.Select(p => p.Id).ToList();
+                    SetContents = _context.ProductSets
+                        .Include(ps => ps.Items)
+                        .ThenInclude(i => i.MenuItem)
+                        .Where(ps => displayedIds.Contains(ps.SetMenuItemId))
+                        .ToDictionary(ps => ps.SetMenuItemId, ps => ps.Items.Select(i => i.MenuItem.Name).ToList());
                 }
             }
         }
@@ -104,7 +113,55 @@ namespace Kiosk.Pages
         /// </summary>
         public IActionResult OnGetIngredients(int menuItemId)
         {
-            var product = _context.MenuItems
+            // 1. SprawdŸ, czy to jest zestaw (SetMenuItem)
+            var productSet = _context.ProductSets
+                .Include(ps => ps.Items)
+                    .ThenInclude(psi => psi.MenuItem)
+                        .ThenInclude(mi => mi.Ingredients)
+                .FirstOrDefault(ps => ps.SetMenuItemId == menuItemId);
+
+            if (productSet != null)
+            {
+                // Zbierz sk³adniki ze wszystkich produktów w zestawie
+                var defaultList = new List<object>();
+                var optionalList = new List<object>();
+
+                foreach (var item in productSet.Items)
+                {
+                    var product = item.MenuItem;
+                    if (product == null) continue;
+
+                    var productName = product.Name;
+
+                    var defaults = product.Ingredients
+                        .Where(i => i.IsDefault)
+                        .Select(i => new
+                        {
+                            name = $"{productName}: {i.Name}",
+                            price = i.AdditionalPrice
+                        });
+
+                    var optionals = product.Ingredients
+                        .Where(i => !i.IsDefault)
+                        .Select(i => new
+                        {
+                            name = $"{productName}: {i.Name}",
+                            price = i.AdditionalPrice
+                        });
+
+                    defaultList.AddRange(defaults);
+                    optionalList.AddRange(optionals);
+                }
+
+                return new JsonResult(new
+                {
+                    defaults = defaultList,
+                    optionals = optionalList
+                });
+            }
+
+            // 2. Zwyk³y produkt – dotychczasowe zachowanie
+            var singleProduct = _context.MenuItems
                .Where(m => m.Id == menuItemId)
                .Select(m => new
                {
@@ -115,12 +172,34 @@ namespace Kiosk.Pages
                })
                .FirstOrDefault();
 
-            if (product == null)
+            if (singleProduct == null)
             {
-                return new JsonResult(new { defaults = new List<string>(), optionals = new List<string>() });
+                return new JsonResult(new { defaults = new List<object>(), optionals = new List<object>() });
             }
 
-            return new JsonResult(product);
+            return new JsonResult(singleProduct);
+        }
+        public IActionResult OnGetSetsForProduct(int menuItemId)
+        {
+            var sets = _context.ProductSets
+                .Include(ps => ps.SetMenuItem)!
+                .ThenInclude(mi => mi.Category)
+                .Include(ps => ps.Items)
+                .ThenInclude(i => i.MenuItem)
+                .Where(ps => ps.SetMenuItem != null && ps.Items.Any(i => i.MenuItemId == menuItemId))
+                .Select(ps => new
+                {
+                    id = ps.SetMenuItemId,
+                    name = ps.SetMenuItem!.Name,
+                    price = ps.SetMenuItem.Price,
+                    description = ps.SetMenuItem.Description,
+                    image = ps.SetMenuItem.Image,
+                    categoryId = ps.SetMenuItem.CategoryId,
+                    items = ps.Items.Select(i => new { id = i.MenuItemId, name = i.MenuItem.Name, image = i.MenuItem.Image }).ToList()
+                })
+                .ToList();
+
+            return new JsonResult(sets);
         }
     }
 }
