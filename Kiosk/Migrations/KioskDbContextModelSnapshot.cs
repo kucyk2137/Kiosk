@@ -103,6 +103,9 @@ namespace Kiosk.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<decimal>("AdditionalPrice")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<bool>("IsDefault")
                         .HasColumnType("bit");
 

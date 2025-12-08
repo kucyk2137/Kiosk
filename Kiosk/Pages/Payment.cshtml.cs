@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 
 namespace Kiosk.Pages
 {
@@ -86,10 +87,30 @@ namespace Kiosk.Pages
         {
             var ids = Cart.Select(ci => ci.MenuItemId).ToList();
             var menuItems = _context.MenuItems.Where(m => ids.Contains(m.Id)).ToDictionary(m => m.Id, m => m);
+            var ingredientLookup = _context.MenuItemIngredients
+                .Where(i => ids.Contains(i.MenuItemId))
+                .GroupBy(i => i.MenuItemId)
+                .ToDictionary(g => g.Key, g => g.ToDictionary(i => i.Name, i => i.AdditionalPrice));
 
             TotalPrice = Cart
                 .Where(ci => menuItems.ContainsKey(ci.MenuItemId))
-                .Sum(ci => menuItems[ci.MenuItemId].Price * ci.Quantity);
+                .Sum(ci =>
+                {
+                    var item = menuItems[ci.MenuItemId];
+                    var ingredients = ci.SelectedIngredients ?? "[]";
+                    var basePrice = item.Price;
+
+                    if (!ingredientLookup.TryGetValue(item.Id, out var ingredientPrices))
+                    {
+                        return basePrice * ci.Quantity;
+                    }
+
+                    var ingredientList = JsonSerializer.Deserialize<List<string>>(ingredients) ?? new List<string>();
+                    var extras = ingredientList.Sum(name => ingredientPrices.TryGetValue(name, out var price) ? price : 0);
+                    var unitPrice = basePrice + extras;
+
+                    return unitPrice * ci.Quantity;
+                });
         }
 
         private string GenerateOrderNumber()

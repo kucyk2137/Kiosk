@@ -58,7 +58,8 @@ namespace Kiosk.Pages
                                     Id = i.Id,
                                     Name = i.Name,
                                     IsDefault = i.IsDefault,
-                                    MenuItemId = i.MenuItemId
+                                    MenuItemId = i.MenuItemId,
+                                    AdditionalPrice = i.AdditionalPrice
                                 })
                                 .ToList()
                         })
@@ -104,13 +105,15 @@ namespace Kiosk.Pages
         public IActionResult OnGetIngredients(int menuItemId)
         {
             var product = _context.MenuItems
-                .Where(m => m.Id == menuItemId)
-                .Select(m => new
-                {
-                    defaults = m.Ingredients.Where(i => i.IsDefault).Select(i => i.Name).ToList(),
-                    optionals = m.Ingredients.Where(i => !i.IsDefault).Select(i => i.Name).ToList()
-                })
-                .FirstOrDefault();
+               .Where(m => m.Id == menuItemId)
+               .Select(m => new
+               {
+                   defaults = m.Ingredients.Where(i => i.IsDefault)
+                       .Select(i => new { name = i.Name, price = i.AdditionalPrice }).ToList(),
+                   optionals = m.Ingredients.Where(i => !i.IsDefault)
+                       .Select(i => new { name = i.Name, price = i.AdditionalPrice }).ToList()
+               })
+               .FirstOrDefault();
 
             if (product == null)
             {

@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using Kiosk.Data;
@@ -111,12 +112,12 @@ namespace Kiosk.Pages.Admin
             var defaults = DefaultIngredientsInput?.Split('\n', System.StringSplitOptions.RemoveEmptyEntries)
                 .Select(i => i.Trim())
                 .Where(i => !string.IsNullOrWhiteSpace(i))
-                .Select(name => new MenuItemIngredient { MenuItemId = Product.Id, Name = name, IsDefault = true });
+                .Select(name => new MenuItemIngredient { MenuItemId = Product.Id, Name = name, IsDefault = true, AdditionalPrice = 0 });
 
             var optionals = OptionalIngredientsInput?.Split('\n', System.StringSplitOptions.RemoveEmptyEntries)
                 .Select(i => i.Trim())
                 .Where(i => !string.IsNullOrWhiteSpace(i))
-                .Select(name => new MenuItemIngredient { MenuItemId = Product.Id, Name = name, IsDefault = false });
+                .Select(line => ParseOptionalIngredient(line, Product.Id));
 
             if (defaults != null)
             {
@@ -131,6 +132,27 @@ namespace Kiosk.Pages.Admin
             _context.SaveChanges();
 
             return RedirectToPage("Index");
+        }
+        private MenuItemIngredient ParseOptionalIngredient(string line, int menuItemId)
+        {
+            var parts = line.Split('|', StringSplitOptions.RemoveEmptyEntries);
+            var name = parts.FirstOrDefault()?.Trim() ?? string.Empty;
+            var price = 0m;
+
+            var priceText = parts.Length > 1 ? parts[1].Trim().Replace(',', '.') : string.Empty;
+
+            if (decimal.TryParse(priceText, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var parsed))
+            {
+                price = parsed;
+            }
+
+            return new MenuItemIngredient
+            {
+                MenuItemId = menuItemId,
+                Name = name,
+                IsDefault = false,
+                AdditionalPrice = price
+            };
         }
     }
 }
