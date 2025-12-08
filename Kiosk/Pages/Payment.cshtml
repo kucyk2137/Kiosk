@@ -1,14 +1,17 @@
 ﻿@page
 @model Kiosk.Pages.PaymentModel
+@inject Kiosk.Services.SiteSettingsService SiteSettingsService
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 <link rel="stylesheet" href="~/css/Payment.css" />
 <link rel="stylesheet" href="~/css/site.css" />
 @{
+    var styleSettings = await SiteSettingsService.GetStyleSettingsAsync();
     ViewData["Title"] = "Płatność";
     ViewData["PageHeaderTitle"] = "Płatność";
 }
 
-<div class="payment-page" data-has-order="@(!string.IsNullOrEmpty(Model.CreatedOrderNumber)).ToString().ToLower()" data-lockscreen-url="@Url.Page("/lockscreen")">
+<div class="payment-page" data-has-order="@(!string.IsNullOrEmpty(Model.CreatedOrderNumber)).ToString().ToLower()" data-lockscreen-url="@Url.Page("/lockscreen")"
+     style="--payment-accent:@styleSettings.AccentColor; --payment-accent-strong:@styleSettings.AccentStrongColor; --payment-soft:@styleSettings.AccentSoftColor; --payment-border:@styleSettings.PanelBorderColor; --payment-shadow:@styleSettings.PanelShadow; --payment-shadow-strong:@styleSettings.ButtonShadow;">
     @if (!string.IsNullOrEmpty(Model.CreatedOrderNumber))
     {
         <div class="payment-success">
