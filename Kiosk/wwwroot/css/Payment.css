@@ -189,7 +189,7 @@
 .primary-btn {
     padding: 12px 14px;
     border: none;
-    color: #fff;
+    color: var(--payment-on-accent, #fff);
     background: linear-gradient(135deg, var(--payment-accent) 0%, var(--payment-accent-strong) 100%);
     border-radius: 14px;
     box-shadow: var(--payment-shadow-strong);

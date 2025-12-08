@@ -98,7 +98,7 @@
     border: none;
     background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 65%);
     border: 1px solid var(--accent);
-    color: #fff;
+    color: var(--accent-on, #fff);
     font-weight: 700;
     letter-spacing: 0.04em;
     cursor: pointer;

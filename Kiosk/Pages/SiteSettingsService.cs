@@ -59,6 +59,7 @@ namespace Kiosk.Services
                 border,
                 BuildShadow(shadow, 0.16),
                 BuildShadow(accent, 0.32, "0 14px 32px"),
+                GetContrastingTextColor(accent),
                 settings.PrimaryButtonColor,
                 settings.PanelBorderColor,
                 settings.ShadowColor);
@@ -155,6 +156,25 @@ namespace Kiosk.Services
             return $"#{r:X2}{g:X2}{b:X2}";
         }
 
+        private static string GetContrastingTextColor(string hex)
+        {
+            if (!hex.StartsWith('#') || (hex.Length != 7 && hex.Length != 4))
+            {
+                return "#ffffff";
+            }
+
+            var expandedHex = hex.Length == 4 ? $"#{hex[1]}{hex[1]}{hex[2]}{hex[2]}{hex[3]}{hex[3]}" : hex;
+
+            var r = Convert.ToInt32(expandedHex.Substring(1, 2), 16);
+            var g = Convert.ToInt32(expandedHex.Substring(3, 2), 16);
+            var b = Convert.ToInt32(expandedHex.Substring(5, 2), 16);
+
+            // Perceived brightness per ITU-R BT.601
+            var brightness = (0.299 * r) + (0.587 * g) + (0.114 * b);
+
+            return brightness > 186 ? "#0f0c04" : "#ffffff";
+        }
+
         private static string? NormalizeColor(string? color)
         {
             if (string.IsNullOrWhiteSpace(color))
@@ -173,6 +193,7 @@ namespace Kiosk.Services
         string PanelBorderColor,
         string PanelShadow,
         string ButtonShadow,
+        string AccentTextColor,
         string? SavedAccentColor,
         string? SavedPanelBorderColor,
         string? SavedShadowColor);

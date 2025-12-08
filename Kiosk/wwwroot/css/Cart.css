@@ -139,7 +139,7 @@
     height: 32px;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%);
-    color: #ffffff;
+    color: var(--accent-on, #ffffff);
     font-size: 18px;
     font-weight: 800;
     line-height: 1;
@@ -198,7 +198,7 @@
 /* “Edytuj” – pomarańczowa pigułka, jak na screenie */
 .edit-item-btn {
     background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%);
-    color: #ffffff;
+    color: var(--accent-on, #ffffff);
     box-shadow: var(--button-shadow);
     border: 1px solid var(--accent);
 }
@@ -279,7 +279,7 @@
     font-size: 15px;
     font-weight: 700;
     background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%);
-    color: #ffffff;
+    color: var(--accent-on, #ffffff);
     cursor: pointer;
     box-shadow: var(--button-shadow);
     transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;

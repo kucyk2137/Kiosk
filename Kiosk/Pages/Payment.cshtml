@@ -11,7 +11,7 @@
 }
 
 <div class="payment-page" data-has-order="@(!string.IsNullOrEmpty(Model.CreatedOrderNumber)).ToString().ToLower()" data-lockscreen-url="@Url.Page("/lockscreen")"
-     style="--payment-accent:@styleSettings.AccentColor; --payment-accent-strong:@styleSettings.AccentStrongColor; --payment-soft:@styleSettings.AccentSoftColor; --payment-border:@styleSettings.PanelBorderColor; --payment-shadow:@styleSettings.PanelShadow; --payment-shadow-strong:@styleSettings.ButtonShadow;">
+     style="--payment-accent:@styleSettings.AccentColor; --payment-accent-strong:@styleSettings.AccentStrongColor; --payment-soft:@styleSettings.AccentSoftColor; --payment-border:@styleSettings.PanelBorderColor; --payment-shadow:@styleSettings.PanelShadow; --payment-shadow-strong:@styleSettings.ButtonShadow; --payment-on-accent:@styleSettings.AccentTextColor;">
     @if (!string.IsNullOrEmpty(Model.CreatedOrderNumber))
     {
         <div class="payment-success">

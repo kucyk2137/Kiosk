@@ -103,7 +103,7 @@
 
     .ingredient-chip.selected {
         background: linear-gradient(135deg, var(--accent-soft) 0%, var(--accent) 100%);
-        color: #fff !important;
+        color: var(--accent-on, #fff) !important;
         border-color: var(--accent);
         box-shadow: var(--button-shadow);
     }
@@ -232,7 +232,7 @@
 #edit-save,
 #add-confirm {
     background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%);
-    color: #fff;
+    color: var(--accent-on, #fff);
     border-color: var(--accent);
     box-shadow: var(--button-shadow);
 }
@@ -308,7 +308,7 @@
     border-radius: 10px;
     border: 1px solid var(--accent);
     background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%);
-    color: #fff;
+    color: var(--accent-on, #fff);
     font-weight: 700;
     cursor: pointer;
     box-shadow: var(--button-shadow);
@@ -329,7 +329,7 @@
 
 .recommend-cart-btn {
     background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%);
-    color: #fff;
+    color: var(--accent-on, #fff);
     border-color: transparent;
 }
 
