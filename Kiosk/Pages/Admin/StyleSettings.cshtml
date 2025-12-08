@@ -1,0 +1,72 @@
+﻿@page
+@model Kiosk.Pages.Admin.StyleSettingsModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+<link rel="stylesheet" href="~/css/admin.css" />
+
+@{
+    ViewData["Title"] = "Ustawienia stylu";
+}
+
+<div class="admin-shell narrow">
+    <div class="admin-heading centered">
+        <div>
+            <p class="eyebrow">Panel administracyjny</p>
+            <h2>Styl przycisków i ramek</h2>
+            <p class="muted">Zmieniaj kolor akcentu, obramowania oraz cienia bezpośrednio z panelu administratora.</p>
+            <div class="admin-actions">
+                <a asp-page="Index" class="btn ghost">Powrót</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-card">
+        <div class="card-heading">
+            <div>
+                <p class="eyebrow">Wygląd</p>
+                <h3>Konfiguracja styli</h3>
+            </div>
+            <a asp-page="Index" class="btn ghost">Powrót</a>
+        </div>
+
+        @if (TempData["StatusMessage"] is string statusMessage)
+        {
+            <div class="alert info">@statusMessage</div>
+        }
+
+        <form method="post" class="admin-form">
+            <div class="form-grid">
+                <div class="form-field">
+                    <label asp-for="AccentColor">Kolor akcentu i przycisków</label>
+                    <input asp-for="AccentColor" type="color" />
+                    <p class="muted">Steruje tłem przycisków i drobnymi elementami akcentu.</p>
+                </div>
+                <div class="form-field">
+                    <label asp-for="PanelBorderColor">Kolor obramowań</label>
+                    <input asp-for="PanelBorderColor" type="color" />
+                    <p class="muted">Zmienia kolor ramek kart i przycisków typu ghost.</p>
+                </div>
+                <div class="form-field">
+                    <label asp-for="ShadowColor">Kolor cienia</label>
+                    <input asp-for="ShadowColor" type="color" />
+                    <p class="muted">Wykorzystywany do cieni paneli oraz przycisków.</p>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn primary">Zapisz styl</button>
+                <button type="submit" asp-page-handler="Reset" class="btn outline">Przywróć domyślne</button>
+            </div>
+        </form>
+
+        <div class="preview-block">
+            <p class="eyebrow">Podgląd</p>
+            <div class="preview-row">
+                <button class="btn primary">Przycisk główny</button>
+                <button class="btn ghost">Przycisk pomocniczy</button>
+            </div>
+            <div class="preview-card">
+                <p class="muted">Przykładowy panel z nowym cieniem i ramką.</p>
+            </div>
+        </div>
+    </div>
+</div>

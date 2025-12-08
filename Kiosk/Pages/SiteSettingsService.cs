@@ -11,6 +11,10 @@ namespace Kiosk.Services
         private readonly IMemoryCache _cache;
         private const string CacheKey = "site-settings";
 
+        public const string DefaultAccentColor = "#ff7a00";
+        public const string DefaultBorderColor = "#e6ecf3";
+        public const string DefaultShadowColor = "#2d3d65";
+
         public SiteSettingsService(KioskDbContext context, IMemoryCache cache)
         {
             _context = context;
@@ -19,12 +23,84 @@ namespace Kiosk.Services
 
         public async Task<string?> GetHeaderBackgroundAsync()
         {
-            if (_cache.TryGetValue(CacheKey, out string? cachedPath))
+            var settings = await GetOrCreateSettingsAsync();
+            return settings.HeaderBackgroundPath;
+        }
+
+        public async Task UpdateHeaderBackgroundAsync(string? newPath)
+        {
+            var settings = await GetOrCreateSettingsAsync();
+
+            settings.HeaderBackgroundPath = newPath;
+            await _context.SaveChangesAsync();
+            _cache.Set(CacheKey, settings);
+        }
+
+        public async Task<StyleSettings> GetStyleSettingsAsync()
+        {
+            var settings = await GetOrCreateSettingsAsync();
+
+            var accent = string.IsNullOrWhiteSpace(settings.PrimaryButtonColor)
+                ? DefaultAccentColor
+                : settings.PrimaryButtonColor;
+
+            var border = string.IsNullOrWhiteSpace(settings.PanelBorderColor)
+                ? DefaultBorderColor
+                : settings.PanelBorderColor;
+
+            var shadow = string.IsNullOrWhiteSpace(settings.ShadowColor)
+                ? DefaultShadowColor
+                : settings.ShadowColor;
+
+            return new StyleSettings(
+                accent,
+                LightenColor(accent, 0.12),
+                LightenColor(accent, 0.68),
+                border,
+                BuildShadow(shadow, 0.16),
+                BuildShadow(accent, 0.32, "0 14px 32px"),
+                settings.PrimaryButtonColor,
+                settings.PanelBorderColor,
+                settings.ShadowColor);
+        }
+
+        public async Task UpdateStyleSettingsAsync(string? primaryColor, string? panelBorderColor, string? shadowColor)
+        {
+            var settings = await GetOrCreateSettingsAsync();
+
+            settings.PrimaryButtonColor = NormalizeColor(primaryColor);
+            settings.PanelBorderColor = NormalizeColor(panelBorderColor);
+            settings.ShadowColor = NormalizeColor(shadowColor);
+
+            await _context.SaveChangesAsync();
+            _cache.Set(CacheKey, settings);
+        }
+
+        public async Task ResetStyleSettingsAsync()
+        {
+            var settings = await GetOrCreateSettingsAsync();
+
+            settings.PrimaryButtonColor = null;
+            settings.PanelBorderColor = null;
+            settings.ShadowColor = null;
+
+            await _context.SaveChangesAsync();
+            _cache.Set(CacheKey, settings);
+        }
+
+        private async Task<SiteSettings> GetOrCreateSettingsAsync()
+        {
+            if (_cache.TryGetValue(CacheKey, out SiteSettings? cachedSettings) && cachedSettings is not null)
             {
-                return string.IsNullOrWhiteSpace(cachedPath) ? null : cachedPath;
+                if (_context.Entry(cachedSettings).State == EntityState.Detached)
+                {
+                    _context.SiteSettings.Attach(cachedSettings);
+                }
+
+                return cachedSettings;
             }
 
-            var settings = await _context.SiteSettings.AsNoTracking().FirstOrDefaultAsync();
+            var settings = await _context.SiteSettings.FirstOrDefaultAsync();
 
             if (settings is null)
             {
@@ -33,23 +109,71 @@ namespace Kiosk.Services
                 await _context.SaveChangesAsync();
             }
 
-            _cache.Set(CacheKey, settings.HeaderBackgroundPath ?? string.Empty);
-            return settings.HeaderBackgroundPath;
+            _cache.Set(CacheKey, settings);
+            return settings;
         }
 
-        public async Task UpdateHeaderBackgroundAsync(string? newPath)
+        private static string BuildShadow(string hexColor, double opacity, string offsets = "0 24px 45px")
         {
-            var settings = await _context.SiteSettings.FirstOrDefaultAsync();
+            var rgba = ToRgba(hexColor, opacity);
+            return $"{offsets} {rgba}";
+        }
 
-            if (settings is null)
+        private static string ToRgba(string hex, double alpha)
+        {
+            if (!hex.StartsWith('#') || (hex.Length != 7 && hex.Length != 4))
             {
-                settings = new SiteSettings();
-                _context.SiteSettings.Add(settings);
+                return hex;
             }
 
-            settings.HeaderBackgroundPath = newPath;
-            await _context.SaveChangesAsync();
-            _cache.Set(CacheKey, newPath ?? string.Empty);
+            var expandedHex = hex.Length == 4 ? $"#{hex[1]}{hex[1]}{hex[2]}{hex[2]}{hex[3]}{hex[3]}" : hex;
+
+            var r = Convert.ToInt32(expandedHex.Substring(1, 2), 16);
+            var g = Convert.ToInt32(expandedHex.Substring(3, 2), 16);
+            var b = Convert.ToInt32(expandedHex.Substring(5, 2), 16);
+
+            return $"rgba({r}, {g}, {b}, {alpha.ToString(System.Globalization.CultureInfo.InvariantCulture)})";
+        }
+
+        private static string LightenColor(string hex, double factor)
+        {
+            if (!hex.StartsWith('#') || (hex.Length != 7 && hex.Length != 4))
+            {
+                return hex;
+            }
+
+            var expandedHex = hex.Length == 4 ? $"#{hex[1]}{hex[1]}{hex[2]}{hex[2]}{hex[3]}{hex[3]}" : hex;
+
+            var r = Convert.ToInt32(expandedHex.Substring(1, 2), 16);
+            var g = Convert.ToInt32(expandedHex.Substring(3, 2), 16);
+            var b = Convert.ToInt32(expandedHex.Substring(5, 2), 16);
+
+            r = (int)Math.Min(255, r + 255 * factor);
+            g = (int)Math.Min(255, g + 255 * factor);
+            b = (int)Math.Min(255, b + 255 * factor);
+
+            return $"#{r:X2}{g:X2}{b:X2}";
+        }
+
+        private static string? NormalizeColor(string? color)
+        {
+            if (string.IsNullOrWhiteSpace(color))
+            {
+                return null;
+            }
+
+            return color.Trim();
         }
     }
+
+    public record StyleSettings(
+        string AccentColor,
+        string AccentStrongColor,
+        string AccentSoftColor,
+        string PanelBorderColor,
+        string PanelShadow,
+        string ButtonShadow,
+        string? SavedAccentColor,
+        string? SavedPanelBorderColor,
+        string? SavedShadowColor);
 }

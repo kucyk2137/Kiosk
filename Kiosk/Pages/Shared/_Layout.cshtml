@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿@inject Kiosk.Services.SiteSettingsService SiteSettingsService
+@{
+    var styleSettings = await SiteSettingsService.GetStyleSettingsAsync();
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -7,9 +12,18 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Kiosk.styles.css" asp-append-version="true" />
+    <style>
+        :root {
+            --accent: @styleSettings.AccentColor;
+            --accent-strong: @styleSettings.AccentStrongColor;
+            --accent-soft: @styleSettings.AccentSoftColor;
+            --panel-border: @styleSettings.PanelBorderColor;
+            --panel-shadow: @styleSettings.PanelShadow;
+            --button-shadow: @styleSettings.ButtonShadow;
+        }
+    </style>
 </head>
 <body>
-    @inject Kiosk.Services.SiteSettingsService SiteSettingsService
     @{
         var hideHeader = ViewData["HidePageHeader"] as bool? ?? false;
         var headerTitle = ViewData["PageHeaderTitle"] as string ?? ViewData["Title"] as string ?? "";
