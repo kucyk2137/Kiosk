@@ -38,6 +38,7 @@
                         <div class="cart-card-media">
                             <img src="@ci.Item.Image" alt="@ci.Item.Name" />
                         </div>
+
                         <div class="cart-card-content">
                             <div class="cart-card-header">
                                 <div>
@@ -48,11 +49,16 @@
                                     </p>
                                 </div>
                             </div>
-                            <div class="price-tag">@ci.UnitPrice.ToString("0.00") zł</div>
-                        </div>
-                            </div>
 
                             <div class="cart-card-footer">
+                                <button type="button"
+                                        class="edit-item-btn ghost-btn"
+                                        data-menu-item-id="@ci.Item.Id"
+                                        data-selected-ingredients="@ci.Ingredients"
+                                        data-quantity="@ci.Quantity">
+                                    Edytuj
+                                </button>
+
                                 <div class="quantity-control">
                                     <form method="post" asp-page-handler="Update">
                                         <input type="hidden" name="MenuItemId" value="@ci.Item.Id" />
@@ -70,23 +76,17 @@
                                         <button type="submit" class="qty-btn">+</button>
                                     </form>
                                 </div>
+                            </div>
+                        </div>
 
-                                <div class="cart-actions">
-                                    <button type="button"
-                                            class="edit-item-btn ghost-btn"
-                                            data-menu-item-id="@ci.Item.Id"
-                                            data-selected-ingredients="@ci.Ingredients"
-                                            data-quantity="@ci.Quantity">
-                                        Edytuj
-                                    </button>
-
-                                    <form method="post" asp-page-handler="Remove" class="inline-form">
-                                        <input type="hidden" name="MenuItemId" value="@ci.Item.Id" />
-                                        <input type="hidden" name="selectedIngredients" value="@ci.Ingredients" />
-                                        <button type="submit" class="remove-btn">Usuń</button>
-                                    </form>
-                                </div>
-                         
+                        <div class="cart-card-side">
+                            <div class="price-tag">@ci.UnitPrice.ToString("0.00") zł</div>
+                            <form method="post" asp-page-handler="Remove" class="inline-form">
+                                <input type="hidden" name="MenuItemId" value="@ci.Item.Id" />
+                                <input type="hidden" name="selectedIngredients" value="@ci.Ingredients" />
+                                <button type="submit" class="remove-btn">Usuń</button>
+                            </form>
+                        </div>
                     </div>
                 }
             </div>
@@ -154,6 +154,7 @@
         </form>
     </div>
 </div>
+
 
 <script src="~/js/IngredientCart.js">
     </script>
