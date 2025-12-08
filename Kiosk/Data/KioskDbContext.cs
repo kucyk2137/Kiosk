@@ -15,6 +15,8 @@ namespace Kiosk.Data
         public DbSet<LockScreenBackground> LockScreenBackgrounds { get; set; }
         public DbSet<SiteSettings> SiteSettings { get; set; }
         public DbSet<RecommendedProduct> RecommendedProducts { get; set; }
+        public DbSet<ProductSet> ProductSets { get; set; }
+        public DbSet<ProductSetItem> ProductSetItems { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<OrderItem>()
@@ -26,11 +28,13 @@ namespace Kiosk.Data
                 .HasOne(oi => oi.MenuItem)
                 .WithMany()
                 .HasForeignKey(oi => oi.MenuItemId);
+
             modelBuilder.Entity<MenuItemIngredient>()
                 .HasOne(mi => mi.MenuItem)
                 .WithMany(m => m.Ingredients)
                 .HasForeignKey(mi => mi.MenuItemId)
                 .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<RecommendedProduct>()
                 .HasOne(rp => rp.MenuItem)
                 .WithMany()
@@ -40,6 +44,24 @@ namespace Kiosk.Data
             modelBuilder.Entity<RecommendedProduct>()
                 .HasIndex(rp => rp.MenuItemId)
                 .IsUnique();
+
+            modelBuilder.Entity<ProductSet>()
+                .HasOne(ps => ps.SetMenuItem)
+                .WithMany()
+                .HasForeignKey(ps => ps.SetMenuItemId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ProductSetItem>()
+                .HasOne(psi => psi.ProductSet)
+                .WithMany(ps => ps.Items)
+                .HasForeignKey(psi => psi.ProductSetId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ProductSetItem>()
+                .HasOne(psi => psi.MenuItem)
+                .WithMany()
+                .HasForeignKey(psi => psi.MenuItemId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             base.OnModelCreating(modelBuilder);
         }
