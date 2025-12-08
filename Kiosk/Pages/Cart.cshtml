@@ -47,7 +47,9 @@
                                         @(formattedIngredients.Any() ? string.Join(", ", formattedIngredients) : "Domyślne składniki")
                                     </p>
                                 </div>
-                                <div class="price-tag">@ci.Item.Price.ToString("0.00") zł</div>
+                            </div>
+                            <div class="price-tag">@ci.UnitPrice.ToString("0.00") zł</div>
+                        </div>
                             </div>
 
                             <div class="cart-card-footer">
@@ -84,8 +86,7 @@
                                         <button type="submit" class="remove-btn">Usuń</button>
                                     </form>
                                 </div>
-                            </div>
-                        </div>
+                         
                     </div>
                 }
             </div>

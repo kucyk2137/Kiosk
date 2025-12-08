@@ -24,16 +24,21 @@
                 return acc;
             }, {});
         };
+         const formatLabel = (name, price) => {
+            const numericPrice = Number(price || 0);
+            return numericPrice > 0 ? `${name} (+${numericPrice.toFixed(2)} zł)` : name;
+        };
 
-        const createChip = (name, initialCount, isOptional = false) => {
+        const createChip = (name, price, initialCount, isOptional = false) => {
             const div = document.createElement('div');
             div.classList.add('ingredient-chip');
             div.dataset.name = name;
+            div.dataset.price = Number(price || 0);
             div.dataset.count = Math.max(0, initialCount || 0);
 
             const label = document.createElement('span');
             label.classList.add('ingredient-name');
-            label.textContent = name;
+            label.textContent = formatLabel(name, price);
 
             const controls = document.createElement('div');
             controls.classList.add('ingredient-controls');
@@ -134,13 +139,21 @@
                         const defaults = data.defaults || data.Defaults || [];
                         const optionals = data.optionals || data.Optionals || [];
 
-                        defaults.forEach(name => {
-                            const chip = createChip(name, counts[name] ?? 0);
+                        const normalize = (item) => {
+                            if (typeof item === 'string') return { name: item, price: 0 };
+                            return {
+                                name: item.name || item.Name,
+                                price: item.price ?? item.Price ?? item.additionalPrice ?? item.AdditionalPrice ?? 0
+                            };
+                        };
+
+                        defaults.map(normalize).forEach(({ name, price }) => {
+                            const chip = createChip(name, price, counts[name] ?? 0);
                             defaultContainer.appendChild(chip);
                         });
 
-                        optionals.forEach(name => {
-                            const chip = createChip(name, counts[name] ?? 0, true);
+                        optionals.map(normalize).forEach(({ name, price }) => {
+                            const chip = createChip(name, price, counts[name] ?? 0, true);
                             optionalContainer.appendChild(chip);
                         });
 

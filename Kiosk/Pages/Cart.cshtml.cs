@@ -6,6 +6,7 @@ using Kiosk.Extensions;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 
 namespace Kiosk.Pages
 {
@@ -18,21 +19,39 @@ namespace Kiosk.Pages
             _context = context;
         }
 
-        public List<(MenuItem Item, int Quantity, string Ingredients)> CartItems { get; set; } = new();
+        public List<CartItemViewModel> CartItems { get; set; } = new();
         public decimal TotalPrice { get; private set; }
 
         public void OnGet()
         {
             var cart = HttpContext.Session.GetObjectFromJson<List<OrderItem>>("Cart") ?? new List<OrderItem>();
 
+            var menuItemIds = cart.Select(ci => ci.MenuItemId).ToList();
+            var menuItems = _context.MenuItems.Where(m => menuItemIds.Contains(m.Id)).ToDictionary(m => m.Id, m => m);
+            var ingredientLookup = _context.MenuItemIngredients
+                .Where(i => menuItemIds.Contains(i.MenuItemId))
+                .GroupBy(i => i.MenuItemId)
+                .ToDictionary(g => g.Key, g => g.ToDictionary(i => i.Name, i => i.AdditionalPrice));
+
             CartItems = cart
-                .Select(ci => (Item: _context.MenuItems.FirstOrDefault(m => m.Id == ci.MenuItemId),
-                               Quantity: ci.Quantity,
-                               Ingredients: ci.SelectedIngredients ?? "[]"))
-                .Where(x => x.Item != null)
+                .Where(ci => menuItems.ContainsKey(ci.MenuItemId))
+                .Select(ci =>
+                {
+                    var item = menuItems[ci.MenuItemId];
+                    var ingredientsJson = ci.SelectedIngredients ?? "[]";
+                    var unitPrice = CalculateUnitPrice(item, ingredientsJson, ingredientLookup);
+
+                    return new CartItemViewModel
+                    {
+                        Item = item,
+                        Quantity = ci.Quantity,
+                        Ingredients = ingredientsJson,
+                        UnitPrice = unitPrice
+                    };
+                })
                 .ToList();
 
-            TotalPrice = CartItems.Sum(ci => ci.Item.Price * ci.Quantity);
+            TotalPrice = CartItems.Sum(ci => ci.UnitPrice * ci.Quantity);
         }
 
         public IActionResult OnPostRemove(int menuItemId, string selectedIngredients)
@@ -70,13 +89,15 @@ namespace Kiosk.Pages
         public IActionResult OnGetIngredients(int menuItemId)
         {
             var product = _context.MenuItems
-                .Where(m => m.Id == menuItemId)
-                .Select(m => new
-                {
-                    defaults = m.Ingredients.Where(i => i.IsDefault).Select(i => i.Name).ToList(),
-                    optionals = m.Ingredients.Where(i => !i.IsDefault).Select(i => i.Name).ToList()
-                })
-                .FirstOrDefault();
+                 .Where(m => m.Id == menuItemId)
+                 .Select(m => new
+                 {
+                     defaults = m.Ingredients.Where(i => i.IsDefault)
+                         .Select(i => new { name = i.Name, price = i.AdditionalPrice }).ToList(),
+                     optionals = m.Ingredients.Where(i => !i.IsDefault)
+                         .Select(i => new { name = i.Name, price = i.AdditionalPrice }).ToList()
+                 })
+                 .FirstOrDefault();
 
             if (product == null)
             {
@@ -108,6 +129,28 @@ namespace Kiosk.Pages
 
             return RedirectToPage();
         }
+        private decimal CalculateUnitPrice(MenuItem item, string selectedIngredients, Dictionary<int, Dictionary<string, decimal>> ingredientLookup)
+        {
+            var basePrice = item.Price;
+            if (!ingredientLookup.TryGetValue(item.Id, out var ingredientPrices))
+            {
+                return basePrice;
+            }
+
+            var ingredientList = JsonSerializer.Deserialize<List<string>>(selectedIngredients ?? "[]") ?? new List<string>();
+            var additional = ingredientList.Sum(name => ingredientPrices.TryGetValue(name, out var price) ? price : 0);
+
+            return basePrice + additional;
+        }
 
     }
+
+    public class CartItemViewModel
+    {
+        public MenuItem Item { get; set; }
+        public int Quantity { get; set; }
+        public string Ingredients { get; set; }
+        public decimal UnitPrice { get; set; }
+    }
 }
+

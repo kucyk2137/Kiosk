@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Globalization;
 using Kiosk.Data;
 using Kiosk.Models;
 using Microsoft.AspNetCore.Hosting;
@@ -106,11 +107,28 @@ public class AddProductModel : PageModel
             .Split('\n', System.StringSplitOptions.RemoveEmptyEntries)
             .Select(i => i.Trim())
             .Where(i => !string.IsNullOrWhiteSpace(i))
-            .Select(i => new MenuItemIngredient
-            {
-                MenuItemId = menuItemId,
-                Name = i,
-                IsDefault = isDefault
-            });
+            .Select(line => CreateIngredient(line, isDefault, menuItemId));
+    }
+
+    private MenuItemIngredient CreateIngredient(string line, bool isDefault, int menuItemId)
+    {
+        var parts = line.Split('|', StringSplitOptions.RemoveEmptyEntries);
+        var name = parts.FirstOrDefault()?.Trim() ?? string.Empty;
+        var price = 0m;
+
+        var priceText = parts.Length > 1 ? parts[1].Trim().Replace(',', '.') : string.Empty;
+
+        if (!isDefault && decimal.TryParse(priceText, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var parsed))
+        {
+            price = parsed;
+        }
+
+        return new MenuItemIngredient
+        {
+            MenuItemId = menuItemId,
+            Name = name,
+            IsDefault = isDefault,
+            AdditionalPrice = price
+        };
     }
 }
