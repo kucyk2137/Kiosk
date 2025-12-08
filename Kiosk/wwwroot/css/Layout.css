@@ -95,16 +95,16 @@
 
     .category-btn:hover,
     .category-btn:focus-visible {
-        border-color: #ffc48c;
-        box-shadow: 0 12px 24px rgba(255, 122, 0, 0.18);
+        border-color: var(--accent);
+        box-shadow: var(--button-shadow);
         transform: translateX(2px);
         outline: none;
     }
 
     .category-btn.active {
-        background: linear-gradient(135deg, #fff5ea 0%, #ffe4c7 100%);
-        border-color: #ffba72;
-        box-shadow: 0 14px 28px rgba(255, 150, 58, 0.25);
+        background: linear-gradient(135deg, var(--accent-soft) 0%, #fffaf4 100%);
+        border-color: var(--accent);
+        box-shadow: var(--button-shadow);
     }
 
 .cart-btn {
@@ -215,8 +215,8 @@
     .menu-item:hover,
     .product-card:hover {
         transform: translateY(-4px);
-        border-color: #ffc48c;
-        box-shadow: 0 22px 45px rgba(255, 122, 0, 0.18);
+        border-color: var(--accent);
+        box-shadow: 0 22px 45px rgba(0, 0, 0, 0.12), var(--button-shadow);
     }
 
     .menu-item img,
@@ -255,23 +255,24 @@
     .menu-item button,
     .product-card button {
         width: 100%;
-        border: none;
+        border: 1px solid var(--accent);
         border-radius: 14px;
         padding: 12px;
-        background: linear-gradient(135deg, #ffd6a8 0%, #ff8a00 90%);
-        color: #2c1a00;
+        background: linear-gradient(135deg, var(--accent-soft) 0%, var(--accent-strong) 90%);
+        color: #0f0c04;
         font-weight: 700;
         letter-spacing: 0.06em;
         cursor: pointer;
-        box-shadow: 0 14px 30px rgba(255, 122, 0, 0.25);
-        transition: transform 0.1s ease-out, box-shadow 0.12s ease-out, filter 0.12s ease-out;
+        box-shadow: var(--button-shadow);
+        transition: transform 0.1s ease-out, box-shadow 0.12s ease-out, filter 0.12s ease-out, border-color 0.12s ease-out;
     }
 
         .menu-item button:hover,
         .product-card button:hover {
             transform: translateY(-2px);
-            filter: brightness(1.03);
-            box-shadow: 0 16px 36px rgba(255, 122, 0, 0.35);
+            filter: brightness(1.05);
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.16), var(--button-shadow);
+            border-color: var(--accent-strong);
         }
 
         .menu-item button:active,

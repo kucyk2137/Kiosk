@@ -5,7 +5,7 @@
     padding: 24px 40px;
     background: #fdf7f2;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    color: #3a2615;
+    color: var(--text-main);
 }
 
 /* GŁÓWNY UKŁAD: LEWA LISTA PRODUKTÓW + PRAWE PODSUMOWANIE ----------------- */
@@ -41,19 +41,19 @@
     gap: 16px;
     padding: 14px 18px;
     border-radius: 22px;
-    background: #ffffff;
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06);
+    background: var(--bg-contrast);
+    box-shadow: var(--panel-shadow);
     transition: box-shadow 0.18s ease, transform 0.18s ease, border 0.18s ease;
-    border: 2px solid transparent;
+    border: 2px solid var(--panel-border);
     align-items: stretch;
 }
 
     /* “Zaznaczona” karta (np. po kliknięciu – dodaj klasę .selected w HTML) */
     .cart-card.selected,
     .cart-card:hover {
-        border-color: #1f8cff;
+        border-color: var(--accent);
         transform: translateY(-2px);
-        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.10);
+        box-shadow: var(--panel-shadow);
     }
 
 .cart-card-media {
@@ -88,7 +88,7 @@
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: #ff914d;
+    color: var(--accent);
     font-weight: 600;
 }
 
@@ -101,14 +101,14 @@
 .item-ingredients {
     margin: 4px 0 0;
     font-size: 12px;
-    color: #a18d80;
+    color: var(--text-muted);
 }
 
 .price-tag {
     font-size: 16px;
     font-weight: 800;
     white-space: nowrap;
-    color: #ff7a1a;
+    color: var(--accent);
 }
 
 /* STOPKA KARTY – ILOŚĆ + PRZYCISKI --------------------------------------- */
@@ -126,11 +126,11 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: #ffffff;
+    background: var(--bg-contrast);
     padding: 4px 8px;
     border-radius: 999px;
-    border: 1px solid #ffe1c7;
-    box-shadow: 0 4px 10px rgba(255, 141, 57, 0.15);
+    border: 1px solid var(--panel-border);
+    box-shadow: var(--panel-shadow);
 }
 
 .qty-btn {
@@ -138,7 +138,7 @@
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #ff9f4f 0%, #ff7a1a 100%);
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%);
     color: #ffffff;
     font-size: 18px;
     font-weight: 800;
@@ -147,7 +147,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+    box-shadow: var(--button-shadow);
+    border: 1px solid var(--accent);
+    transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease, border-color 0.12s ease;
 }
 
     .qty-btn:disabled {
@@ -158,20 +160,21 @@
 
     .qty-btn:not(:disabled):hover {
         transform: translateY(-1px);
-        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18), var(--button-shadow);
+        border-color: var(--accent-strong);
     }
 
 .qty-value {
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    border: 2px solid #ff8d39;
+    border: 2px solid var(--accent);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     font-weight: 800;
-    color: #ff8d39;
-    background: #ffffff;
+    color: var(--accent);
+    background: var(--bg-contrast);
 }
 
 /* Przyciski Edytuj / Usuń w karcie --------------------------------------- */
@@ -194,13 +197,14 @@
 
 /* “Edytuj” – pomarańczowa pigułka, jak na screenie */
 .edit-item-btn {
-    background: linear-gradient(135deg, #ff9f4f 0%, #ff7a1a 100%);
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%);
     color: #ffffff;
-    box-shadow: 0 6px 14px rgba(255, 141, 57, 0.45);
+    box-shadow: var(--button-shadow);
+    border: 1px solid var(--accent);
 }
 
     .edit-item-btn:hover {
-        background: #ff7a1a;
+        background: linear-gradient(135deg, var(--accent-strong) 0%, var(--accent) 100%);
         transform: translateY(-1px);
     }
 
@@ -227,9 +231,10 @@
     width: 100%;
     padding: 18px 20px;
     border-radius: 18px;
-    background: #ffffff;
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.07);
+    background: var(--bg-contrast);
+    box-shadow: var(--panel-shadow);
     font-size: 14px;
+    border: 1px solid var(--panel-border);
 }
 
     .cart-summary-card h4 {
@@ -252,7 +257,7 @@
     .summary-row.total {
         margin-top: 10px;
         padding-top: 8px;
-        border-top: 1px solid #f1e2d8;
+        border-top: 1px solid var(--panel-border);
         font-weight: 700;
     }
 
@@ -266,20 +271,21 @@
 .checkout-btn {
     width: 100%;
     border-radius: 999px;
-    border: none;
+    border: 1px solid var(--accent);
     padding: 10px 0;
     font-size: 15px;
     font-weight: 700;
-    background: #ff8d39;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%);
     color: #ffffff;
     cursor: pointer;
-    box-shadow: 0 8px 14px rgba(255, 141, 57, 0.6);
+    box-shadow: var(--button-shadow);
     transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
 }
 
     .checkout-btn:hover {
-        background: #ff7a1a;
+        background: linear-gradient(135deg, var(--accent-strong) 0%, var(--accent) 100%);
         transform: translateY(-1px);
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12), var(--button-shadow);
     }
 
 /* Wróć do menu */
