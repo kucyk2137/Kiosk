@@ -96,12 +96,13 @@
     padding: 16px 42px 16px 38px;
     border-radius: 18px;
     border: none;
-    background: linear-gradient(135deg, #ffb261 0%, #ff8f45 50%, #ff7b38 100%);
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 65%);
+    border: 1px solid var(--accent);
     color: #fff;
     font-weight: 700;
     letter-spacing: 0.04em;
     cursor: pointer;
-    box-shadow: 0 16px 36px rgba(255, 135, 67, 0.6);
+    box-shadow: var(--button-shadow);
     transition: transform 0.16s ease-out, box-shadow 0.16s ease-out, filter 0.16s ease-out;
     z-index: 2;
 }
@@ -109,7 +110,7 @@
     .lockscreen-cta:hover {
         transform: translate(-50%, -3px) scale(1.02);
         filter: brightness(1.06);
-        box-shadow: 0 26px 58px rgba(255, 135, 67, 0.72);
+        box-shadow: 0 26px 58px rgba(0, 0, 0, 0.14), var(--button-shadow);
     }
 
     .lockscreen-cta:active {
