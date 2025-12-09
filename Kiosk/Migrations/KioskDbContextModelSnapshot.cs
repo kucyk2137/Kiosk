@@ -258,6 +258,15 @@ namespace Kiosk.Migrations
                     b.Property<string>("HeaderBackgroundPath")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("AdminLanguage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("KitchenLanguage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OrderDisplayLanguage")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("SiteSettings");

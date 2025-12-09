@@ -10,6 +10,7 @@
 </head>
 <body>
     @inject Kiosk.Services.SiteSettingsService SiteSettingsService
+    @inject Kiosk.Services.LanguageService LanguageService
     @{
         var hideHeader = ViewData["HidePageHeader"] as bool? ?? false;
         var headerTitle = ViewData["PageHeaderTitle"] as string ?? ViewData["Title"] as string ?? "";
@@ -17,7 +18,17 @@
         var headerStyle = !string.IsNullOrWhiteSpace(headerBackground)
         ? $"background-image: linear-gradient(135deg, rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.35)), url('{headerBackground}'); background-size: cover; background-position: center;"
         : string.Empty;
+        var currentOrderingLanguage = LanguageService.GetLanguage(Context, Kiosk.Services.LanguageArea.Ordering);
     }
+
+    <div class="language-switcher" data-current-language="@currentOrderingLanguage">
+        <button type="button" class="language-btn" data-language="en" aria-label="Switch to English">
+            <span>EN</span>
+        </button>
+        <button type="button" class="language-btn" data-language="de" aria-label="Wechseln zu Deutsch">
+            <span>DE</span>
+        </button>
+    </div>
 
     @if (!hideHeader && !string.IsNullOrWhiteSpace(headerTitle))
     {
@@ -36,6 +47,32 @@
     </div>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        (function () {
+            const switcher = document.querySelector('.language-switcher');
+            if (!switcher) return;
+
+            const current = switcher.dataset.currentLanguage || 'pl';
+            switcher.querySelectorAll('.language-btn').forEach(btn => {
+                if (btn.dataset.language === current) {
+                    btn.classList.add('is-active');
+                }
+
+                btn.addEventListener('click', async () => {
+                    const lang = btn.dataset.language;
+                    if (!lang) return;
+
+                    try {
+                        await fetch(`/api/language/ordering/${lang}`, { method: 'POST' });
+                        window.location.reload();
+                    } catch {
+                        console.warn('Language change failed');
+                    }
+                });
+            });
+        })();
+    </script>
 
     @await RenderSectionAsync("Scripts", required: false)
 

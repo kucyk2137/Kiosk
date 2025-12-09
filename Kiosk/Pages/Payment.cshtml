@@ -1,35 +1,38 @@
 ﻿@page
+@using Kiosk.Services
 @model Kiosk.Pages.PaymentModel
+@inject LanguageService LanguageService
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 <link rel="stylesheet" href="~/css/Payment.css" />
 <link rel="stylesheet" href="~/css/site.css" />
 @{
-    ViewData["Title"] = "Płatność";
-    ViewData["PageHeaderTitle"] = "Płatność";
+    string T(string key, string fallback) => LanguageService.Translate(HttpContext, LanguageArea.Ordering, key, fallback);
+    ViewData["Title"] = T("payment.title", "Płatność");
+    ViewData["PageHeaderTitle"] = T("payment.title", "Płatność");
 }
 
 <div class="payment-page" data-has-order="@(!string.IsNullOrEmpty(Model.CreatedOrderNumber)).ToString().ToLower()" data-lockscreen-url="@Url.Page("/lockscreen")">
     @if (!string.IsNullOrEmpty(Model.CreatedOrderNumber))
     {
         <div class="payment-success">
-            <p class="eyebrow">Dziękujemy za złożenie zamówienia</p>
-            <h1>Twój numer zamówienia to</h1>
+            <p class="eyebrow">@T("payment.success.eyebrow", "Dziękujemy za złożenie zamówienia")</p>
+            <h1>@T("payment.success.title", "Twój numer zamówienia to")</h1>
 
             <div class="order-number">@Model.CreatedOrderNumber</div>
 
             <p class="muted">
-                Pokaż ten numer przy odbiorze. Zamówienie pojawi się od razu na ekranie kuchni.
+                @T("payment.success.note", "Pokaż ten numer przy odbiorze. Zamówienie pojawi się od razu na ekranie kuchni.")
             </p>
 
             <div class="summary-actions" style="justify-content:center; margin-top:12px;">
                 <button id="finish-btn" class="btn primary"
                         onclick="window.location.href='@Url.Page("/lockscreen")'">
-                    Zakończ
+                    @T("payment.success.finish", "Zakończ")
                 </button>
             </div>
 
             <p class="muted" style="margin-top:8px;">
-                Za chwilę wrócimy automatycznie do ekranu startowego.
+                @T("payment.success.autoReturn", "Za chwilę wrócimy automatycznie do ekranu startowego.")
             </p>
         </div>
 
@@ -39,10 +42,10 @@
         <div class="payment-layout">
             <div class="payment-header">
                 <div>
-                    <p class="eyebrow">Wybierz metodę płatności</p>
-                    <h1>Jak chcesz zapłacić?</h1>
+                    <p class="eyebrow">@T("payment.eyebrow", "Wybierz metodę płatności")</p>
+                    <h1>@T("payment.header", "Jak chcesz zapłacić?")</h1>
                 </div>
-                <div class="pill">Do zapłaty: @Model.TotalPrice.ToString("0.00") zł</div>
+                <div class="pill">@T("payment.toPay", "Do zapłaty:") @Model.TotalPrice.ToString("0.00") zł</div>
             </div>
 
             <div asp-validation-summary="ModelOnly" class="validation-errors"></div>
@@ -51,25 +54,25 @@
                 <input type="hidden" asp-for="SelectedPaymentMethod" />
                 <div class="payment-grid">
                     <button type="button" class="payment-tile card" data-method="Karta">
-                        <div class="tile-label">Karta</div>
-                        <span class="muted">Płatność zbliżeniowa lub chip</span>
+                        <div class="tile-label">@T("payment.card", "Karta")</div>
+                        <span class="muted">@T("payment.card.subtitle", "Płatność zbliżeniowa lub chip")</span>
                     </button>
                     <button type="button" class="payment-tile cash" data-method="Gotówka">
-                        <div class="tile-label">Gotówka</div>
-                        <span class="muted">Zapłacisz przy kasie</span>
+                        <div class="tile-label">@T("payment.cash", "Gotówka")</div>
+                        <span class="muted">@T("payment.cash.subtitle", "Zapłacisz przy kasie")</span>
                     </button>
                     <button type="button" class="payment-tile blik" data-method="BLIK">
                         <div class="tile-label">BLIK</div>
-                        <span class="muted">Przepisz kod z aplikacji</span>
+                        <span class="muted">@T("payment.blik.subtitle", "Przepisz kod z aplikacji")</span>
                     </button>
                     <div class="payment-summary">
-                        <p class="eyebrow">Podsumowanie</p>
-                        <h3>Łącznie</h3>
+                        <p class="eyebrow">@T("payment.summary", "Podsumowanie")</p>
+                        <h3>@T("payment.total", "Łącznie")</h3>
                         <div class="summary-amount">@Model.TotalPrice.ToString("0.00") zł</div>
-                        <p class="muted">Wybierz metodę płatności, a następnie zatwierdź zamówienie.</p>
+                        <p class="muted">@T("payment.summary.subtitle", "Wybierz metodę płatności, a następnie zatwierdź zamówienie.")</p>
                         <div class="summary-actions">
-                            <a asp-page="/Cart" class="btn ghost">Wróć do koszyka</a>
-                            <button type="submit" class="btn primary">Zapłać</button>
+                            <a asp-page="/Cart" class="btn ghost">@T("payment.backToCart", "Wróć do koszyka")</a>
+                            <button type="submit" class="btn primary">@T("payment.pay", "Zapłać")</button>
                         </div>
                     </div>
                 </div>

@@ -14,8 +14,10 @@ options.UseSqlServer(
         sqlOptions => sqlOptions.EnableRetryOnFailure()));
 
 builder.Services.AddRazorPages();
+builder.Services.AddMemoryCache();
 builder.Services.AddSession(); // potrzebne dla koszyka
-builder.Services.AddSingleton<OrderUpdateNotifier>(); //odœwie¿anie widoku orderdisplay
+builder.Services.AddScoped<LanguageService>();
+builder.Services.AddSingleton<OrderUpdateNotifier>(); //odÅ“wieÂ¿anie widoku orderdisplay
 builder.Services.AddScoped<SiteSettingsService>();
 var app = builder.Build();
 
@@ -46,7 +48,7 @@ app.MapPost("/api/orders/{id:int}/ready", async (int id, KioskDbContext db, Orde
 
     if (order.IsClosed)
     {
-        return Results.BadRequest(new { message = "Zamówienie zosta³o ju¿ zamkniête." });
+        return Results.BadRequest(new { message = "ZamÃ³wienie zostaÂ³o juÂ¿ zamkniÃªte." });
     }
 
     order.IsReady = true;
@@ -67,7 +69,7 @@ app.MapPost("/api/orders/{id:int}/complete", async (int id, KioskDbContext db, O
 
     if (order.IsClosed)
     {
-        return Results.BadRequest(new { message = "Zamówienie zosta³o ju¿ zamkniête." });
+        return Results.BadRequest(new { message = "ZamÃ³wienie zostaÂ³o juÂ¿ zamkniÃªte." });
     }
 
     order.IsReady = true;
@@ -106,6 +108,24 @@ app.MapGet("/api/orders/updates", async (HttpContext context, OrderUpdateNotifie
     }
 });
 
+
+
+app.MapPost("/api/language/{area}/{language}", async (string area, string language, HttpContext context, LanguageService languageService) =>
+{
+    if (Enum.TryParse<LanguageArea>(area, true, out var parsedArea))
+    {
+        if (parsedArea == LanguageArea.Ordering)
+        {
+            languageService.SetOrderingLanguage(context, language);
+            return Results.Ok();
+        }
+
+        await languageService.UpdatePersistentLanguageAsync(parsedArea, language);
+        return Results.Ok();
+    }
+
+    return Results.BadRequest();
+});
 
 app.MapRazorPages();
 app.Run();

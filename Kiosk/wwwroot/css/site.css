@@ -19,6 +19,40 @@
     box-sizing: border-box;
 }
 
+.language-switcher {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    display: flex;
+    gap: 8px;
+    z-index: 1200;
+}
+
+.language-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 1px solid #d5d5d5;
+    background: #fff;
+    color: #1f2937;
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    transition: transform 0.1s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.language-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.language-btn.is-active {
+    background: linear-gradient(135deg, #0ea5e9, #2563eb);
+    color: #fff;
+    border-color: transparent;
+}
+
 html, body {
     margin: 0;
     padding: 0;

@@ -21,6 +21,45 @@
     <div class="admin-card">
         <div class="card-heading">
             <div>
+                <p class="eyebrow">Języki</p>
+                <h3>Ustawienia językowe</h3>
+                <p class="muted">Zapisz język panelu administracyjnego, widoku kuchni i ekranu zamówień.</p>
+            </div>
+        </div>
+        <form method="post" asp-page-handler="UpdateLanguages" class="admin-form compact">
+            <div class="form-grid">
+                <div class="form-field">
+                    <label for="admin-language">Panel administratora</label>
+                    <select id="admin-language" asp-for="AdminLanguage">
+                        <option value="pl">Polski</option>
+                        <option value="en">English</option>
+                        <option value="de">Deutsch</option>
+                    </select>
+                </div>
+                <div class="form-field">
+                    <label for="kitchen-language">Widok kuchni</label>
+                    <select id="kitchen-language" asp-for="KitchenLanguage">
+                        <option value="pl">Polski</option>
+                        <option value="en">English</option>
+                        <option value="de">Deutsch</option>
+                    </select>
+                </div>
+                <div class="form-field">
+                    <label for="display-language">Ekran zamówień</label>
+                    <select id="display-language" asp-for="OrderDisplayLanguage">
+                        <option value="pl">Polski</option>
+                        <option value="en">English</option>
+                        <option value="de">Deutsch</option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="btn primary full-width">Zapisz języki</button>
+        </form>
+    </div>
+
+    <div class="admin-card">
+        <div class="card-heading">
+            <div>
                 <p class="eyebrow">Polecenia</p>
                 <h3>Polecane produkty</h3>
             </div>

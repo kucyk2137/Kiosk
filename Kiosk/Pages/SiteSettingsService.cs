@@ -17,23 +17,29 @@ namespace Kiosk.Services
             _cache = cache;
         }
 
-        public async Task<string?> GetHeaderBackgroundAsync()
+        public SiteSettings GetCachedSettings()
         {
-            if (_cache.TryGetValue(CacheKey, out string? cachedPath))
+            if (_cache.TryGetValue(CacheKey, out SiteSettings? cachedSettings) && cachedSettings is not null)
             {
-                return string.IsNullOrWhiteSpace(cachedPath) ? null : cachedPath;
+                return cachedSettings;
             }
 
-            var settings = await _context.SiteSettings.AsNoTracking().FirstOrDefaultAsync();
+            var settings = _context.SiteSettings.AsNoTracking().FirstOrDefault();
 
             if (settings is null)
             {
                 settings = new SiteSettings();
                 _context.SiteSettings.Add(settings);
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
             }
 
-            _cache.Set(CacheKey, settings.HeaderBackgroundPath ?? string.Empty);
+            _cache.Set(CacheKey, settings);
+            return settings;
+        }
+
+        public async Task<string?> GetHeaderBackgroundAsync()
+        {
+            var settings = GetCachedSettings();
             return settings.HeaderBackgroundPath;
         }
 
@@ -49,7 +55,47 @@ namespace Kiosk.Services
 
             settings.HeaderBackgroundPath = newPath;
             await _context.SaveChangesAsync();
-            _cache.Set(CacheKey, newPath ?? string.Empty);
+            _cache.Set(CacheKey, settings);
+        }
+
+        public async Task UpdateAdminLanguageAsync(string language)
+        {
+            var settings = await EnsureSettingsAsync();
+            settings.AdminLanguage = language;
+            await PersistAsync(settings);
+        }
+
+        public async Task UpdateKitchenLanguageAsync(string language)
+        {
+            var settings = await EnsureSettingsAsync();
+            settings.KitchenLanguage = language;
+            await PersistAsync(settings);
+        }
+
+        public async Task UpdateOrderDisplayLanguageAsync(string language)
+        {
+            var settings = await EnsureSettingsAsync();
+            settings.OrderDisplayLanguage = language;
+            await PersistAsync(settings);
+        }
+
+        private async Task<SiteSettings> EnsureSettingsAsync()
+        {
+            var settings = await _context.SiteSettings.FirstOrDefaultAsync();
+
+            if (settings is null)
+            {
+                settings = new SiteSettings();
+                _context.SiteSettings.Add(settings);
+            }
+
+            return settings;
+        }
+
+        private async Task PersistAsync(SiteSettings settings)
+        {
+            await _context.SaveChangesAsync();
+            _cache.Set(CacheKey, settings);
         }
     }
 }

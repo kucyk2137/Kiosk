@@ -2,9 +2,11 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc;
 using Kiosk.Data;
 using Kiosk.Models;
+using Kiosk.Services;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 
 namespace Kiosk.Pages.Admin
@@ -12,15 +14,25 @@ namespace Kiosk.Pages.Admin
     public class IndexModel : PageModel
     {
         private readonly KioskDbContext _context;
+        private readonly SiteSettingsService _siteSettingsService;
+        private readonly LanguageService _languageService;
 
-        public IndexModel(KioskDbContext context)
+        public IndexModel(KioskDbContext context, SiteSettingsService siteSettingsService, LanguageService languageService)
         {
             _context = context;
+            _siteSettingsService = siteSettingsService;
+            _languageService = languageService;
         }
 
         public List<MenuItem> MenuItems { get; set; } = new();
         public List<MenuItem> RecommendedMenuItems { get; set; } = new();
         public List<MenuItem> AvailableForRecommendation { get; set; } = new();
+        [BindProperty]
+        public string AdminLanguage { get; set; } = "pl";
+        [BindProperty]
+        public string KitchenLanguage { get; set; } = "pl";
+        [BindProperty]
+        public string OrderDisplayLanguage { get; set; } = "pl";
         public void OnGet()
         {
 
@@ -40,6 +52,11 @@ namespace Kiosk.Pages.Admin
                 .Where(m => !recommendedIds.Contains(m.Id))
                 .OrderBy(m => m.Name)
                 .ToList();
+
+            var settings = _siteSettingsService.GetCachedSettings();
+            AdminLanguage = settings.AdminLanguage ?? "pl";
+            KitchenLanguage = settings.KitchenLanguage ?? "pl";
+            OrderDisplayLanguage = settings.OrderDisplayLanguage ?? "pl";
         }
 
         public IActionResult OnPostDelete(int MenuItemId)
@@ -73,6 +90,15 @@ namespace Kiosk.Pages.Admin
                 _context.SaveChanges();
             }
 
+            return RedirectToPage();
+        }
+
+        public async Task<IActionResult> OnPostUpdateLanguagesAsync()
+        {
+            await _languageService.UpdatePersistentLanguageAsync(LanguageArea.Admin, AdminLanguage);
+            await _languageService.UpdatePersistentLanguageAsync(LanguageArea.Kitchen, KitchenLanguage);
+            await _languageService.UpdatePersistentLanguageAsync(LanguageArea.OrderDisplay, OrderDisplayLanguage);
+            TempData["StatusMessage"] = "Ustawienia językowe zostały zapisane.";
             return RedirectToPage();
         }
     }
