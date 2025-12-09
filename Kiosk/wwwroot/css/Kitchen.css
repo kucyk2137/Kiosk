@@ -51,6 +51,11 @@
     position: relative;
 }
 
+    .kitchen-card.is-ready {
+        border-color: rgba(74, 222, 128, 0.35);
+        box-shadow: 0 18px 45px rgba(74, 222, 128, 0.28);
+    }
+
 .kitchen-card--history {
     background: rgba(255, 255, 255, 0.03);
 }

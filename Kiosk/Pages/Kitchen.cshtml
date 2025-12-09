@@ -124,6 +124,10 @@
         orders.forEach(order => {
             const card = document.createElement('article');
             card.className = 'kitchen-card';
+            if (order.isReady) {
+                card.classList.add('is-ready');
+            }
+            card.dataset.isReady = order.isReady;
             card.innerHTML = `
                         <header class="card-head">
                             <div>
@@ -132,6 +136,7 @@
                             </div>
                             <div class="badge-row">
                                 <span class="pill pill--accent">${order.paymentMethod}</span>
+                                    ${order.isReady ? '<span class="pill pill--success">Gotowe</span>' : ''}
                             </div>
                         </header>
                         <div class="card-body">
@@ -146,7 +151,7 @@
                             `).join('')}
                         </div>
                         <footer class="card-actions">
-                            <button class="done-btn" data-order-id="${order.orderId}">Gotowe</button>
+                                <button class="done-btn" data-order-id="${order.orderId}">${order.isReady ? 'Odebrane' : 'Gotowe'}</button>
                         </footer>`;
 
             card.querySelector('.done-btn').addEventListener('click', () => markDone(order.orderId, card));
@@ -156,11 +161,23 @@
 
     const markDone = async (orderId, card) => {
         card.classList.add('is-processing');
+        const isReady = card.dataset.isReady === 'true';
+        const endpoint = isReady ? 'complete' : 'ready';
         try {
-            const response = await fetch(`/api/orders/${orderId}/complete`, { method: 'POST' });
+            const response = await fetch(`/api/orders/${orderId}/${endpoint}`, { method: 'POST' });
             if (!response.ok) {
                 const payload = await response.json().catch(() => ({}));
-                alert(payload.message || 'Nie udało się zamknąć zamówienia.');
+                const defaultMessage = isReady
+                    ? 'Nie udało się zamknąć zamówienia.'
+                    : 'Nie udało się oznaczyć zamówienia jako gotowe.';
+                alert(payload.message || defaultMessage);
+            }
+            if (!isReady) {
+                card.dataset.isReady = 'true';
+                card.classList.add('is-ready');
+                card.querySelector('.done-btn').textContent = 'Odebrane';
+                card.querySelector('.badge-row')
+                    .insertAdjacentHTML('beforeend', '<span class="pill pill--success">Gotowe</span>');
             }
             await loadOrders();
         } catch (err) {
