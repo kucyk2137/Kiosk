@@ -22,7 +22,7 @@
             </p>
 
             <div class="summary-actions" style="justify-content:center; margin-top:12px;">
-                <button id="finish-btn" class="primary-btn"
+                <button id="finish-btn" class="btn primary"
                         onclick="window.location.href='@Url.Page("/lockscreen")'">
                     Zakończ
                 </button>
@@ -68,8 +68,8 @@
                         <div class="summary-amount">@Model.TotalPrice.ToString("0.00") zł</div>
                         <p class="muted">Wybierz metodę płatności, a następnie zatwierdź zamówienie.</p>
                         <div class="summary-actions">
-                            <a asp-page="/Cart" class="ghost-btn">Wróć do koszyka</a>
-                            <button type="submit" class="checkout-btn">Zapłać</button>
+                            <a asp-page="/Cart" class="btn ghost">Wróć do koszyka</a>
+                            <button type="submit" class="btn primary">Zapłać</button>
                         </div>
                     </div>
                 </div>

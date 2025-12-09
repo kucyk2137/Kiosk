@@ -106,10 +106,10 @@
                         <span>@Model.TotalPrice.ToString("0.00") zł</span>
                     </div>
                     <form method="post" asp-page-handler="Checkout">
-                        <button type="submit" class="checkout-btn">Zapłać</button>
+                        <button type="submit" class="btn primary pill full-width checkout-btn">Zapłać</button>
                     </form>
 
-                    <a asp-page="/Menu" class="back-btn">Wróć do menu</a>
+                    <a asp-page="/Menu" class="btn danger back-btn">Wróć do menu</a>
                 </div>
             </div>
         </div>
