@@ -32,11 +32,13 @@ namespace Kiosk.Pages
             ProductsWithSets = _context.ProductSetItems
                .Select(p => p.MenuItemId)
                .ToHashSet();
+            var cart = HttpContext.Session.GetObjectFromJson<List<OrderItem>>("Cart") ?? new List<OrderItem>();
+            var cartMenuItemIds = cart.Select(c => c.MenuItemId).ToHashSet();
             // produkty polecane (globalnie)
             RecommendedItems = _context.RecommendedProducts
                 .Include(rp => rp.MenuItem)!
                 .ThenInclude(m => m.Category)
-                .Where(rp => rp.MenuItem != null)
+                .Where(rp => rp.MenuItem != null && !cartMenuItemIds.Contains(rp.MenuItem.Id))
                 .Select(rp => rp.MenuItem!)
                 .ToList();
 

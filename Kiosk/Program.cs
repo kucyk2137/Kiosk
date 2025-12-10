@@ -4,6 +4,7 @@ using Kiosk.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,16 +23,30 @@ var app = builder.Build();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseSession();
+app.Use(async (context, next) =>
+{
+    var path = context.Request.Path;
+
+    if (path.StartsWithSegments("/Admin", out var remaining) &&
+        !remaining.StartsWithSegments("/Login") &&
+        context.Session.GetString("IsAdmin") != "true")
+    {
+        context.Response.Redirect("/Admin/Login");
+        return;
+    }
+
+    await next();
+});
 app.MapGet("/api/orders", async (KioskDbContext db) =>
 {
-    var orders = await MapOrders(db.Orders.Where(o => !o.IsClosed)).ToListAsync();
+    var orders = await MapOrders(db, db.Orders.Where(o => !o.IsClosed));
 
     return Results.Ok(orders);
 });
 
 app.MapGet("/api/orders/history", async (KioskDbContext db) =>
 {
-    var orders = await MapOrders(db.Orders.Where(o => o.IsClosed)).ToListAsync();
+    var orders = await MapOrders(db, db.Orders.Where(o => o.IsClosed));
     return Results.Ok(orders);
 });
 
@@ -109,11 +124,30 @@ app.MapGet("/api/orders/updates", async (HttpContext context, OrderUpdateNotifie
 
 app.MapRazorPages();
 app.Run();
-static IQueryable<KitchenOrderDto> MapOrders(IQueryable<Order> queryable) => queryable
-    .Include(o => o.Items)
-    .ThenInclude(i => i.MenuItem)
-    .OrderByDescending(o => o.OrderDate)
-    .Select(o => new KitchenOrderDto
+static async Task<List<KitchenOrderDto>> MapOrders(KioskDbContext db, IQueryable<Order> queryable)
+{
+    var orders = await queryable
+        .Include(o => o.Items)
+            .ThenInclude(i => i.MenuItem)
+                .ThenInclude(mi => mi.Ingredients)
+        .OrderByDescending(o => o.OrderDate)
+        .ToListAsync();
+
+    var menuItemIds = orders
+        .SelectMany(o => o.Items)
+        .Select(i => i.MenuItem?.Id)
+        .Where(id => id.HasValue)
+        .Select(id => id!.Value)
+        .ToHashSet();
+
+    var setLookup = await db.ProductSets
+        .Where(ps => menuItemIds.Contains(ps.SetMenuItemId))
+        .Include(ps => ps.Items)
+            .ThenInclude(psi => psi.MenuItem)
+                .ThenInclude(mi => mi.Ingredients)
+        .ToDictionaryAsync(ps => ps.SetMenuItemId);
+
+    return orders.Select(o => new KitchenOrderDto
     {
         OrderId = o.Id,
         OrderDate = o.OrderDate,
@@ -124,20 +158,59 @@ static IQueryable<KitchenOrderDto> MapOrders(IQueryable<Order> queryable) => que
         IsClosed = o.IsClosed,
         Items = o.Items
             .Where(i => i.MenuItem != null)
-            .Select(i => new KitchenOrderItemDto
-            {
-                DishName = i.MenuItem.Name,
-                Quantity = i.Quantity,
-                UnitPrice = i.MenuItem.Price,
-                Ingredients = i.SelectedIngredients,
-                DefaultIngredients = i.MenuItem.Ingredients
-                    .Where(ing => ing.IsDefault)
-                    .Select(ing => ing.Name)
-                    .ToList(),
-                OptionalIngredients = i.MenuItem.Ingredients
-                    .Where(ing => !ing.IsDefault)
-                    .Select(ing => ing.Name)
-                    .ToList()
-            })
+            .Select(i => MapKitchenOrderItem(i, setLookup))
             .ToList()
-    });
+    }).ToList();
+}
+
+static KitchenOrderItemDto MapKitchenOrderItem(OrderItem item, Dictionary<int, ProductSet> setLookup)
+{
+    var menuItem = item.MenuItem!;
+    var (defaultIngredients, optionalIngredients) = BuildIngredientLists(menuItem, setLookup);
+
+    return new KitchenOrderItemDto
+    {
+        DishName = menuItem.Name,
+        Quantity = item.Quantity,
+        UnitPrice = menuItem.Price,
+        Ingredients = item.SelectedIngredients,
+        DefaultIngredients = defaultIngredients,
+        OptionalIngredients = optionalIngredients
+    };
+}
+
+static (List<string> defaults, List<string> optionals) BuildIngredientLists(MenuItem menuItem, Dictionary<int, ProductSet> setLookup)
+{
+    if (setLookup.TryGetValue(menuItem.Id, out var productSet))
+    {
+        var setDefaults = new List<string>();
+        var setOptionals = new List<string>();
+
+        foreach (var setItem in productSet.Items.Where(si => si.MenuItem != null))
+        {
+            var productName = setItem.MenuItem!.Name;
+
+            setDefaults.AddRange(setItem.MenuItem.Ingredients
+                .Where(ing => ing.IsDefault)
+                .Select(ing => $"{productName}: {ing.Name}"));
+
+            setOptionals.AddRange(setItem.MenuItem.Ingredients
+                .Where(ing => !ing.IsDefault)
+                .Select(ing => $"{productName}: {ing.Name}"));
+        }
+
+        return (setDefaults, setOptionals);
+    }
+
+    var defaults = menuItem.Ingredients
+        .Where(ing => ing.IsDefault)
+        .Select(ing => ing.Name)
+        .ToList();
+
+    var optionals = menuItem.Ingredients
+        .Where(ing => !ing.IsDefault)
+        .Select(ing => ing.Name)
+        .ToList();
+
+    return (defaults, optionals);
+}

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Kiosk.Migrations
 {
     /// <inheritdoc />
-    public partial class KIOSK : Migration
+    public partial class kiosk : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
