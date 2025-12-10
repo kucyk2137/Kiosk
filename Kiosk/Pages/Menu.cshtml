@@ -165,6 +165,14 @@
         </div>
     </div>
 </div>
+<script>
+    window.kioskInactivityConfig = {
+        lockscreenUrl: '@Url.Page("/LockScreen")',
+        idleTimeoutMs: 40000,
+        promptTimeoutMs: 15000
+    };
+</script>
+<script src="~/js/inactivity.js"></script>
 <script src="~/js/ingredient.js"></script>
 <script src="~/js/recommended.js">
     </script>
