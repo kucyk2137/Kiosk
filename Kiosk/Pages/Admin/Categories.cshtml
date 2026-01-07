@@ -1,45 +1,50 @@
 ﻿@page
 @model Kiosk.Pages.Admin.CategoriesModel
+@using Kiosk.Extensions
+@using System.Globalization
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 <link rel="stylesheet" href="~/css/admin.css" />
+@{
+    var culture = CultureInfo.CurrentUICulture;
+}
 
 <div class="admin-shell">
     <div class="admin-heading">
         <div>
-            <p class="eyebrow">Panel administracyjny</p>
-            <h2>Kategorie</h2>
-            <p class="muted">Porządkuj menu i przypisuj produkty do właściwych działów.</p>
+            <p class="eyebrow">@Localizer["Panel administracyjny"]</p>
+            <h2>@Localizer["Kategorie"]</h2>
+            <p class="muted">@Localizer["Porządkuj menu i przypisuj produkty do właściwych działów."]</p>
         </div>
         <div class="admin-actions">
-            <a asp-page="AddCategory" class="btn primary">Dodaj kategorię</a>
-            <a asp-page="Index" class="btn ghost">Powrót</a>
+            <a asp-page="AddCategory" class="btn primary">@Localizer["Dodaj kategorię"]</a>
+            <a asp-page="Index" class="btn ghost">@Localizer["Powrót"]</a>
         </div>
     </div>
 
     <div class="admin-card">
         <div class="card-heading">
-            <p class="eyebrow">Kategorie</p>
-            <h3>Lista kategorii</h3>
+            <p class="eyebrow">@Localizer["Kategorie"]</p>
+            <h3>@Localizer["Lista kategorii"]</h3>
         </div>
 
         <table class="admin-table">
             <thead>
                 <tr>
-                    <th>Nazwa</th>
-                    <th class="text-right">Opcje</th>
+                    <th>@Localizer["Nazwa"]</th>
+                    <th class="text-right">@Localizer["Opcje"]</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var cat in Model.Categories)
                 {
                     <tr>
-                        <td>@cat.Name</td>
+                        <td>@cat.GetDisplayName(culture)</td>
                         <td class="text-right">
                             <div class="table-actions">
-                                <a asp-page="EditCategory" asp-route-id="@cat.Id" class="btn ghost">Edytuj</a>
+                                <a asp-page="EditCategory" asp-route-id="@cat.Id" class="btn ghost">@Localizer["Edytuj"]</a>
                                 <form method="post" asp-page-handler="Delete" class="inline-form">
                                     <input type="hidden" name="CategoryId" value="@cat.Id" />
-                                    <button type="submit" class="btn danger">Usuń</button>
+                                    <button type="submit" class="btn danger">@Localizer["Usuń"]</button>
                                 </form>
                             </div>
                         </td>

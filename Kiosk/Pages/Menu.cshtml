@@ -2,16 +2,18 @@
 @using Kiosk.Models
 @using Kiosk.Extensions
 @using Microsoft.AspNetCore.Http
+@using System.Globalization
 
 @model Kiosk.Pages.MenuModel
 <link rel="stylesheet" href="~/css/Layout.css" />
 <link rel="stylesheet" href="~/css/popup.css" />
 @{
-    ViewData["Title"] = "Menu";
-    ViewData["PageHeaderTitle"] = "Menu";
+    ViewData["Title"] = Localizer["Menu"];
+    ViewData["PageHeaderTitle"] = Localizer["Menu"];
     var cartItems = HttpContext.Session.GetObjectFromJson<List<OrderItem>>("Cart") ?? new List<OrderItem>();
     var cartCount = cartItems.Count;
-    var isSetCategory = Model.SelectedCategory?.Name?.Equals("Zestawy", StringComparison.OrdinalIgnoreCase) == true;
+    var culture = CultureInfo.CurrentUICulture;
+    var isSetCategory = Model.SelectedCategory?.IsSetsCategory() == true;
 }
 
 <div class="menu-page">
@@ -21,14 +23,14 @@
             <form method="get">
                 <input type="hidden" name="categoryId" value="@category.Id" />
                 <button type="submit" class="category-btn">
-                    <img src="@category.Image" alt="@category.Name" class="category-icon" width="25" height="25"/>
-                    <span>@category.Name</span>
+                    <img src="@category.Image" alt="@category.GetDisplayName(culture)" class="category-icon" width="25" height="25"/>
+                    <span>@category.GetDisplayName(culture)</span>
                 </button>
             </form>
         }
         <form method="get" asp-page="/Cart" id="cart-form">
             <button type="button" class="cart-btn" id="cart-btn" data-cart-count="@cartCount">
-                Koszyk (@cartCount)
+                @Localizer["Koszyk"] (@cartCount)
             </button>
         </form>
     </div>
@@ -41,14 +43,14 @@
                 @foreach (var item in Model.Products)
                 {
                     <div class="menu-item">
-                        <img src="@item.Image" alt="@item.Name" width="100" />
-                        <h3>@item.Name</h3>
-                        <p>@item.Description</p>
+                        <img src="@item.Image" alt="@item.GetDisplayName(culture)" width="100" />
+                        <h3>@item.GetDisplayName(culture)</h3>
+                        <p>@item.GetDisplayDescription(culture)</p>
                         @if (Model.SetContents.ContainsKey(item.Id))
                         {
-                            <p class="muted">W zestawie: @string.Join(", ", Model.SetContents[item.Id])</p>
+                            <p class="muted">@Localizer["W zestawie:"] @string.Join(", ", Model.SetContents[item.Id])</p>
                         }
-                        <p>Cena: @item.Price.ToString("0.00") zł</p>
+                        <p>@Localizer["Cena:"] @item.Price.ToString("0.00") zł</p>
 
                         <form method="post" class="add-to-cart-form">
                             <input type="hidden" name="menuItemId" value="@item.Id" />
@@ -60,7 +62,7 @@
                                     data-menu-item-id="@item.Id"
                                     data-has-set="@Model.ProductsWithSets.Contains(item.Id).ToString().ToLower()"
                                     data-is-set="@isSetCategory.ToString().ToLower()">
-                                Dodaj do koszyka
+                                @Localizer["Dodaj do koszyka"]
                             </button>
                         </form>
                     </div>
@@ -69,7 +71,7 @@
         }
         else
         {
-            <p>Wybierz kategorię, aby zobaczyć produkty.</p>
+            <p>@Localizer["Wybierz kategorię, aby zobaczyć produkty."]</p>
         }
     </div>
 </div>
@@ -78,9 +80,9 @@
     <div id="recommended-modal" class="modal" style="display:none;">
         <div class="modal-content recommended-modal">
             <div class="recommended-header">
-                <p class="eyebrow">Produkty polecane</p>
-                <h3>Co powiesz na coś dodatkowego?</h3>
-                <p class="muted">Dodaj jedną z naszych propozycji zanim przejdziesz do podsumowania.</p>
+                <p class="eyebrow">@Localizer["Produkty polecane"]</p>
+                <h3>@Localizer["Co powiesz na coś dodatkowego?"]</h3>
+                <p class="muted">@Localizer["Dodaj jedną z naszych propozycji zanim przejdziesz do podsumowania."]</p>
             </div>
 
             <div class="recommended-grid">
@@ -88,11 +90,11 @@
                 {
                     <div class="recommended-card">
                         <div class="recommended-media">
-                            <img src="@item.Image" alt="@item.Name" />
+                            <img src="@item.Image" alt="@item.GetDisplayName(culture)" />
                         </div>
                         <div class="recommended-info">
-                            <div class="cell-title">@item.Name</div>
-                            <p class="muted">@item.Description</p>
+                            <div class="cell-title">@item.GetDisplayName(culture)</div>
+                            <p class="muted">@item.GetDisplayDescription(culture)</p>
                             <div class="recommended-price">@item.Price.ToString("0.00") zł</div>
 
                             <form method="post" class="recommended-add-form">
@@ -100,7 +102,7 @@
                                 <input type="hidden" name="categoryId" value="@item.CategoryId" />
                                 <input type="hidden" name="selectedIngredients" value="[]" />
                                 <input type="hidden" name="quantity" value="1" />
-                                <button type="submit" class="recommend-add-btn">Dodaj do koszyka</button>
+                                <button type="submit" class="recommend-add-btn">@Localizer["Dodaj do koszyka"]</button>
                             </form>
                         </div>
                     </div>
@@ -108,39 +110,39 @@
             </div>
 
             <div class="modal-actions recommended-actions">
-                <button type="button" id="recommended-go-to-cart" class="recommend-cart-btn">Przejdź do koszyka</button>
-                <button type="button" id="recommended-continue" class="recommend-continue-btn">Kontynuuj zakupy</button>
+                <button type="button" id="recommended-go-to-cart" class="recommend-cart-btn">@Localizer["Przejdź do koszyka"]</button>
+                <button type="button" id="recommended-continue" class="recommend-continue-btn">@Localizer["Kontynuuj zakupy"]</button>
             </div>
         </div>
     </div>
 }
 <div id="set-choice-modal" class="modal" style="display:none;">
     <div class="modal-content">
-        <h3>Jak dodać produkt?</h3>
-        <p class="muted">Możesz dodać pozycję osobno lub wybrać jeden z dostępnych zestawów.</p>
+        <h3>@Localizer["Jak dodać produkt?"]</h3>
+        <p class="muted">@Localizer["Możesz dodać pozycję osobno lub wybrać jeden z dostępnych zestawów."]</p>
         <div class="modal-actions">
-            <button type="button" id="set-without-btn">Bez zestawu</button>
-            <button type="button" id="set-with-btn" class="recommend-add-btn">Dodaj w zestawie</button>
+            <button type="button" id="set-without-btn">@Localizer["Bez zestawu"]</button>
+            <button type="button" id="set-with-btn" class="recommend-add-btn">@Localizer["Dodaj w zestawie"]</button>
         </div>
     </div>
 </div>
 <div id="set-list-modal" class="modal" style="display:none;">
     <div class="modal-content">
-        <h3>Wybierz zestaw</h3>
-        <p class="muted">Poniżej pokazujemy tylko zestawy zawierające wybrany produkt.</p>
+        <h3>@Localizer["Wybierz zestaw"]</h3>
+        <p class="muted">@Localizer["Poniżej pokazujemy tylko zestawy zawierające wybrany produkt."]</p>
         <div id="set-list-container" class="recommended-grid"></div>
         <div class="modal-actions">
-            <button type="button" id="set-list-close">Zamknij</button>
+            <button type="button" id="set-list-close">@Localizer["Zamknij"]</button>
         </div>
     </div>
 </div>
 <!-- POPUP WYBORU SKŁADNIKÓW (IDENTYCZNY STYL JAK W KOSZYKU) -->
 <div id="add-item-modal" class="modal" style="display:none;">
     <div class="modal-content">
-        <h3>Dodaj produkt</h3>
+        <h3>@Localizer["Dodaj produkt"]</h3>
 
         <div class="edit-modal-section">
-            <label>Ilość:</label>
+            <label>@Localizer["Ilość:"]</label>
             <div class="qty-control">
                 <button type="button" id="qty-minus">−</button>
                 <span id="qty-value">1</span>
@@ -149,19 +151,19 @@
         </div>
 
         <div class="edit-modal-section">
-            <h4>Składniki główne</h4>
+            <h4>@Localizer["Składniki główne"]</h4>
             <div id="add-default-ingredients" class="ingredients-list"></div>
         </div>
 
         <div class="edit-modal-section">
-            <h4>Dodatki</h4>
-            <div class="addon-counter">Wybrane dodatki: <span id="add-optional-count">0/3</span></div>
+            <h4>@Localizer["Dodatki"]</h4>
+            <div class="addon-counter">@Localizer["Wybrane dodatki:"] <span id="add-optional-count">0/3</span></div>
             <div id="add-optional-ingredients" class="ingredients-list"></div>
         </div>
 
         <div class="modal-actions">
-            <button type="button" id="add-cancel">Anuluj</button>
-            <button type="button" id="add-confirm">Dodaj do koszyka</button>
+            <button type="button" id="add-cancel">@Localizer["Anuluj"]</button>
+            <button type="button" id="add-confirm">@Localizer["Dodaj do koszyka"]</button>
         </div>
     </div>
 </div>

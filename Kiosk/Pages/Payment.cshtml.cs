@@ -1,11 +1,14 @@
 using Kiosk.Data;
 using Kiosk.Extensions;
 using Kiosk.Models;
+using Kiosk.Resources;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 
@@ -14,10 +17,12 @@ namespace Kiosk.Pages
     public class PaymentModel : PageModel
     {
         private readonly KioskDbContext _context;
+        private readonly IStringLocalizer<SharedResource> _localizer;
 
-        public PaymentModel(KioskDbContext context)
+        public PaymentModel(KioskDbContext context, IStringLocalizer<SharedResource> localizer)
         {
             _context = context;
+            _localizer = localizer;
         }
 
         [BindProperty]
@@ -51,7 +56,7 @@ namespace Kiosk.Pages
 
             if (string.IsNullOrWhiteSpace(SelectedPaymentMethod))
             {
-                ModelState.AddModelError(string.Empty, "Wybierz metodê p³atnoœci.");
+                ModelState.AddModelError(string.Empty, _localizer["Wybierz metodÄ™ pÅ‚atnoÅ›ci."]);
                 return Page();
             }
 
@@ -85,12 +90,13 @@ namespace Kiosk.Pages
 
         private void CalculateTotals()
         {
+            var culture = CultureInfo.CurrentUICulture;
             var ids = Cart.Select(ci => ci.MenuItemId).ToList();
             var menuItems = _context.MenuItems.Where(m => ids.Contains(m.Id)).ToDictionary(m => m.Id, m => m);
             var ingredientLookup = _context.MenuItemIngredients
                 .Where(i => ids.Contains(i.MenuItemId))
                 .GroupBy(i => i.MenuItemId)
-                .ToDictionary(g => g.Key, g => g.ToDictionary(i => i.Name, i => i.AdditionalPrice));
+                .ToDictionary(g => g.Key, g => g.ToDictionary(i => i.GetDisplayName(culture), i => i.AdditionalPrice));
 
             TotalPrice = Cart
                 .Where(ci => menuItems.ContainsKey(ci.MenuItemId))

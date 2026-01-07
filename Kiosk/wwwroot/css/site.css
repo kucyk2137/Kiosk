@@ -31,6 +31,29 @@ body {
     color: var(--text-main);
 }
 
+.language-switcher {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 1100;
+}
+
+.language-toggle {
+    background: #ffffff;
+    border: 1px solid var(--panel-border);
+    border-radius: 999px;
+    color: var(--text-main);
+    font-weight: 700;
+    padding: 6px 12px;
+    cursor: pointer;
+    box-shadow: 0 10px 24px rgba(28, 36, 51, 0.12);
+}
+
+.language-toggle:hover {
+    border-color: #c6cfdb;
+    transform: translateY(-1px);
+}
+
 /* =======================
    GLOBAL BUTTON STYLES
    ======================= */

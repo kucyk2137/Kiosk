@@ -1,0 +1,612 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="-- Wybierz kategorię --" xml:space="preserve">
+    <value>-- Select category --</value>
+  </data>
+  <data name="0 w kolejce" xml:space="preserve">
+    <value>0 in queue</value>
+  </data>
+  <data name="Aktualizuj dane produktu, aby menu było zawsze na bieżąco." xml:space="preserve">
+    <value>Update product details so the menu is always current.</value>
+  </data>
+  <data name="Aktualne produkty" xml:space="preserve">
+    <value>Current products</value>
+  </data>
+  <data name="Aktualne tło" xml:space="preserve">
+    <value>Current background</value>
+  </data>
+  <data name="Aktualne zdjęcie" xml:space="preserve">
+    <value>Current image</value>
+  </data>
+  <data name="Anuluj" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Bez zestawu" xml:space="preserve">
+    <value>Without a set</value>
+  </data>
+  <data name="Brak" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="Brak historii" xml:space="preserve">
+    <value>No history</value>
+  </data>
+  <data name="Brak zamówień" xml:space="preserve">
+    <value>No orders</value>
+  </data>
+  <data name="Cena" xml:space="preserve">
+    <value>Price</value>
+  </data>
+  <data name="Cena zestawu" xml:space="preserve">
+    <value>Set price</value>
+  </data>
+  <data name="Cena:" xml:space="preserve">
+    <value>Price:</value>
+  </data>
+  <data name="Co powiesz na coś dodatkowego?" xml:space="preserve">
+    <value>How about something extra?</value>
+  </data>
+  <data name="Do zapłaty:" xml:space="preserve">
+    <value>Total due:</value>
+  </data>
+  <data name="Dodaj" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="Dodaj do koszyka" xml:space="preserve">
+    <value>Add to cart</value>
+  </data>
+  <data name="Dodaj do polecanych" xml:space="preserve">
+    <value>Add to featured</value>
+  </data>
+  <data name="Dodaj jedną z naszych propozycji zanim przejdziesz do podsumowania." xml:space="preserve">
+    <value>Add one of our suggestions before you proceed to the summary.</value>
+  </data>
+  <data name="Dodaj kategorię" xml:space="preserve">
+    <value>Add category</value>
+  </data>
+  <data name="Dodaj nowe zdjęcie tła, które zobaczą klienci na ekranie startowym." xml:space="preserve">
+    <value>Upload a new background image that customers will see on the start screen.</value>
+  </data>
+  <data name="Dodaj nowy produkt" xml:space="preserve">
+    <value>Add new product</value>
+  </data>
+  <data name="Dodaj nowy zestaw" xml:space="preserve">
+    <value>Add new set</value>
+  </data>
+  <data name="Dodaj produkt" xml:space="preserve">
+    <value>Add product</value>
+  </data>
+  <data name="Dodaj produkt do polecanych" xml:space="preserve">
+    <value>Add product to featured</value>
+  </data>
+  <data name="Dodaj w zestawie" xml:space="preserve">
+    <value>Add in a set</value>
+  </data>
+  <data name="Dodaj zestaw" xml:space="preserve">
+    <value>Add set</value>
+  </data>
+  <data name="Dodatki" xml:space="preserve">
+    <value>Extras</value>
+  </data>
+  <data name="Dodatki (EN)" xml:space="preserve">
+    <value>Extras (EN)</value>
+  </data>
+  <data name="Dodatki (PL)" xml:space="preserve">
+    <value>Extras (PL)</value>
+  </data>
+  <data name="Dodawaj, edytuj i usuwaj pozycje menu z jednego miejsca." xml:space="preserve">
+    <value>Add, edit, and remove menu items from one place.</value>
+  </data>
+  <data name="Domyślne składniki" xml:space="preserve">
+    <value>Default ingredients</value>
+  </data>
+  <data name="Domyślne składniki (EN)" xml:space="preserve">
+    <value>Default ingredients (EN)</value>
+  </data>
+  <data name="Domyślne składniki (PL)" xml:space="preserve">
+    <value>Default ingredients (PL)</value>
+  </data>
+  <data name="Dziękujemy za złożenie zamówienia" xml:space="preserve">
+    <value>Thank you for your order</value>
+  </data>
+  <data name="Edycja" xml:space="preserve">
+    <value>Editing</value>
+  </data>
+  <data name="Edytuj" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Edytuj kategorię" xml:space="preserve">
+    <value>Edit category</value>
+  </data>
+  <data name="Edytuj produkt" xml:space="preserve">
+    <value>Edit product</value>
+  </data>
+  <data name="Ekran startowy" xml:space="preserve">
+    <value>Start screen</value>
+  </data>
+  <data name="Formularz zawiera błędy:" xml:space="preserve">
+    <value>The form contains errors:</value>
+  </data>
+  <data name="Gdy kuchnia oznaczy Twoje zamówienie jako gotowe, numer podświetli się na zielono." xml:space="preserve">
+    <value>When the kitchen marks your order as ready, the number will turn green.</value>
+  </data>
+  <data name="Gdy tylko zamówienie trafi do kuchni, numer pokaże się na liście." xml:space="preserve">
+    <value>As soon as the order reaches the kitchen, the number will appear on the list.</value>
+  </data>
+  <data name="Gotowe" xml:space="preserve">
+    <value>Ready</value>
+  </data>
+  <data name="Gotowe do odbioru" xml:space="preserve">
+    <value>Ready for pickup</value>
+  </data>
+  <data name="Gotówka" xml:space="preserve">
+    <value>Cash</value>
+  </data>
+  <data name="Hasło" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="Historia zamówień" xml:space="preserve">
+    <value>Order history</value>
+  </data>
+  <data name="Ilość:" xml:space="preserve">
+    <value>Quantity:</value>
+  </data>
+  <data name="Informacje" xml:space="preserve">
+    <value>Information</value>
+  </data>
+  <data name="Jak chcesz zapłacić?" xml:space="preserve">
+    <value>How would you like to pay?</value>
+  </data>
+  <data name="Jak dodać produkt?" xml:space="preserve">
+    <value>How to add a product?</value>
+  </data>
+  <data name="Karta" xml:space="preserve">
+    <value>Card</value>
+  </data>
+  <data name="Kategoria" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="Kategoria dodana!" xml:space="preserve">
+    <value>Category added!</value>
+  </data>
+  <data name="Kategorie" xml:space="preserve">
+    <value>Categories</value>
+  </data>
+  <data name="Kontynuuj zakupy" xml:space="preserve">
+    <value>Continue shopping</value>
+  </data>
+  <data name="Koszyk" xml:space="preserve">
+    <value>Cart</value>
+  </data>
+  <data name="Koszyk jest pusty." xml:space="preserve">
+    <value>The cart is empty.</value>
+  </data>
+  <data name="Kuchnia" xml:space="preserve">
+    <value>Kitchen</value>
+  </data>
+  <data name="Lista kategorii" xml:space="preserve">
+    <value>Category list</value>
+  </data>
+  <data name="Lista produktów" xml:space="preserve">
+    <value>Product list</value>
+  </data>
+  <data name="Listę zamówień uzupełnimy gdy pojawią się nowe." xml:space="preserve">
+    <value>We will fill the order list when new ones appear.</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="Logowanie administratora" xml:space="preserve">
+    <value>Administrator login</value>
+  </data>
+  <data name="Menu" xml:space="preserve">
+    <value>Menu</value>
+  </data>
+  <data name="Możesz dodać pozycję osobno lub wybrać jeden z dostępnych zestawów." xml:space="preserve">
+    <value>You can add the item separately or choose one of the available sets.</value>
+  </data>
+  <data name="Na miejscu" xml:space="preserve">
+    <value>Dine in</value>
+  </data>
+  <data name="Na wynos" xml:space="preserve">
+    <value>Takeaway</value>
+  </data>
+  <data name="Nazwa" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Nazwa (EN)" xml:space="preserve">
+    <value>Name (EN)</value>
+  </data>
+  <data name="Nazwa (PL)" xml:space="preserve">
+    <value>Name (PL)</value>
+  </data>
+  <data name="Nazwa zestawu (EN)" xml:space="preserve">
+    <value>Set name (EN)</value>
+  </data>
+  <data name="Nazwa zestawu (PL)" xml:space="preserve">
+    <value>Set name (PL)</value>
+  </data>
+  <data name="Nie dodano jeszcze żadnych produktów polecanych." xml:space="preserve">
+    <value>No featured products have been added yet.</value>
+  </data>
+  <data name="Nie udało się oznaczyć zamówienia jako gotowe." xml:space="preserve">
+    <value>Failed to mark the order as ready.</value>
+  </data>
+  <data name="Nie udało się pobrać historii." xml:space="preserve">
+    <value>Failed to load history.</value>
+  </data>
+  <data name="Nie udało się pobrać listy zamówień." xml:space="preserve">
+    <value>Failed to fetch the order list.</value>
+  </data>
+  <data name="Nie udało się pobrać zamówień." xml:space="preserve">
+    <value>Failed to fetch orders.</value>
+  </data>
+  <data name="Nie udało się ustawić obrazu zestawu." xml:space="preserve">
+    <value>Failed to set the set image.</value>
+  </data>
+  <data name="Nie udało się zamknąć zamówienia." xml:space="preserve">
+    <value>Failed to close the order.</value>
+  </data>
+  <data name="Nie zamknięto jeszcze żadnych zamówień" xml:space="preserve">
+    <value>No orders have been closed yet</value>
+  </data>
+  <data name="Nowa kategoria" xml:space="preserve">
+    <value>New category</value>
+  </data>
+  <data name="Nowa kompozycja" xml:space="preserve">
+    <value>New combo</value>
+  </data>
+  <data name="Nowa pozycja" xml:space="preserve">
+    <value>New item</value>
+  </data>
+  <data name="Nowe zamówienia pojawiają się automatycznie – kliknij Gotowe gdy wydasz potrawy." xml:space="preserve">
+    <value>New orders appear automatically — click Ready when you serve dishes.</value>
+  </data>
+  <data name="Nowe zamówienia pokażą się tutaj natychmiast po złożeniu." xml:space="preserve">
+    <value>New orders will appear here immediately after being placed.</value>
+  </data>
+  <data name="Nowe zdjęcie kategorii (opcjonalnie)" xml:space="preserve">
+    <value>New category image (optional)</value>
+  </data>
+  <data name="Nowe zdjęcie produktu (opcjonalnie)" xml:space="preserve">
+    <value>New product image (optional)</value>
+  </data>
+  <data name="Numerki zamówień" xml:space="preserve">
+    <value>Order numbers</value>
+  </data>
+  <data name="Obraz (opcjonalnie)" xml:space="preserve">
+    <value>Image (optional)</value>
+  </data>
+  <data name="Obraz (plik)" xml:space="preserve">
+    <value>Image (file)</value>
+  </data>
+  <data name="Obraz kategorii" xml:space="preserve">
+    <value>Category image</value>
+  </data>
+  <data name="Oczekujące zamówienia" xml:space="preserve">
+    <value>Pending orders</value>
+  </data>
+  <data name="Odbiór zamówień" xml:space="preserve">
+    <value>Order pickup</value>
+  </data>
+  <data name="Odebrane" xml:space="preserve">
+    <value>Picked up</value>
+  </data>
+  <data name="Odśwież" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="Opcje" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="Opcjonalne dodatki (EN)" xml:space="preserve">
+    <value>Optional extras (EN)</value>
+  </data>
+  <data name="Opcjonalne dodatki (PL)" xml:space="preserve">
+    <value>Optional extras (PL)</value>
+  </data>
+  <data name="Opis (EN)" xml:space="preserve">
+    <value>Description (EN)</value>
+  </data>
+  <data name="Opis (PL)" xml:space="preserve">
+    <value>Description (PL)</value>
+  </data>
+  <data name="Opisz zestaw lub pozostaw puste aby wygenerować listę produktów." xml:space="preserve">
+    <value>Describe the set or leave empty to generate a product list.</value>
+  </data>
+  <data name="Opisz zestaw po angielsku lub pozostaw puste aby wygenerować listę produktów." xml:space="preserve">
+    <value>Describe the set in English or leave empty to generate a product list.</value>
+  </data>
+  <data name="Ostatnia aktualizacja:" xml:space="preserve">
+    <value>Last update:</value>
+  </data>
+  <data name="Panel administracyjny" xml:space="preserve">
+    <value>Admin panel</value>
+  </data>
+  <data name="Panel kuchni" xml:space="preserve">
+    <value>Kitchen panel</value>
+  </data>
+  <data name="Plik obrazu jest wymagany." xml:space="preserve">
+    <value>An image file is required.</value>
+  </data>
+  <data name="Podaj dane dostępowe, aby zarządzać treścią." xml:space="preserve">
+    <value>Enter credentials to manage content.</value>
+  </data>
+  <data name="Podatek" xml:space="preserve">
+    <value>Tax</value>
+  </data>
+  <data name="Podgląd" xml:space="preserve">
+    <value>Preview</value>
+  </data>
+  <data name="Podgląd tła LockScreen" xml:space="preserve">
+    <value>Lock screen background preview</value>
+  </data>
+  <data name="Podsumowanie" xml:space="preserve">
+    <value>Summary</value>
+  </data>
+  <data name="Pokaż ten numer przy odbiorze. Zamówienie pojawi się od razu na ekranie kuchni." xml:space="preserve">
+    <value>Show this number at pickup. The order will appear on the kitchen screen right away.</value>
+  </data>
+  <data name="Polecane produkty" xml:space="preserve">
+    <value>Featured products</value>
+  </data>
+  <data name="Polecenia" xml:space="preserve">
+    <value>Featured</value>
+  </data>
+  <data name="Poniżej pokazujemy tylko zestawy zawierające wybrany produkt." xml:space="preserve">
+    <value>Below we show only sets that contain the selected product.</value>
+  </data>
+  <data name="Popraw błędy w formularzu." xml:space="preserve">
+    <value>Fix the errors in the form.</value>
+  </data>
+  <data name="Porządkuj menu i przypisuj produkty do właściwych działów." xml:space="preserve">
+    <value>Organize the menu and assign products to the right sections.</value>
+  </data>
+  <data name="Powrót" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="Powrót do listy" xml:space="preserve">
+    <value>Back to list</value>
+  </data>
+  <data name="Pozostaw puste, aby zachować obecne zdjęcie lub podany URL." xml:space="preserve">
+    <value>Leave empty to keep the current image or provided URL.</value>
+  </data>
+  <data name="Pozostaw puste, aby zachować obecne zdjęcie." xml:space="preserve">
+    <value>Leave empty to keep the current image.</value>
+  </data>
+  <data name="Pozycja w koszyku" xml:space="preserve">
+    <value>Cart item</value>
+  </data>
+  <data name="Połącz dostępne produkty w atrakcyjny zestaw." xml:space="preserve">
+    <value>Combine available products into an attractive set.</value>
+  </data>
+  <data name="Produkt został dodany!" xml:space="preserve">
+    <value>Product has been added!</value>
+  </data>
+  <data name="Produkty polecane" xml:space="preserve">
+    <value>Recommended products</value>
+  </data>
+  <data name="Produkty w zestawie (minimum 2)" xml:space="preserve">
+    <value>Products in the set (minimum 2)</value>
+  </data>
+  <data name="Przejdź do koszyka" xml:space="preserve">
+    <value>Go to cart</value>
+  </data>
+  <data name="Przejdź do menu" xml:space="preserve">
+    <value>Go to menu</value>
+  </data>
+  <data name="Przepisz kod z aplikacji" xml:space="preserve">
+    <value>Enter the code from the app</value>
+  </data>
+  <data name="Prześlij nowe zdjęcie" xml:space="preserve">
+    <value>Upload a new image</value>
+  </data>
+  <data name="Prześlij zdjęcie, które będzie wyświetlane w tle sekcji nagłówka." xml:space="preserve">
+    <value>Upload an image that will be displayed in the header background.</value>
+  </data>
+  <data name="Przygotowywane" xml:space="preserve">
+    <value>Preparing</value>
+  </data>
+  <data name="Przykładowy nagłówek" xml:space="preserve">
+    <value>Sample header</value>
+  </data>
+  <data name="Płatność" xml:space="preserve">
+    <value>Payment</value>
+  </data>
+  <data name="Płatność zbliżeniowa lub chip" xml:space="preserve">
+    <value>Contactless or chip payment</value>
+  </data>
+  <data name="Rodzaj zamówienia" xml:space="preserve">
+    <value>Order type</value>
+  </data>
+  <data name="Składniki domyślne (EN)" xml:space="preserve">
+    <value>Default ingredients (EN)</value>
+  </data>
+  <data name="Składniki domyślne (PL)" xml:space="preserve">
+    <value>Default ingredients (PL)</value>
+  </data>
+  <data name="Składniki główne" xml:space="preserve">
+    <value>Main ingredients</value>
+  </data>
+  <data name="Składniki podstawowe" xml:space="preserve">
+    <value>Base ingredients</value>
+  </data>
+  <data name="Sprawdź status swojego zamówienia" xml:space="preserve">
+    <value>Check your order status</value>
+  </data>
+  <data name="Stwórz nowy dział, aby uporządkować produkty." xml:space="preserve">
+    <value>Create a new section to organize products.</value>
+  </data>
+  <data name="Suma częściowa" xml:space="preserve">
+    <value>Subtotal</value>
+  </data>
+  <data name="Szczegóły produktu" xml:space="preserve">
+    <value>Product details</value>
+  </data>
+  <data name="Szczegóły zestawu" xml:space="preserve">
+    <value>Set details</value>
+  </data>
+  <data name="Twój koszyk jest pusty." xml:space="preserve">
+    <value>Your cart is empty.</value>
+  </data>
+  <data name="Twój numer zamówienia to" xml:space="preserve">
+    <value>Your order number is</value>
+  </data>
+  <data name="Tło ekranu blokady" xml:space="preserve">
+    <value>Lock screen background</value>
+  </data>
+  <data name="Tło nagłówka" xml:space="preserve">
+    <value>Header background</value>
+  </data>
+  <data name="URL obrazka" xml:space="preserve">
+    <value>Image URL</value>
+  </data>
+  <data name="Ustaw tło nagłówka" xml:space="preserve">
+    <value>Set header background</value>
+  </data>
+  <data name="Usuń" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="Usuń obecne tło" xml:space="preserve">
+    <value>Remove current background</value>
+  </data>
+  <data name="Uzupełnij szczegóły i dodaj nową pozycję do menu." xml:space="preserve">
+    <value>Fill in details and add a new item to the menu.</value>
+  </data>
+  <data name="Użyj tej samej kolejności składników co w wersji polskiej." xml:space="preserve">
+    <value>Use the same ingredient order as in the Polish version.</value>
+  </data>
+  <data name="W zestawie:" xml:space="preserve">
+    <value>In the set:</value>
+  </data>
+  <data name="Wróć do bieżących" xml:space="preserve">
+    <value>Back to current</value>
+  </data>
+  <data name="Wróć do koszyka" xml:space="preserve">
+    <value>Back to cart</value>
+  </data>
+  <data name="Wróć do menu" xml:space="preserve">
+    <value>Back to menu</value>
+  </data>
+  <data name="Wskaż czy chcesz zjeść na miejscu czy zabrać zamówienie ze sobą." xml:space="preserve">
+    <value>Indicate whether you want to eat in or take your order with you.</value>
+  </data>
+  <data name="Wszystkie zamówienia zostały zrealizowane" xml:space="preserve">
+    <value>All orders have been completed</value>
+  </data>
+  <data name="Wybierz kategorię, aby zobaczyć produkty." xml:space="preserve">
+    <value>Select a category to see products.</value>
+  </data>
+  <data name="Wybierz metodę płatności" xml:space="preserve">
+    <value>Choose a payment method</value>
+  </data>
+  <data name="Wybierz metodę płatności, a następnie zatwierdź zamówienie." xml:space="preserve">
+    <value>Choose a payment method, then confirm your order.</value>
+  </data>
+  <data name="Wybierz metodę płatności." xml:space="preserve">
+    <value>Choose a payment method.</value>
+  </data>
+  <data name="Wybierz nowe zdjęcie" xml:space="preserve">
+    <value>Choose a new image</value>
+  </data>
+  <data name="Wybierz plik" xml:space="preserve">
+    <value>Choose a file</value>
+  </data>
+  <data name="Wybierz produkt" xml:space="preserve">
+    <value>Select a product</value>
+  </data>
+  <data name="Wybierz rodzaj zamówienia" xml:space="preserve">
+    <value>Choose order type</value>
+  </data>
+  <data name="Wybierz zestaw" xml:space="preserve">
+    <value>Choose a set</value>
+  </data>
+  <data name="Wybrane dodatki:" xml:space="preserve">
+    <value>Selected extras:</value>
+  </data>
+  <data name="Wygląd" xml:space="preserve">
+    <value>Appearance</value>
+  </data>
+  <data name="Wystąpił błąd podczas zamykania zamówienia." xml:space="preserve">
+    <value>An error occurred while closing the order.</value>
+  </data>
+  <data name="Za chwilę wrócimy automatycznie do ekranu startowego." xml:space="preserve">
+    <value>You will be returned to the start screen shortly.</value>
+  </data>
+  <data name="Zacznij zamówienie" xml:space="preserve">
+    <value>Start order</value>
+  </data>
+  <data name="Zakończ" xml:space="preserve">
+    <value>Finish</value>
+  </data>
+  <data name="Zaktualizuj nazwę kategorii, aby lepiej pasowała do oferty." xml:space="preserve">
+    <value>Update the category name to better fit the offer.</value>
+  </data>
+  <data name="Zaloguj" xml:space="preserve">
+    <value>Log in</value>
+  </data>
+  <data name="Zamknij" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="Zamknięte" xml:space="preserve">
+    <value>Closed</value>
+  </data>
+  <data name="Zamówienia oznaczone jako gotowe. Najnowsze na górze." xml:space="preserve">
+    <value>Orders marked as ready. Newest first.</value>
+  </data>
+  <data name="Zamówienie" xml:space="preserve">
+    <value>Order</value>
+  </data>
+  <data name="Zapisz tło" xml:space="preserve">
+    <value>Save background</value>
+  </data>
+  <data name="Zapisz zmiany" xml:space="preserve">
+    <value>Save changes</value>
+  </data>
+  <data name="Zapłacisz przy kasie" xml:space="preserve">
+    <value>Pay at the counter</value>
+  </data>
+  <data name="Zapłać" xml:space="preserve">
+    <value>Pay</value>
+  </data>
+  <data name="Zarządzaj kategoriami" xml:space="preserve">
+    <value>Manage categories</value>
+  </data>
+  <data name="Zdjęcie nagłówka" xml:space="preserve">
+    <value>Header image</value>
+  </data>
+  <data name="Zdjęcie tła" xml:space="preserve">
+    <value>Background image</value>
+  </data>
+  <data name="Zestaw musi zawierać minimum 2 produkty." xml:space="preserve">
+    <value>The set must contain at least 2 products.</value>
+  </data>
+  <data name="Zestaw został dodany." xml:space="preserve">
+    <value>Set has been added.</value>
+  </data>
+  <data name="Zmień język na angielski" xml:space="preserve">
+    <value>Switch language to English</value>
+  </data>
+  <data name="Zmień język na polski" xml:space="preserve">
+    <value>Switch language to Polish</value>
+  </data>
+  <data name="bez -" xml:space="preserve">
+    <value>without</value>
+  </data>
+  <data name="w kolejce" xml:space="preserve">
+    <value>in queue</value>
+  </data>
+  <data name="Łącznie" xml:space="preserve">
+    <value>Total</value>
+  </data>
+</root>

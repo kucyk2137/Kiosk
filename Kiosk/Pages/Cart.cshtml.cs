@@ -3,8 +3,11 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Kiosk.Data;
 using Kiosk.Models;
 using Kiosk.Extensions;
+using Kiosk.Resources;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Localization;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 
@@ -13,10 +16,12 @@ namespace Kiosk.Pages
     public class CartModel : PageModel
     {
         private readonly KioskDbContext _context;
+        private readonly IStringLocalizer<SharedResource> _localizer;
 
-        public CartModel(KioskDbContext context)
+        public CartModel(KioskDbContext context, IStringLocalizer<SharedResource> localizer)
         {
             _context = context;
+            _localizer = localizer;
         }
 
         public List<CartItemViewModel> CartItems { get; set; } = new();
@@ -25,13 +30,14 @@ namespace Kiosk.Pages
         public void OnGet()
         {
             var cart = HttpContext.Session.GetObjectFromJson<List<OrderItem>>("Cart") ?? new List<OrderItem>();
+            var culture = CultureInfo.CurrentUICulture;
 
             var menuItemIds = cart.Select(ci => ci.MenuItemId).ToList();
             var menuItems = _context.MenuItems.Where(m => menuItemIds.Contains(m.Id)).ToDictionary(m => m.Id, m => m);
             var ingredientLookup = _context.MenuItemIngredients
                 .Where(i => menuItemIds.Contains(i.MenuItemId))
                 .GroupBy(i => i.MenuItemId)
-                .ToDictionary(g => g.Key, g => g.ToDictionary(i => i.Name, i => i.AdditionalPrice));
+                .ToDictionary(g => g.Key, g => g.ToDictionary(i => i.GetDisplayName(culture), i => i.AdditionalPrice));
 
             CartItems = cart
                 .Where(ci => menuItems.ContainsKey(ci.MenuItemId))
@@ -78,36 +84,39 @@ namespace Kiosk.Pages
 
             if (!cart.Any())
             {
-                ModelState.AddModelError(string.Empty, "Koszyk jest pusty.");
+                ModelState.AddModelError(string.Empty, _localizer["Koszyk jest pusty."]);
                 OnGet();
                 return Page();
             }
 
             return RedirectToPage("/Payment");
         }
-        // sk³adniki dla popupu edycji
+        // skÅ‚adniki dla popupu edycji
         public IActionResult OnGetIngredients(int menuItemId)
         {
-            var product = _context.MenuItems
-                 .Where(m => m.Id == menuItemId)
-                 .Select(m => new
-                 {
-                     defaults = m.Ingredients.Where(i => i.IsDefault)
-                         .Select(i => new { name = i.Name, price = i.AdditionalPrice }).ToList(),
-                     optionals = m.Ingredients.Where(i => !i.IsDefault)
-                         .Select(i => new { name = i.Name, price = i.AdditionalPrice }).ToList()
-                 })
-                 .FirstOrDefault();
+            var culture = CultureInfo.CurrentUICulture;
+            var ingredients = _context.MenuItemIngredients
+                .Where(i => i.MenuItemId == menuItemId)
+                .ToList();
 
-            if (product == null)
+            if (!ingredients.Any())
             {
                 return new JsonResult(new { defaults = new List<string>(), optionals = new List<string>() });
             }
 
-            return new JsonResult(product);
+            var defaults = ingredients
+                .Where(i => i.IsDefault)
+                .Select(i => new { name = i.GetDisplayName(culture), price = i.AdditionalPrice })
+                .ToList();
+            var optionals = ingredients
+                .Where(i => !i.IsDefault)
+                .Select(i => new { name = i.GetDisplayName(culture), price = i.AdditionalPrice })
+                .ToList();
+
+            return new JsonResult(new { defaults, optionals });
         }
 
-        // zapis zmian z popupu (sk³adniki + iloœæ)
+        // zapis zmian z popupu (skÅ‚adniki + iloÅ›Ä‡)
         public IActionResult OnPostUpdate(int menuItemId, string oldSelectedIngredients, string newSelectedIngredients, int quantity)
         {
             var cart = HttpContext.Session.GetObjectFromJson<List<OrderItem>>("Cart") ?? new List<OrderItem>();

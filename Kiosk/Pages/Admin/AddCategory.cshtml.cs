@@ -2,10 +2,12 @@ using System;
 using System.IO;
 using Kiosk.Data;
 using Kiosk.Models;
+using Kiosk.Resources;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Localization;
 
 namespace Kiosk.Pages.Admin
 {
@@ -13,10 +15,12 @@ namespace Kiosk.Pages.Admin
     {
         private readonly KioskDbContext _context;
         private readonly IWebHostEnvironment _environment;
-        public AddCategoryModel(KioskDbContext context, IWebHostEnvironment environment)
+        private readonly IStringLocalizer<SharedResource> _localizer;
+        public AddCategoryModel(KioskDbContext context, IWebHostEnvironment environment, IStringLocalizer<SharedResource> localizer)
         {
             _context = context;
             _environment = environment;
+            _localizer = localizer;
         }
 
         [BindProperty]
@@ -32,7 +36,7 @@ namespace Kiosk.Pages.Admin
         {
             if (ImageFile == null || ImageFile.Length == 0)
             {
-                ModelState.AddModelError(nameof(ImageFile), "Plik obrazu jest wymagany.");
+                ModelState.AddModelError(nameof(ImageFile), _localizer["Plik obrazu jest wymagany."]);
             }
             if (!ModelState.IsValid) return Page();
 
@@ -51,7 +55,7 @@ namespace Kiosk.Pages.Admin
 
             _context.Categories.Add(Category);
             _context.SaveChanges();
-            Message = "Kategoria dodana!";
+            Message = _localizer["Kategoria dodana!"];
             Category = new Category();
             return Page();
         }

@@ -2,31 +2,31 @@
 @model Kiosk.Pages.Admin.LoginModel
 <link rel="stylesheet" href="~/css/admin.css" />
 @{
-    ViewData["Title"] = "Logowanie Administratora";
-    ViewData["PageHeaderTitle"] = "Logowanie Administratora";
+    ViewData["Title"] = Localizer["Logowanie administratora"];
+    ViewData["PageHeaderTitle"] = Localizer["Logowanie administratora"];
 }
 
 <div class="admin-shell narrow">
     <div class="admin-heading centered">
         <div>
-            <p class="eyebrow">Panel administracyjny</p>
-            <h2>Logowanie Administratora</h2>
-            <p class="muted">Podaj dane dostępowe, aby zarządzać treścią.</p>
+            <p class="eyebrow">@Localizer["Panel administracyjny"]</p>
+            <h2>@Localizer["Logowanie administratora"]</h2>
+            <p class="muted">@Localizer["Podaj dane dostępowe, aby zarządzać treścią."]</p>
         </div>
     </div>
 
     <div class="admin-card">
         <form method="post" class="admin-form compact">
             <div class="form-field full-width">
-                <label>Login</label>
+                <label>@Localizer["Login"]</label>
                 <input asp-for="Username" />
             </div>
             <div class="form-field full-width">
-                <label>Hasło</label>
+                <label>@Localizer["Hasło"]</label>
                 <input asp-for="Password" type="password" />
             </div>
             <div class="form-actions stacked">
-                <button type="submit" class="btn primary full-width">Zaloguj</button>
+                <button type="submit" class="btn primary full-width">@Localizer["Zaloguj"]</button>
                 <p class="error">@Model.ErrorMessage</p>
             </div>
         </form>

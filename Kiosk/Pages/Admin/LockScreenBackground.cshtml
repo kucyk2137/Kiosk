@@ -6,30 +6,30 @@
 <div class="admin-shell">
     <div class="admin-heading">
         <div>
-            <p class="eyebrow">Panel administracyjny</p>
-            <h2>Tło ekranu blokady</h2>
-            <p class="muted">Dodaj nowe zdjęcie tła, które zobaczą klienci na ekranie startowym.</p>
+            <p class="eyebrow">@Localizer["Panel administracyjny"]</p>
+            <h2>@Localizer["Tło ekranu blokady"]</h2>
+            <p class="muted">@Localizer["Dodaj nowe zdjęcie tła, które zobaczą klienci na ekranie startowym."]</p>
         </div>
         <div class="admin-actions">
-            <a asp-page="Index" class="btn ghost">Powrót</a>
+            <a asp-page="Index" class="btn ghost">@Localizer["Powrót"]</a>
         </div>
     </div>
 
     <div class="admin-card">
         <div class="card-heading">
             <div>
-                <p class="eyebrow">Zdjęcie tła</p>
-                <h3>Prześlij nowe zdjęcie</h3>
+                <p class="eyebrow">@Localizer["Zdjęcie tła"]</p>
+                <h3>@Localizer["Prześlij nowe zdjęcie"]</h3>
             </div>
         </div>
 
         <form method="post" enctype="multipart/form-data" class="admin-form">
             <div class="form-group">
-                <label for="ImageFile">Wybierz plik</label>
+                <label for="ImageFile">@Localizer["Wybierz plik"]</label>
                 <input asp-for="ImageFile" type="file" accept="image/*" />
                 <span asp-validation-for="ImageFile" class="text-danger"></span>
             </div>
-            <button type="submit" class="btn primary">Zapisz tło</button>
+            <button type="submit" class="btn primary">@Localizer["Zapisz tło"]</button>
             @if (!string.IsNullOrEmpty(Model.Message))
             {
                 <p class="muted">@Model.Message</p>
@@ -39,10 +39,10 @@
         @if (Model.CurrentBackground != null)
         {
             <div class="preview-section">
-                <p class="eyebrow">Aktualne tło</p>
+                <p class="eyebrow">@Localizer["Aktualne tło"]</p>
                 <div class="lockscreen-preview">
-                    <img src="@Model.CurrentBackground.ImagePath" alt="Podgląd tła LockScreen" />
-                    <p class="muted">Ostatnia aktualizacja: @Model.CurrentBackground.UploadedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</p>
+                    <img src="@Model.CurrentBackground.ImagePath" alt="@Localizer["Podgląd tła LockScreen"]" />
+                    <p class="muted">@Localizer["Ostatnia aktualizacja:"] @Model.CurrentBackground.UploadedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</p>
                 </div>
             </div>
         }

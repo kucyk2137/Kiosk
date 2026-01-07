@@ -4,7 +4,7 @@
 @model Kiosk.Pages.LockScreenModel
 <link rel="stylesheet" href="~/css/LockScreen.css" />
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = Localizer["Ekran startowy"];
     ViewData["HidePageHeader"] = true;
     var backgroundStyle = !string.IsNullOrEmpty(Model.BackgroundImagePath)
         ? $"--lockscreen-background: url('{Model.BackgroundImagePath}');"
@@ -19,6 +19,6 @@
     }
     <div class="lockscreen-pattern"></div>
     <div class="lockscreen-content">
-        <button class="lockscreen-cta" onclick="location.href='OrderType'">Zacznij zamówienie</button>
+        <button class="lockscreen-cta" onclick="location.href='OrderType'">@Localizer["Zacznij zamówienie"]</button>
     </div>
 </div>

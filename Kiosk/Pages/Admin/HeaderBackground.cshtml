@@ -6,11 +6,11 @@
 <div class="admin-shell narrow">
     <div class="admin-heading centered">
         <div>            
-            <p class="eyebrow">Panel administracyjny</p>
-            <h2>Tło nagłówka</h2>
-            <p class="muted">Prześlij zdjęcie, które będzie wyświetlane w tle sekcji nagłówka.</p>   
+            <p class="eyebrow">@Localizer["Panel administracyjny"]</p>
+            <h2>@Localizer["Tło nagłówka"]</h2>
+            <p class="muted">@Localizer["Prześlij zdjęcie, które będzie wyświetlane w tle sekcji nagłówka."]</p>   
             <div class="admin-actions">
-                <a asp-page="Index" class="btn ghost">Powrót</a>
+                <a asp-page="Index" class="btn ghost">@Localizer["Powrót"]</a>
             </div>
         </div>
     </div>
@@ -18,10 +18,10 @@
     <div class="admin-card">
         <div class="card-heading">
             <div>
-                <p class="eyebrow">Wygląd</p>
-                <h3>Zdjęcie nagłówka</h3>
+                <p class="eyebrow">@Localizer["Wygląd"]</p>
+                <h3>@Localizer["Zdjęcie nagłówka"]</h3>
             </div>
-            <a asp-page="Index" class="btn ghost">Powrót</a>
+            <a asp-page="Index" class="btn ghost">@Localizer["Powrót"]</a>
         </div>
 
         @if (TempData["StatusMessage"] is string statusMessage)
@@ -31,17 +31,17 @@
 
         <form method="post" enctype="multipart/form-data" class="admin-form">
             <div class="form-field">
-                <label asp-for="HeaderImage">Wybierz nowe zdjęcie</label>
+                <label asp-for="HeaderImage">@Localizer["Wybierz nowe zdjęcie"]</label>
                 <input asp-for="HeaderImage" type="file" accept="image/*" />
                 <span class="text-danger" asp-validation-for="HeaderImage"></span>
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="btn primary">Zapisz tło</button>
+                <button type="submit" class="btn primary">@Localizer["Zapisz tło"]</button>
 
                 @if (!string.IsNullOrWhiteSpace(Model.CurrentHeaderImage))
                 {
-                    <button type="submit" asp-page-handler="Remove" class="btn outline">Usuń obecne tło</button>
+                    <button type="submit" asp-page-handler="Remove" class="btn outline">@Localizer["Usuń obecne tło"]</button>
                 }
             </div>
         </form>
@@ -49,10 +49,10 @@
         @if (!string.IsNullOrWhiteSpace(Model.CurrentHeaderImage))
         {
             <div class="preview-block">
-                <p class="eyebrow">Podgląd</p>
+                <p class="eyebrow">@Localizer["Podgląd"]</p>
                 <div class="hero-preview" style="background-image: linear-gradient(135deg, rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.35)), url('@Model.CurrentHeaderImage');">
                     <div class="hero-preview__overlay"></div>
-                    <div class="hero-preview__title">Przykładowy nagłówek</div>
+                    <div class="hero-preview__title">@Localizer["Przykładowy nagłówek"]</div>
                 </div>
             </div>
         }

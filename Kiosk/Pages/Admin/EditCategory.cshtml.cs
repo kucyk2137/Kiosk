@@ -59,6 +59,7 @@ namespace Kiosk.Pages.Admin
             }
 
             categoryInDb.Name = Category.Name;
+            categoryInDb.NameEn = Category.NameEn;
 
             if (ImageFile == null || ImageFile.Length == 0)
             {

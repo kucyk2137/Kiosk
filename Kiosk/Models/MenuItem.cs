@@ -10,8 +10,12 @@ namespace Kiosk.Models
         [Required(ErrorMessage = "Nazwa jest wymagana")]
         public string Name { get; set; }
 
+        public string? NameEn { get; set; }
+
         [Required(ErrorMessage = "Opis jest wymagany")]
         public string Description { get; set; }
+
+        public string? DescriptionEn { get; set; }
 
         [Required(ErrorMessage = "Cena jest wymagana")]
         [Range(0.01, double.MaxValue, ErrorMessage = "Cena musi być większa od 0")]

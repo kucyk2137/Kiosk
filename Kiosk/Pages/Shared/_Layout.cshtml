@@ -1,5 +1,6 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+﻿@using System.Globalization
+<!DOCTYPE html>
+<html lang="@CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,8 +10,16 @@
     <link rel="stylesheet" href="~/Kiosk.styles.css" asp-append-version="true" />
 </head>
 <body>
-    @inject Kiosk.Services.SiteSettingsService SiteSettingsService
+@inject Kiosk.Services.SiteSettingsService SiteSettingsService
     @{
+
+        var currentCulture = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+        var returnUrl = $"{Context.Request.Path}{Context.Request.QueryString}";
+        var languageTarget = currentCulture == "en" ? "pl-PL" : "en-US";
+        var languageLabel = currentCulture == "en" ? "PL" : "EN";
+        var languageAriaLabel = currentCulture == "en"
+            ? Localizer["Zmień język na polski"]
+            : Localizer["Zmień język na angielski"];
         var hideHeader = ViewData["HidePageHeader"] as bool? ?? false;
         var headerTitle = ViewData["PageHeaderTitle"] as string ?? ViewData["Title"] as string ?? "";
         var headerBackground = await SiteSettingsService.GetHeaderBackgroundAsync();
@@ -18,6 +27,12 @@
         ? $"background-image: linear-gradient(135deg, rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.35)), url('{headerBackground}'); background-size: cover; background-position: center;"
         : string.Empty;
     }
+
+    <form method="post" asp-page="/SetLanguage" class="language-switcher">
+        <input type="hidden" name="culture" value="@languageTarget" />
+        <input type="hidden" name="returnUrl" value="@returnUrl" />
+        <button type="submit" class="language-toggle" aria-label="@languageAriaLabel">@languageLabel</button>
+    </form>
 
     @if (!hideHeader && !string.IsNullOrWhiteSpace(headerTitle))
     {

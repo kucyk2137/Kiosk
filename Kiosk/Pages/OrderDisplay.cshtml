@@ -2,30 +2,39 @@
 @model Kiosk.Pages.OrderDisplayModel
 <link rel="stylesheet" href="~/css/OrderDisplay.css" />
 @{
-    ViewData["Title"] = "Odbiór zamówień";
+    ViewData["Title"] = Localizer["Odbiór zamówień"];
     ViewData["HidePageHeader"] = true;
 }
 
 <div class="order-display-screen">
     <div class="order-display__header">
         <div>
-            <p class="eyebrow">Numerki zamówień</p>
-            <h1>Sprawdź status swojego zamówienia</h1>
-            <p class="muted">Gdy kuchnia oznaczy Twoje zamówienie jako gotowe, numer podświetli się na zielono.</p>
+            <p class="eyebrow">@Localizer["Numerki zamówień"]</p>
+            <h1>@Localizer["Sprawdź status swojego zamówienia"]</h1>
+            <p class="muted">@Localizer["Gdy kuchnia oznaczy Twoje zamówienie jako gotowe, numer podświetli się na zielono."]</p>
         </div>
-        <button id="refresh-board" class="btn ghost pill">Odśwież</button>
+        <button id="refresh-board" class="btn ghost pill">@Localizer["Odśwież"]</button>
     </div>
 
     <div id="orders-board" class="order-display__grid">
         <div class="empty-state">
-            <p class="eyebrow">Brak zamówień</p>
-            <h3>Listę zamówień uzupełnimy gdy pojawią się nowe.</h3>
+            <p class="eyebrow">@Localizer["Brak zamówień"]</p>
+            <h3>@Localizer["Listę zamówień uzupełnimy gdy pojawią się nowe."]</h3>
         </div>
     </div>
 </div>
 
 @section Scripts {
         <script>
+            const messages = {
+                emptyTitle: '@Localizer["Brak zamówień"]',
+                emptySubtitle: '@Localizer["Listę zamówień uzupełnimy gdy pojawią się nowe."]',
+                emptyHint: '@Localizer["Gdy tylko zamówienie trafi do kuchni, numer pokaże się na liście."]',
+                ready: '@Localizer["Gotowe do odbioru"]',
+                preparing: '@Localizer["Przygotowywane"]',
+                fetchError: '@Localizer["Nie udało się pobrać listy zamówień."]'
+            };
+
             const board = document.getElementById('orders-board');
             const refreshBoard = document.getElementById('refresh-board');
 
@@ -36,9 +45,9 @@
                 if (!active.length) {
                     board.innerHTML = `
                         <div class="empty-state">
-                            <p class="eyebrow">Brak zamówień</p>
-                            <h3>Listę zamówień uzupełnimy gdy pojawią się nowe.</h3>
-                            <p class="muted">Gdy tylko zamówienie trafi do kuchni, numer pokaże się na liście.</p>
+                            <p class="eyebrow">${messages.emptyTitle}</p>
+                            <h3>${messages.emptySubtitle}</h3>
+                            <p class="muted">${messages.emptyHint}</p>
                         </div>`;
                     return;
                 }
@@ -52,7 +61,7 @@
 
                     card.innerHTML = `
                         <div class="order-number">${order.orderNumber || `#${order.orderId}`}</div>
-                        <div class="order-status">${order.isReady ? 'Gotowe do odbioru' : 'Przygotowywane'}</div>
+                        <div class="order-status">${order.isReady ? messages.ready : messages.preparing}</div>
                     `;
 
                     board.appendChild(card);
@@ -66,7 +75,7 @@
                     const data = await response.json();
                     renderOrders(data);
                 } catch (err) {
-                    board.innerHTML = '<p class="muted">Nie udało się pobrać listy zamówień.</p>';
+                    board.innerHTML = `<p class="muted">${messages.fetchError}</p>`;
                 } finally {
                     board.classList.remove('is-loading');
                 }

@@ -2,32 +2,54 @@
 @model Kiosk.Pages.KitchenHistoryModel
 <link rel="stylesheet" href="~/css/Kitchen.css" />
 @{
-    ViewData["Title"] = "Historia zamówień";
+    ViewData["Title"] = Localizer["Historia zamówień"];
     ViewData["HidePageHeader"] = true;
 }
 
 <div class="kitchen-screen">
     <div class="kitchen-topbar">
         <div>
-            <p class="eyebrow">Panel kuchni</p>
-            <h1>Historia zamówień</h1>
-            <p class="muted">Zamówienia oznaczone jako gotowe. Najnowsze na górze.</p>
+            <p class="eyebrow">@Localizer["Panel kuchni"]</p>
+            <h1>@Localizer["Historia zamówień"]</h1>
+            <p class="muted">@Localizer["Zamówienia oznaczone jako gotowe. Najnowsze na górze."]</p>
         </div>
         <div class="kitchen-actions">
-            <a href="/Kitchen" class="ghost-btn">Wróć do bieżących</a>
+            <a href="/Kitchen" class="ghost-btn">@Localizer["Wróć do bieżących"]</a>
         </div>
     </div>
 
     <div id="history-grid" class="kitchen-grid kitchen-grid--history history-grid">
         <div class="empty-state">
-            <p class="eyebrow">Brak historii</p>
-            <h3>Nie zamknięto jeszcze żadnych zamówień</h3>
+            <p class="eyebrow">@Localizer["Brak historii"]</p>
+            <h3>@Localizer["Nie zamknięto jeszcze żadnych zamówień"]</h3>
         </div>
     </div>
 </div>
 
 <script>
-        const historyGrid = document.getElementById('history-grid');
+    const i18n = {
+        emptyTitle: '@Localizer["Brak historii"]',
+        emptySubtitle: '@Localizer["Nie zamknięto jeszcze żadnych zamówień"]',
+        none: '@Localizer["Brak"]',
+        without: '@Localizer["bez -"]',
+        baseIngredients: '@Localizer["Składniki podstawowe"]',
+        extraIngredients: '@Localizer["Dodatki"]',
+        orderLabel: '@Localizer["Zamówienie"]',
+        defaultOrderType: '@Localizer["Na miejscu"]',
+        closed: '@Localizer["Zamknięte"]',
+        fetchError: '@Localizer["Nie udało się pobrać historii."]'
+    };
+    const orderTypeLabels = {
+        "Na miejscu": i18n.defaultOrderType,
+        "Na wynos": '@Localizer["Na wynos"]'
+    };
+    const paymentMethodLabels = {
+        "Karta": '@Localizer["Karta"]',
+        "Gotówka": '@Localizer["Gotówka"]',
+        "BLIK": "BLIK"
+    };
+
+    const historyGrid = document.getElementById('history-grid');
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return `${date.toLocaleDateString()} • ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
@@ -70,11 +92,11 @@
         const toEntries = (list, className = '') => list.map(text => ({ text, className }));
         const renderEntries = (entries) => entries.length
             ? entries.map(({ text, className }) => `<li${className ? ` class=\"${className}\"` : ''}>${text}</li>`).join('')
-            : '<li class="muted">Brak</li>';
+            : `<li class="muted">${i18n.none}</li>`;
 
         const defaultEntries = [
             ...toEntries(selectedDefaults),
-            ...toEntries(removedDefaults.map(name => `bez - ${name}`), 'removed-ingredient')
+            ...toEntries(removedDefaults.map(name => `${i18n.without} ${name}`), 'removed-ingredient')
         ];
         const optionalEntries = toEntries(selectedOptionals);
 
@@ -84,13 +106,13 @@
         return `
             <div class="item-ingredients">
                 <div class="ingredient-group">
-                    <div class="ingredient-label">Składniki podstawowe</div>
+                    <div class="ingredient-label">${i18n.baseIngredients}</div>
                     <ul class="ingredient-list">
                         ${renderEntries(defaultEntries)}
                     </ul>
                 </div>
                 <div class="ingredient-group">
-                    <div class="ingredient-label">Dodatki</div>
+                    <div class="ingredient-label">${i18n.extraIngredients}</div>
                     <ul class="ingredient-list">
                         ${renderEntries(optionalEntries)}
                     </ul>
@@ -103,8 +125,8 @@
             if (!orders.length) {
                 historyGrid.innerHTML = `
                         <div class="empty-state">
-                            <p class="eyebrow">Brak historii</p>
-                            <h3>Nie zamknięto jeszcze żadnych zamówień</h3>
+                            <p class="eyebrow">${i18n.emptyTitle}</p>
+                            <h3>${i18n.emptySubtitle}</h3>
                         </div>`;
             return;
                 }
@@ -115,12 +137,12 @@
             card.innerHTML = `
             <header class="card-head">
                 <div>
-                    <div class="eyebrow">Zamówienie ${order.orderNumber || `#${order.orderId}`}</div>
-                    <div class="order-time">${order.orderType || 'Na miejscu'} • ${formatDate(order.orderDate)}</div>
+                    <div class="eyebrow">${i18n.orderLabel} ${order.orderNumber || `#${order.orderId}`}</div>
+                    <div class="order-time">${orderTypeLabels[order.orderType] || order.orderType || i18n.defaultOrderType} • ${formatDate(order.orderDate)}</div>
                 </div>
                 <div class="badge-row">
-                    <span class="pill">${order.paymentMethod}</span>
-                    <span class="pill pill--success">Zamknięte</span>
+                    <span class="pill">${paymentMethodLabels[order.paymentMethod] || order.paymentMethod}</span>
+                    <span class="pill pill--success">${i18n.closed}</span>
                 </div>
             </header>
             <div class="card-body">
@@ -146,7 +168,7 @@
             const data = await response.json();
             renderHistory(data);
                 } catch (err) {
-                historyGrid.innerHTML = '<p class="muted">Nie udało się pobrać historii.</p>';
+                historyGrid.innerHTML = `<p class="muted">${i18n.fetchError}</p>`;
                 } finally {
                 historyGrid.classList.remove('is-loading');
                 }

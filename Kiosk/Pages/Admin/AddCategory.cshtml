@@ -4,38 +4,44 @@
 <div class="admin-shell">
     <div class="admin-heading">
         <div>
-            <p class="eyebrow">Panel administracyjny</p>
-            <h2>Dodaj kategorię</h2>
-            <p class="muted">Stwórz nowy dział, aby uporządkować produkty.</p>
+            <p class="eyebrow">@Localizer["Panel administracyjny"]</p>
+            <h2>@Localizer["Dodaj kategorię"]</h2>
+            <p class="muted">@Localizer["Stwórz nowy dział, aby uporządkować produkty."]</p>
         </div>
         <div class="admin-actions">
-            <a asp-page="Categories" class="btn ghost">Powrót</a>
+            <a asp-page="Categories" class="btn ghost">@Localizer["Powrót"]</a>
         </div>
     </div>
 
     <div class="admin-card">
         <div class="card-heading">
-            <p class="eyebrow">Nowa kategoria</p>
-            <h3>Informacje</h3>
+            <p class="eyebrow">@Localizer["Nowa kategoria"]</p>
+            <h3>@Localizer["Informacje"]</h3>
         </div>
 
         <form method="post" enctype="multipart/form-data" class="admin-form">
             <div class="form-grid">
                 <div class="form-field full-width">
-                    <label>Nazwa</label>
+                    <label>@Localizer["Nazwa (PL)"]</label>
                     <input asp-for="Category.Name" />
                     <span asp-validation-for="Category.Name" class="text-danger"></span>
                 </div>
 
                 <div class="form-field full-width">
-                    <label>Obraz kategorii</label>
+                    <label>@Localizer["Nazwa (EN)"]</label>
+                    <input asp-for="Category.NameEn" />
+                    <span asp-validation-for="Category.NameEn" class="text-danger"></span>
+                </div>
+
+                <div class="form-field full-width">
+                    <label>@Localizer["Obraz kategorii"]</label>
                     <input asp-for="ImageFile" type="file" accept="image/*" />
                     <span asp-validation-for="ImageFile" class="text-danger"></span>
                 </div>
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="btn primary">Dodaj</button>
+                <button type="submit" class="btn primary">@Localizer["Dodaj"]</button>
                 <p class="success">@Model.Message</p>
             </div>
         </form>

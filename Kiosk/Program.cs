@@ -1,7 +1,10 @@
 using Kiosk.Data;
 using Kiosk.Models;
+using Kiosk.Extensions;
 using Kiosk.Services;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -14,13 +17,30 @@ options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection"),
         sqlOptions => sqlOptions.EnableRetryOnFailure()));
 
-builder.Services.AddRazorPages();
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+builder.Services.AddRazorPages()
+    .AddViewLocalization()
+    .AddDataAnnotationsLocalization();
 builder.Services.AddSession(); // potrzebne dla koszyka
-builder.Services.AddSingleton<OrderUpdateNotifier>(); //odúwieøanie widoku orderdisplay
+builder.Services.AddSingleton<OrderUpdateNotifier>(); //od≈õwie≈ºanie widoku orderdisplay
 builder.Services.AddScoped<SiteSettingsService>();
 var app = builder.Build();
 
+
 app.UseStaticFiles();
+var supportedCultures = new[]
+{
+    new CultureInfo("pl-PL"),
+    new CultureInfo("en-US")
+};
+var localizationOptions = new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture("pl-PL"),
+    SupportedCultures = supportedCultures,
+    SupportedUICultures = supportedCultures
+};
+localizationOptions.RequestCultureProviders.Insert(0, new CookieRequestCultureProvider());
+app.UseRequestLocalization(localizationOptions);
 app.UseRouting();
 app.UseSession();
 app.Use(async (context, next) =>
@@ -61,7 +81,7 @@ app.MapPost("/api/orders/{id:int}/ready", async (int id, KioskDbContext db, Orde
 
     if (order.IsClosed)
     {
-        return Results.BadRequest(new { message = "ZamÛwienie zosta≥o juø zamkniÍte." });
+        return Results.BadRequest(new { message = "Zam√≥wienie zosta≈Ço ju≈º zamkniƒôte." });
     }
 
     order.IsReady = true;
@@ -82,7 +102,7 @@ app.MapPost("/api/orders/{id:int}/complete", async (int id, KioskDbContext db, O
 
     if (order.IsClosed)
     {
-        return Results.BadRequest(new { message = "ZamÛwienie zosta≥o juø zamkniÍte." });
+        return Results.BadRequest(new { message = "Zam√≥wienie zosta≈Ço ju≈º zamkniƒôte." });
     }
 
     order.IsReady = true;
@@ -166,11 +186,12 @@ static async Task<List<KitchenOrderDto>> MapOrders(KioskDbContext db, IQueryable
 static KitchenOrderItemDto MapKitchenOrderItem(OrderItem item, Dictionary<int, ProductSet> setLookup)
 {
     var menuItem = item.MenuItem!;
-    var (defaultIngredients, optionalIngredients) = BuildIngredientLists(menuItem, setLookup);
+    var culture = CultureInfo.CurrentUICulture;
+    var (defaultIngredients, optionalIngredients) = BuildIngredientLists(menuItem, setLookup, culture);
 
     return new KitchenOrderItemDto
     {
-        DishName = menuItem.Name,
+        DishName = menuItem.GetDisplayName(culture),
         Quantity = item.Quantity,
         UnitPrice = menuItem.Price,
         Ingredients = item.SelectedIngredients,
@@ -179,7 +200,7 @@ static KitchenOrderItemDto MapKitchenOrderItem(OrderItem item, Dictionary<int, P
     };
 }
 
-static (List<string> defaults, List<string> optionals) BuildIngredientLists(MenuItem menuItem, Dictionary<int, ProductSet> setLookup)
+static (List<string> defaults, List<string> optionals) BuildIngredientLists(MenuItem menuItem, Dictionary<int, ProductSet> setLookup, CultureInfo culture)
 {
     if (setLookup.TryGetValue(menuItem.Id, out var productSet))
     {
@@ -188,15 +209,15 @@ static (List<string> defaults, List<string> optionals) BuildIngredientLists(Menu
 
         foreach (var setItem in productSet.Items.Where(si => si.MenuItem != null))
         {
-            var productName = setItem.MenuItem!.Name;
+            var productName = setItem.MenuItem!.GetDisplayName(culture);
 
             setDefaults.AddRange(setItem.MenuItem.Ingredients
                 .Where(ing => ing.IsDefault)
-                .Select(ing => $"{productName}: {ing.Name}"));
+                .Select(ing => $"{productName}: {ing.GetDisplayName(culture)}"));
 
             setOptionals.AddRange(setItem.MenuItem.Ingredients
                 .Where(ing => !ing.IsDefault)
-                .Select(ing => $"{productName}: {ing.Name}"));
+                .Select(ing => $"{productName}: {ing.GetDisplayName(culture)}"));
         }
 
         return (setDefaults, setOptionals);
@@ -204,12 +225,12 @@ static (List<string> defaults, List<string> optionals) BuildIngredientLists(Menu
 
     var defaults = menuItem.Ingredients
         .Where(ing => ing.IsDefault)
-        .Select(ing => ing.Name)
+        .Select(ing => ing.GetDisplayName(culture))
         .ToList();
 
     var optionals = menuItem.Ingredients
         .Where(ing => !ing.IsDefault)
-        .Select(ing => ing.Name)
+        .Select(ing => ing.GetDisplayName(culture))
         .ToList();
 
     return (defaults, optionals);

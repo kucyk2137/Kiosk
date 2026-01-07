@@ -1,11 +1,14 @@
 ﻿@page
 @model Kiosk.Pages.CartModel
+@using Kiosk.Extensions
+@using System.Globalization
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 <link rel="stylesheet" href="~/css/Cart.css" />
 <link rel="stylesheet" href="~/css/popup.css" />
 @{
-    ViewData["Title"] = "Koszyk";
-    ViewData["PageHeaderTitle"] = "Koszyk";
+    ViewData["Title"] = Localizer["Koszyk"];
+    ViewData["PageHeaderTitle"] = Localizer["Koszyk"];
+    var culture = CultureInfo.CurrentUICulture;
 }
 
 <div class="cart-page">
@@ -19,8 +22,8 @@
     @if (Model.CartItems.Count == 0)
     {
         <div class="empty-cart">
-            <p>Twój koszyk jest pusty.</p>
-            <a asp-page="/Menu" class="primary-btn">Przejdź do menu</a>
+            <p>@Localizer["Twój koszyk jest pusty."]</p>
+            <a asp-page="/Menu" class="primary-btn">@Localizer["Przejdź do menu"]</a>
         </div>
     }
     else
@@ -36,16 +39,16 @@
                     .ToList();
                     <div class="cart-card">
                         <div class="cart-card-media">
-                            <img src="@ci.Item.Image" alt="@ci.Item.Name" />
+                            <img src="@ci.Item.Image" alt="@ci.Item.GetDisplayName(culture)" />
                         </div>
 
                         <div class="cart-card-content">
                             <div class="cart-card-header">
                                 <div>
-                                    <p class="item-category">Pozycja w koszyku</p>
-                                    <h3>@ci.Item.Name</h3>
+                                    <p class="item-category">@Localizer["Pozycja w koszyku"]</p>
+                                    <h3>@ci.Item.GetDisplayName(culture)</h3>
                                     <p class="item-ingredients">
-                                        @(formattedIngredients.Any() ? string.Join(", ", formattedIngredients) : "Domyślne składniki")
+                                        @(formattedIngredients.Any() ? string.Join(", ", formattedIngredients) : Localizer["Domyślne składniki"])
                                     </p>
                                 </div>
                             </div>
@@ -56,7 +59,7 @@
                                         data-menu-item-id="@ci.Item.Id"
                                         data-selected-ingredients="@ci.Ingredients"
                                         data-quantity="@ci.Quantity">
-                                    Edytuj
+                                    @Localizer["Edytuj"]
                                 </button>
 
                                 <div class="quantity-control">
@@ -84,7 +87,7 @@
                             <form method="post" asp-page-handler="Remove" class="inline-form">
                                 <input type="hidden" name="MenuItemId" value="@ci.Item.Id" />
                                 <input type="hidden" name="selectedIngredients" value="@ci.Ingredients" />
-                                <button type="submit" class="remove-btn">Usuń</button>
+                                <button type="submit" class="remove-btn">@Localizer["Usuń"]</button>
                             </form>
                         </div>
                     </div>
@@ -92,24 +95,24 @@
             </div>
             <div class="payment-box">
                 <div class="cart-summary-card">
-                    <h4>Podsumowanie</h4>
+                    <h4>@Localizer["Podsumowanie"]</h4>
                     <div class="summary-row">
-                        <span>Subtotal</span>
+                        <span>@Localizer["Suma częściowa"]</span>
                         <span>@Model.TotalPrice.ToString("0.00") zł</span>
                     </div>
                     <div class="summary-row muted">
-                        <span>Podatek</span>
+                        <span>@Localizer["Podatek"]</span>
                         <span>0,00 zł</span>
                     </div>
                     <div class="summary-row total">
-                        <span>Łącznie</span>
+                        <span>@Localizer["Łącznie"]</span>
                         <span>@Model.TotalPrice.ToString("0.00") zł</span>
                     </div>
                     <form method="post" asp-page-handler="Checkout">
-                        <button type="submit" class="btn primary pill full-width checkout-btn">Zapłać</button>
+                        <button type="submit" class="btn primary pill full-width checkout-btn">@Localizer["Zapłać"]</button>
                     </form>
 
-                    <a asp-page="/Menu" class="btn danger back-btn">Wróć do menu</a>
+                    <a asp-page="/Menu" class="btn danger back-btn">@Localizer["Wróć do menu"]</a>
                 </div>
             </div>
         </div>
@@ -119,10 +122,10 @@
 <!-- POPUP EDYCJI PRODUKTU W KOSZYKU -->
 <div id="edit-item-modal" class="modal" style="display:none;">
     <div class="modal-content">
-        <h3>Edytuj produkt</h3>
+        <h3>@Localizer["Edytuj"] produkt</h3>
 
         <div class="edit-modal-section">
-            <label>Ilość:</label>
+            <label>@Localizer["Ilość:"]</label>
             <div class="qty-control">
                 <button type="button" id="qty-minus">−</button>
                 <span id="qty-value">1</span>
@@ -131,13 +134,13 @@
         </div>
 
         <div class="edit-modal-section">
-            <h4>Składniki główne</h4>
+            <h4>@Localizer["Składniki główne"]</h4>
             <div id="edit-default-ingredients" class="ingredients-list"></div>
         </div>
 
         <div class="edit-modal-section">
-            <h4>Dodatki</h4>
-            <div class="addon-counter">Wybrane dodatki: <span id="edit-optional-count">0/3</span></div>
+            <h4>@Localizer["Dodatki"]</h4>
+            <div class="addon-counter">@Localizer["Wybrane dodatki:"] <span id="edit-optional-count">0/3</span></div>
             <div id="edit-optional-ingredients" class="ingredients-list"></div>
         </div>
 
@@ -148,8 +151,8 @@
             <input type="hidden" name="quantity" id="edit-quantity" />
 
             <div class="modal-actions">
-                <button type="button" id="edit-cancel">Anuluj</button>
-                <button type="button" id="edit-save">Zapisz zmiany</button>
+                <button type="button" id="edit-cancel">@Localizer["Anuluj"]</button>
+                <button type="button" id="edit-save">@Localizer["Zapisz zmiany"]</button>
             </div>
         </form>
     </div>

@@ -1,6 +1,8 @@
 using Kiosk.Services;
+using Kiosk.Resources;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Localization;
 using System.IO;
 
 namespace Kiosk.Pages.Admin
@@ -9,11 +11,13 @@ namespace Kiosk.Pages.Admin
     {
         private readonly SiteSettingsService _siteSettingsService;
         private readonly IWebHostEnvironment _environment;
+        private readonly IStringLocalizer<SharedResource> _localizer;
 
-        public HeaderBackground(SiteSettingsService siteSettingsService, IWebHostEnvironment environment)
+        public HeaderBackground(SiteSettingsService siteSettingsService, IWebHostEnvironment environment, IStringLocalizer<SharedResource> localizer)
         {
             _siteSettingsService = siteSettingsService;
             _environment = environment;
+            _localizer = localizer;
         }
 
         [BindProperty]
@@ -32,7 +36,7 @@ namespace Kiosk.Pages.Admin
 
             if (HeaderImage is null || HeaderImage.Length == 0)
             {
-                ModelState.AddModelError(nameof(HeaderImage), "Proszê wybraæ plik graficzny.");
+                ModelState.AddModelError(nameof(HeaderImage), "ProszÄ™ wybraÄ‡ plik graficzny.");
                 return Page();
             }
 
@@ -61,7 +65,7 @@ namespace Kiosk.Pages.Admin
 
             var relativePath = $"/uploads/headers/{fileName}";
             await _siteSettingsService.UpdateHeaderBackgroundAsync(relativePath);
-            TempData["StatusMessage"] = "Zdjêcie nag³ówka zosta³o zaktualizowane.";
+            TempData["StatusMessage"] = "ZdjÄ™cie nagÅ‚Ã³wka zostaÅ‚o zaktualizowane.";
 
             return RedirectToPage();
         }
@@ -83,7 +87,7 @@ namespace Kiosk.Pages.Admin
                 await _siteSettingsService.UpdateHeaderBackgroundAsync(null);
             }
 
-            TempData["StatusMessage"] = "Zdjêcie nag³ówka zosta³o usuniête.";
+            TempData["StatusMessage"] = "ZdjÄ™cie nagÅ‚Ã³wka zostaÅ‚o usuniÄ™te.";
             return RedirectToPage();
         }
     }
