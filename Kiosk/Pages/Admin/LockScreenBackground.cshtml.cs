@@ -3,10 +3,12 @@ using System.IO;
 using System.Linq;
 using Kiosk.Data;
 using Kiosk.Models;
+using Kiosk.Resources;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Localization;
 
 namespace Kiosk.Pages.Admin
 {
@@ -14,11 +16,13 @@ namespace Kiosk.Pages.Admin
     {
         private readonly KioskDbContext _context;
         private readonly IWebHostEnvironment _environment;
+        private readonly IStringLocalizer<SharedResource> _localizer;
 
-        public LockScreenBackgroundModel(KioskDbContext context, IWebHostEnvironment environment)
+        public LockScreenBackgroundModel(KioskDbContext context, IWebHostEnvironment environment, IStringLocalizer<SharedResource> localizer)
         {
             _context = context;
             _environment = environment;
+            _localizer = localizer;
         }
 
         [BindProperty]
@@ -39,7 +43,7 @@ namespace Kiosk.Pages.Admin
         {
             if (ImageFile == null || ImageFile.Length == 0)
             {
-                ModelState.AddModelError(nameof(ImageFile), "Plik obrazu jest wymagany.");
+                ModelState.AddModelError(nameof(ImageFile), _localizer["Plik obrazu jest wymagany."]);
             }
 
             if (!ModelState.IsValid)
@@ -87,7 +91,7 @@ namespace Kiosk.Pages.Admin
             _context.LockScreenBackgrounds.Add(background);
             _context.SaveChanges();
 
-            Message = "Nowe t≥o zosta≥o zapisane.";
+            Message = "Nowe t≈Ço zosta≈Ço zapisane.";
             ImageFile = null;
             CurrentBackground = background;
             return Page();

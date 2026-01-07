@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 
@@ -29,6 +30,7 @@ namespace Kiosk.Pages
         public void OnGet(int? categoryId)
         {
             Categories = _context.Categories.ToList();
+            var culture = CultureInfo.CurrentUICulture;
             ProductsWithSets = _context.ProductSetItems
                .Select(p => p.MenuItemId)
                .ToHashSet();
@@ -53,7 +55,9 @@ namespace Kiosk.Pages
                         {
                             Id = m.Id,
                             Name = m.Name,
+                            NameEn = m.NameEn,
                             Description = m.Description,
+                            DescriptionEn = m.DescriptionEn,
                             Price = m.Price,
                             Image = m.Image,
                             CategoryId = m.CategoryId,
@@ -62,6 +66,7 @@ namespace Kiosk.Pages
                                 {
                                     Id = i.Id,
                                     Name = i.Name,
+                                    NameEn = i.NameEn,
                                     IsDefault = i.IsDefault,
                                     MenuItemId = i.MenuItemId,
                                     AdditionalPrice = i.AdditionalPrice
@@ -74,22 +79,24 @@ namespace Kiosk.Pages
                         .Include(ps => ps.Items)
                         .ThenInclude(i => i.MenuItem)
                         .Where(ps => displayedIds.Contains(ps.SetMenuItemId))
-                        .ToDictionary(ps => ps.SetMenuItemId, ps => ps.Items.Select(i => i.MenuItem.Name).ToList());
+                        .AsEnumerable()
+                        .ToDictionary(ps => ps.SetMenuItemId, ps => ps.Items.Select(i => i.MenuItem.GetDisplayName(culture)).ToList());
                 }
             }
         }
 
         /// <summary>
-        /// Dodawanie produktu do koszyka (zarówno z widoku kategorii, jak i z popupu polecanych).
+        /// Dodawanie produktu do koszyka (zarÃ³wno z widoku kategorii, jak i z popupu polecanych).
         /// </summary>
         public IActionResult OnPost(int menuItemId, int categoryId, string selectedIngredients, int quantity)
         {
-            // JEŒLI selectedIngredients jest puste (np. z produktu polecanego) ? uzupe³niamy domyœlne sk³adniki
+            var culture = CultureInfo.CurrentUICulture;
+            // JEÅšLI selectedIngredients jest puste (np. z produktu polecanego) ? uzupeÅ‚niamy domyÅ›lne skÅ‚adniki
             if (string.IsNullOrWhiteSpace(selectedIngredients) || selectedIngredients == "[]")
             {
                 var defaultIngredientNames = _context.MenuItemIngredients
                     .Where(i => i.MenuItemId == menuItemId && i.IsDefault)
-                    .Select(i => i.Name)
+                    .Select(i => i.GetDisplayName(culture))
                     .ToList();
 
                 selectedIngredients = JsonSerializer.Serialize(defaultIngredientNames);
@@ -97,7 +104,7 @@ namespace Kiosk.Pages
 
             var cart = HttpContext.Session.GetObjectFromJson<List<OrderItem>>("Cart") ?? new List<OrderItem>();
 
-            // Proste dodanie pozycji do koszyka (mo¿na rozbudowaæ o ³¹czenie pozycji)
+            // Proste dodanie pozycji do koszyka (moÅ¼na rozbudowaÄ‡ o Å‚Ä…czenie pozycji)
             cart.Add(new OrderItem
             {
                 MenuItemId = menuItemId,
@@ -111,11 +118,12 @@ namespace Kiosk.Pages
         }
 
         /// <summary>
-        /// Endpoint AJAX dla popupu wyboru sk³adników – zwraca listê domyœlnych i opcjonalnych.
+        /// Endpoint AJAX dla popupu wyboru skÅ‚adnikÃ³w â€“ zwraca listÄ™ domyÅ›lnych i opcjonalnych.
         /// </summary>
         public IActionResult OnGetIngredients(int menuItemId)
         {
-            // 1. SprawdŸ, czy to jest zestaw (SetMenuItem)
+            var culture = CultureInfo.CurrentUICulture;
+            // 1. SprawdÅº, czy to jest zestaw (SetMenuItem)
             var productSet = _context.ProductSets
                 .Include(ps => ps.Items)
                     .ThenInclude(psi => psi.MenuItem)
@@ -124,7 +132,7 @@ namespace Kiosk.Pages
 
             if (productSet != null)
             {
-                // Zbierz sk³adniki ze wszystkich produktów w zestawie
+                // Zbierz skÅ‚adniki ze wszystkich produktÃ³w w zestawie
                 var defaultList = new List<object>();
                 var optionalList = new List<object>();
 
@@ -133,13 +141,13 @@ namespace Kiosk.Pages
                     var product = item.MenuItem;
                     if (product == null) continue;
 
-                    var productName = product.Name;
+                    var productName = product.GetDisplayName(culture);
 
                     var defaults = product.Ingredients
                         .Where(i => i.IsDefault)
                         .Select(i => new
                         {
-                            name = $"{productName}: {i.Name}",
+                            name = $"{productName}: {i.GetDisplayName(culture)}",
                             price = i.AdditionalPrice
                         });
 
@@ -147,7 +155,7 @@ namespace Kiosk.Pages
                         .Where(i => !i.IsDefault)
                         .Select(i => new
                         {
-                            name = $"{productName}: {i.Name}",
+                            name = $"{productName}: {i.GetDisplayName(culture)}",
                             price = i.AdditionalPrice
                         });
 
@@ -162,27 +170,31 @@ namespace Kiosk.Pages
                 });
             }
 
-            // 2. Zwyk³y produkt – dotychczasowe zachowanie
-            var singleProduct = _context.MenuItems
-               .Where(m => m.Id == menuItemId)
-               .Select(m => new
-               {
-                   defaults = m.Ingredients.Where(i => i.IsDefault)
-                       .Select(i => new { name = i.Name, price = i.AdditionalPrice }).ToList(),
-                   optionals = m.Ingredients.Where(i => !i.IsDefault)
-                       .Select(i => new { name = i.Name, price = i.AdditionalPrice }).ToList()
-               })
-               .FirstOrDefault();
+            // 2. ZwykÅ‚y produkt â€“ dotychczasowe zachowanie
+            var ingredients = _context.MenuItemIngredients
+                .Where(i => i.MenuItemId == menuItemId)
+                .ToList();
 
-            if (singleProduct == null)
+            if (!ingredients.Any())
             {
                 return new JsonResult(new { defaults = new List<object>(), optionals = new List<object>() });
             }
 
-            return new JsonResult(singleProduct);
+            var defaults = ingredients
+                .Where(i => i.IsDefault)
+                .Select(i => new { name = i.GetDisplayName(culture), price = i.AdditionalPrice })
+                .ToList();
+
+            var optionals = ingredients
+                .Where(i => !i.IsDefault)
+                .Select(i => new { name = i.GetDisplayName(culture), price = i.AdditionalPrice })
+                .ToList();
+
+            return new JsonResult(new { defaults, optionals });
         }
         public IActionResult OnGetSetsForProduct(int menuItemId)
         {
+            var culture = CultureInfo.CurrentUICulture;
             var sets = _context.ProductSets
                 .Include(ps => ps.SetMenuItem)!
                 .ThenInclude(mi => mi.Category)
@@ -192,12 +204,12 @@ namespace Kiosk.Pages
                 .Select(ps => new
                 {
                     id = ps.SetMenuItemId,
-                    name = ps.SetMenuItem!.Name,
+                    name = ps.SetMenuItem!.GetDisplayName(culture),
                     price = ps.SetMenuItem.Price,
-                    description = ps.SetMenuItem.Description,
+                    description = ps.SetMenuItem.GetDisplayDescription(culture),
                     image = ps.SetMenuItem.Image,
                     categoryId = ps.SetMenuItem.CategoryId,
-                    items = ps.Items.Select(i => new { id = i.MenuItemId, name = i.MenuItem.Name, image = i.MenuItem.Image }).ToList()
+                    items = ps.Items.Select(i => new { id = i.MenuItemId, name = i.MenuItem.GetDisplayName(culture), image = i.MenuItem.Image }).ToList()
                 })
                 .ToList();
 

@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="~/css/OrderType.css" />
 
 @{
-    ViewData["Title"] = "Rodzaj Zamówienia";
+    ViewData["Title"] = Localizer["Rodzaj zamówienia"];
     ViewData["HidePageHeader"] = true;
     var backgroundStyle = !string.IsNullOrEmpty(Model.BackgroundImagePath)
        ? $"--order-type-background: url('{Model.BackgroundImagePath}');"
@@ -12,15 +12,15 @@
 
 <div class="order-type-page" style="@backgroundStyle">
     <div class="order-type-card">
-        <h1>Wybierz rodzaj zamówienia</h1>
-        <p>Wskaż czy chcesz zjeść na miejscu czy zabrać zamówienie ze sobą.</p>
+        <h1>@Localizer["Wybierz rodzaj zamówienia"]</h1>
+        <p>@Localizer["Wskaż czy chcesz zjeść na miejscu czy zabrać zamówienie ze sobą."]</p>
 
         <div class="order-type-buttons">
             <form method="post">
                 <input type="hidden" name="orderType" value="Na miejscu" />
                 <button type="submit" class="order-type-btn onsite">
                     <span class="order-type-icon" aria-hidden="true">🍽️</span>
-                    <span class="order-type-label">Na miejscu</span>
+                    <span class="order-type-label">@Localizer["Na miejscu"]</span>
                 </button>
             </form>
 
@@ -28,7 +28,7 @@
                 <input type="hidden" name="orderType" value="Na wynos" />
                 <button type="submit" class="order-type-btn takeaway">
                     <span class="order-type-icon" aria-hidden="true">🛍️</span>
-                    <span class="order-type-label">Na wynos</span>
+                    <span class="order-type-label">@Localizer["Na wynos"]</span>
                 </button>
             </form>
         </div>

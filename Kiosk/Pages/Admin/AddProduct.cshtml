@@ -4,69 +4,92 @@
 <div class="admin-shell">
     <div class="admin-heading">
         <div>
-            <p class="eyebrow">Panel administracyjny</p>
-            <h2>Dodaj produkt</h2>
-            <p class="muted">Uzupełnij szczegóły i dodaj nową pozycję do menu.</p>
+            <p class="eyebrow">@Localizer["Panel administracyjny"]</p>
+            <h2>@Localizer["Dodaj produkt"]</h2>
+            <p class="muted">@Localizer["Uzupełnij szczegóły i dodaj nową pozycję do menu."]</p>
         </div>
         <div class="admin-actions">          
-            <a asp-page="Categories" class="btn outline">Zarządzaj kategoriami</a>
-            <a asp-page="Index" class="btn ghost">Powrót</a>
+            <a asp-page="Categories" class="btn outline">@Localizer["Zarządzaj kategoriami"]</a>
+            <a asp-page="Index" class="btn ghost">@Localizer["Powrót"]</a>
         </div>
     </div>
 
     <div class="admin-card">
         <div class="card-heading">
-            <p class="eyebrow">Szczegóły produktu</p>
-            <h3>Nowa pozycja</h3>
+            <p class="eyebrow">@Localizer["Szczegóły produktu"]</p>
+            <h3>@Localizer["Nowa pozycja"]</h3>
         </div>
 
         <form method="post" enctype="multipart/form-data" class="admin-form">
             <div class="form-grid">
                 <div class="form-field">
-                    <label>Nazwa</label>
+                    <label>@Localizer["Nazwa (PL)"]</label>
                     <input asp-for="MenuItem.Name" />
                     <span asp-validation-for="MenuItem.Name" class="text-danger"></span>
                 </div>
 
                 <div class="form-field">
-                    <label>Cena</label>
+                    <label>@Localizer["Cena"]</label>
                     <input asp-for="MenuItem.Price" type="number" step="0.01" />
                     <span asp-validation-for="MenuItem.Price" class="text-danger"></span>
                 </div>
 
                 <div class="form-field">
-                    <label>Kategoria</label>
+                    <label>@Localizer["Kategoria"]</label>
                     <select asp-for="MenuItem.CategoryId" asp-items="Model.CategorySelectList">
-                        <option value="">-- Wybierz kategorię --</option>
+                        <option value="">@Localizer["-- Wybierz kategorię --"]</option>
                     </select>
                     <span asp-validation-for="MenuItem.CategoryId" class="text-danger"></span>
                 </div>
 
                 <div class="form-field">
-                    <label>Obraz (plik)</label>
+                    <label>@Localizer["Obraz (plik)"]</label>
                     <input asp-for="ImageFile" type="file" accept="image/*" />
                     <span asp-validation-for="ImageFile" class="text-danger"></span>
                 </div>
 
                 <div class="form-field full-width">
-                    <label>Opis</label>
+                    <label>@Localizer["Opis (PL)"]</label>
                     <textarea asp-for="MenuItem.Description" rows="3"></textarea>
                     <span asp-validation-for="MenuItem.Description" class="text-danger"></span>
                 </div>
 
                 <div class="form-field full-width">
-                    <label>Domyślne składniki (jeden na linię)</label>
+                    <label>@Localizer["Domyślne składniki (PL)"]</label>
                     <textarea asp-for="DefaultIngredientsInput" placeholder="np. pomidor&#x0a;ogórek" rows="3"></textarea>
                 </div>
 
                 <div class="form-field full-width">
-                    <label>Opcjonalne dodatki (nazwa | cena w zł, jeden na linię)</label>
+                    <label>@Localizer["Opcjonalne dodatki (PL)"]</label>
                     <textarea asp-for="OptionalIngredientsInput" placeholder="np. bekon | 2.50&#x0a;sos BBQ | 1.00" rows="3"></textarea>
+                </div>
+
+                <div class="form-field">
+                    <label>@Localizer["Nazwa (EN)"]</label>
+                    <input asp-for="MenuItem.NameEn" />
+                    <span asp-validation-for="MenuItem.NameEn" class="text-danger"></span>
+                </div>
+
+                <div class="form-field full-width">
+                    <label>@Localizer["Opis (EN)"]</label>
+                    <textarea asp-for="MenuItem.DescriptionEn" rows="3"></textarea>
+                    <span asp-validation-for="MenuItem.DescriptionEn" class="text-danger"></span>
+                </div>
+
+                <div class="form-field full-width">
+                    <label>@Localizer["Domyślne składniki (EN)"]</label>
+                    <textarea asp-for="DefaultIngredientsInputEn" placeholder="e.g. tomato&#x0a;cucumber" rows="3"></textarea>
+                </div>
+
+                <div class="form-field full-width">
+                    <label>@Localizer["Opcjonalne dodatki (EN)"]</label>
+                    <textarea asp-for="OptionalIngredientsInputEn" placeholder="e.g. bacon | 2.50&#x0a;BBQ sauce | 1.00" rows="3"></textarea>
+                    <small class="muted">@Localizer["Użyj tej samej kolejności składników co w wersji polskiej."]</small>
                 </div>
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="btn primary">Dodaj produkt</button>
+                <button type="submit" class="btn primary">@Localizer["Dodaj produkt"]</button>
                 <p class="success">@Model.Message</p>
             </div>
         </form>

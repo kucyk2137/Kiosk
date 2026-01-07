@@ -9,6 +9,8 @@ namespace Kiosk.Models
         [Required]
         public string Name { get; set; }
 
+        public string? NameEn { get; set; }
+
         public bool IsDefault { get; set; }
 
         public int MenuItemId { get; set; }

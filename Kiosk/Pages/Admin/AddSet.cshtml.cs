@@ -2,14 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Globalization;
 using Kiosk.Data;
 using Kiosk.Models;
+using Kiosk.Extensions;
+using Kiosk.Resources;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.Extensions.Localization;
 
 namespace Kiosk.Pages.Admin
 {
@@ -18,11 +22,13 @@ namespace Kiosk.Pages.Admin
         private const string SetsCategoryName = "Zestawy";
         private readonly KioskDbContext _context;
         private readonly IWebHostEnvironment _environment;
+        private readonly IStringLocalizer<SharedResource> _localizer;
 
-        public AddSetModel(KioskDbContext context, IWebHostEnvironment environment)
+        public AddSetModel(KioskDbContext context, IWebHostEnvironment environment, IStringLocalizer<SharedResource> localizer)
         {
             _context = context;
             _environment = environment;
+            _localizer = localizer;
         }
 
         [BindProperty]
@@ -30,10 +36,16 @@ namespace Kiosk.Pages.Admin
         public string Name { get; set; }
 
         [BindProperty]
+        public string NameEn { get; set; }
+
+        [BindProperty]
         public string Description { get; set; }
 
         [BindProperty]
-        [Range(0.01, double.MaxValue, ErrorMessage = "Cena musi byæ wiêksza od zera.")]
+        public string DescriptionEn { get; set; }
+
+        [BindProperty]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Cena musi byÄ‡ wiÄ™ksza od zera.")]
         public decimal Price { get; set; }
 
         [BindProperty]
@@ -63,12 +75,12 @@ namespace Kiosk.Pages.Admin
 
             if (SelectedProductIds.Count < 2)
             {
-                ModelState.AddModelError(nameof(SelectedProductIds), "Zestaw musi zawieraæ minimum 2 produkty.");
+                ModelState.AddModelError(nameof(SelectedProductIds), _localizer["Zestaw musi zawieraÄ‡ minimum 2 produkty."]);
             }
 
             if (!ModelState.IsValid)
             {
-                Error = "Popraw b³êdy w formularzu.";
+                Error = _localizer["Popraw bÅ‚Ä™dy w formularzu."];
                 return Page();
             }
 
@@ -77,18 +89,24 @@ namespace Kiosk.Pages.Admin
             var imagePath = ResolveImagePath();
             if (string.IsNullOrWhiteSpace(imagePath))
             {
-                Error = "Nie uda³o siê ustawiæ obrazu zestawu.";
+                Error = _localizer["Nie udaÅ‚o siÄ™ ustawiÄ‡ obrazu zestawu."];
                 return Page();
             }
 
             var finalDescription = string.IsNullOrWhiteSpace(Description)
-                ? BuildAutoDescription()
+                ? BuildAutoDescription(new CultureInfo("pl-PL"), "Zestaw zawiera:")
                 : Description;
+
+            var finalDescriptionEn = string.IsNullOrWhiteSpace(DescriptionEn)
+                ? BuildAutoDescription(new CultureInfo("en-US"), "Set includes:")
+                : DescriptionEn;
 
             var setMenuItem = new MenuItem
             {
                 Name = Name,
+                NameEn = NameEn,
                 Description = finalDescription,
+                DescriptionEn = finalDescriptionEn,
                 Price = Price,
                 Image = imagePath,
                 CategoryId = setsCategory.Id
@@ -114,7 +132,7 @@ namespace Kiosk.Pages.Admin
             _context.ProductSetItems.AddRange(setItems);
             _context.SaveChanges();
 
-            Message = "Zestaw zosta³ dodany.";
+            Message = _localizer["Zestaw zostaÅ‚ dodany."];
             ClearForm();
             LoadAvailableProducts();
             return Page();
@@ -123,11 +141,13 @@ namespace Kiosk.Pages.Admin
         private void LoadAvailableProducts()
         {
             var setsCategoryName = SetsCategoryName.ToLower();
+            var setsCategoryNameEn = "sets";
 
             AvailableProducts = _context.MenuItems
                 .Include(m => m.Category)
                 .Where(m => m.Category != null
-                            && m.Category.Name.ToLower() != setsCategoryName)
+                            && m.Category.Name.ToLower() != setsCategoryName
+                            && (m.Category.NameEn == null || m.Category.NameEn.ToLower() != setsCategoryNameEn))
                 .OrderBy(m => m.Name)
                 .ToList();
         }
@@ -138,9 +158,10 @@ namespace Kiosk.Pages.Admin
                 .FirstOrDefault(p => SelectedProductIds.Contains(p.Id))?.Image ?? string.Empty;
 
             var setsCategoryName = SetsCategoryName.ToLower();
+            var setsCategoryNameEn = "sets";
 
             var category = _context.Categories
-                .FirstOrDefault(c => c.Name.ToLower() == setsCategoryName);
+                .FirstOrDefault(c => c.Name.ToLower() == setsCategoryName || (c.NameEn != null && c.NameEn.ToLower() == setsCategoryNameEn));
 
             if (category != null)
             {
@@ -155,6 +176,7 @@ namespace Kiosk.Pages.Admin
             category = new Category
             {
                 Name = SetsCategoryName,
+                NameEn = "Sets",
                 Image = fallbackImage
             };
 
@@ -183,22 +205,24 @@ namespace Kiosk.Pages.Admin
             return firstSelected?.Image ?? string.Empty;
         }
 
-        private string BuildAutoDescription()
+        private string BuildAutoDescription(CultureInfo culture, string prefix)
         {
             var names = AvailableProducts
                 .Where(p => SelectedProductIds.Contains(p.Id))
-                .Select(p => p.Name)
+                .Select(p => p.GetDisplayName(culture))
                 .ToList();
 
             return names.Any()
-                ? $"Zestaw zawiera: {string.Join(", ", names)}"
+                ? $"{prefix} {string.Join(", ", names)}"
                 : string.Empty;
         }
 
         private void ClearForm()
         {
             Name = string.Empty;
+            NameEn = string.Empty;
             Description = string.Empty;
+            DescriptionEn = string.Empty;
             Price = 0;
             SelectedProductIds = new List<int>();
             ImageFile = null;

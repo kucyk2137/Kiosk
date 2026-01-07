@@ -4,18 +4,18 @@
 <div class="admin-shell">
     <div class="admin-heading">
         <div>
-            <p class="eyebrow">Panel administracyjny</p>
-            <h2>Edytuj kategorię</h2>
-            <p class="muted">Zaktualizuj nazwę kategorii, aby lepiej pasowała do oferty.</p>
+            <p class="eyebrow">@Localizer["Panel administracyjny"]</p>
+            <h2>@Localizer["Edytuj kategorię"]</h2>
+            <p class="muted">@Localizer["Zaktualizuj nazwę kategorii, aby lepiej pasowała do oferty."]</p>
         </div>
         <div class="admin-actions">
-            <a asp-page="Categories" class="btn ghost">Powrót do listy</a>
+            <a asp-page="Categories" class="btn ghost">@Localizer["Powrót do listy"]</a>
         </div>
     </div>
 
     <div class="admin-card">
         <div class="card-heading">
-            <p class="eyebrow">Edycja</p>
+            <p class="eyebrow">@Localizer["Edycja"]</p>
             <h3>@Model.Category.Name</h3>
         </div>
 
@@ -23,13 +23,19 @@
             <input type="hidden" asp-for="Category.Id" />
             <div class="form-grid">
                 <div class="form-field full-width">
-                    <label>Nazwa</label>
+                    <label>@Localizer["Nazwa (PL)"]</label>
                     <input asp-for="Category.Name" />
                     <span asp-validation-for="Category.Name" class="text-danger"></span>
                 </div>
 
                 <div class="form-field full-width">
-                    <label>Aktualne zdjęcie</label>
+                    <label>@Localizer["Nazwa (EN)"]</label>
+                    <input asp-for="Category.NameEn" />
+                    <span asp-validation-for="Category.NameEn" class="text-danger"></span>
+                </div>
+
+                <div class="form-field full-width">
+                    <label>@Localizer["Aktualne zdjęcie"]</label>
                     <div class="muted">
                         @if (!string.IsNullOrWhiteSpace(Model.Category.Image))
                         {
@@ -37,20 +43,20 @@
                         }
                         else
                         {
-                            <span>Brak</span>
+                            <span>@Localizer["Brak"]</span>
                         }
                     </div>
                 </div>
 
                 <div class="form-field full-width">
-                    <label>Nowe zdjęcie kategorii (opcjonalnie)</label>
+                    <label>@Localizer["Nowe zdjęcie kategorii (opcjonalnie)"]</label>
                     <input type="file" asp-for="ImageFile" accept="image/*" />
-                    <small class="muted">Pozostaw puste, aby zachować obecne zdjęcie.</small>
+                    <small class="muted">@Localizer["Pozostaw puste, aby zachować obecne zdjęcie."]</small>
                 </div>
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="btn primary">Zapisz zmiany</button>
+                <button type="submit" class="btn primary">@Localizer["Zapisz zmiany"]</button>
             </div>
         </form>
     </div>

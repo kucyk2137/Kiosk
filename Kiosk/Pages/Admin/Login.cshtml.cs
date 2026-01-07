@@ -1,11 +1,19 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Localization;
 using Microsoft.AspNetCore.Http;
+using Kiosk.Resources;
 
 namespace Kiosk.Pages.Admin
 {
     public class LoginModel : PageModel
     {
+        private readonly IStringLocalizer<SharedResource> _localizer;
+
+        public LoginModel(IStringLocalizer<SharedResource> localizer)
+        {
+            _localizer = localizer;
+        }
         [BindProperty]
         public string Username { get; set; }
 
@@ -20,14 +28,14 @@ namespace Kiosk.Pages.Admin
 
         public IActionResult OnPost()
         {
-            // Prosta weryfikacja admina (login i has≥o na sta≥e)
+            // Prosta weryfikacja admina (login i has≈Ço na sta≈Çe)
             if (Username == "admin" && Password == "admin123")
             {
                 HttpContext.Session.SetString("IsAdmin", "true");
                 return RedirectToPage("/Admin/Index");
             }
 
-            ErrorMessage = "Nieprawid≥owy login lub has≥o";
+            ErrorMessage = "Nieprawid≈Çowy login lub has≈Ço";
             return Page();
         }
     }

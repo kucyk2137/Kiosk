@@ -5,20 +5,25 @@ using System.Linq;
 using System.Globalization;
 using Kiosk.Data;
 using Kiosk.Models;
+using Kiosk.Extensions;
+using Kiosk.Resources;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Localization;
 
 public class AddProductModel : PageModel
 {
     private readonly KioskDbContext _context;
     private readonly IWebHostEnvironment _environment;
-    public AddProductModel(KioskDbContext context, IWebHostEnvironment environment)
+    private readonly IStringLocalizer<SharedResource> _localizer;
+    public AddProductModel(KioskDbContext context, IWebHostEnvironment environment, IStringLocalizer<SharedResource> localizer)
     {
         _context = context;
         _environment = environment;
+        _localizer = localizer;
     }
 
     [BindProperty]
@@ -31,6 +36,12 @@ public class AddProductModel : PageModel
     public string OptionalIngredientsInput { get; set; }
 
     [BindProperty]
+    public string DefaultIngredientsInputEn { get; set; }
+
+    [BindProperty]
+    public string OptionalIngredientsInputEn { get; set; }
+
+    [BindProperty]
     public IFormFile ImageFile { get; set; }
 
     public SelectList CategorySelectList { get; set; }
@@ -39,12 +50,16 @@ public class AddProductModel : PageModel
 
     public void OnGet()
     {
-        CategorySelectList = new SelectList(_context.Categories.OrderBy(c => c.Name), "Id", "Name");
+        var culture = CultureInfo.CurrentUICulture;
+        CategorySelectList = new SelectList(_context.Categories.OrderBy(c => c.Name)
+            .Select(c => new { c.Id, Name = c.GetDisplayName(culture) }), "Id", "Name");
     }
 
     public IActionResult OnPost()
     {
-        CategorySelectList = new SelectList(_context.Categories.OrderBy(c => c.Name), "Id", "Name");
+        var culture = CultureInfo.CurrentUICulture;
+        CategorySelectList = new SelectList(_context.Categories.OrderBy(c => c.Name)
+            .Select(c => new { c.Id, Name = c.GetDisplayName(culture) }), "Id", "Name");
 
         ModelState.Remove("MenuItem.Image");
 
@@ -54,13 +69,13 @@ public class AddProductModel : PageModel
                 .SelectMany(kvp => kvp.Value.Errors.Select(e => $"{kvp.Key}: {e.ErrorMessage}"))
                 .ToList();
 
-            Message = "Formularz zawiera b³êdy: " + string.Join(" | ", allErrors);
+            Message = _localizer["Formularz zawiera bÅ‚Ä™dy:"] + " " + string.Join(" | ", allErrors);
             return Page();
         }
 
         if (ImageFile == null || ImageFile.Length == 0)
         {
-            ModelState.AddModelError(nameof(ImageFile), "Plik obrazu jest wymagany.");
+            ModelState.AddModelError(nameof(ImageFile), _localizer["Plik obrazu jest wymagany."]);
             return Page();
         }
 
@@ -80,8 +95,8 @@ public class AddProductModel : PageModel
         _context.SaveChanges();
 
         var ingredientsToAdd = new List<MenuItemIngredient>();
-        ingredientsToAdd.AddRange(ParseIngredients(DefaultIngredientsInput, true, MenuItem.Id));
-        ingredientsToAdd.AddRange(ParseIngredients(OptionalIngredientsInput, false, MenuItem.Id));
+        ingredientsToAdd.AddRange(ParseIngredients(DefaultIngredientsInput, DefaultIngredientsInputEn, true, MenuItem.Id));
+        ingredientsToAdd.AddRange(ParseIngredients(OptionalIngredientsInput, OptionalIngredientsInputEn, false, MenuItem.Id));
 
         if (ingredientsToAdd.Any())
         {
@@ -89,46 +104,83 @@ public class AddProductModel : PageModel
             _context.SaveChanges();
         }
 
-        Message = "Produkt zosta³ dodany!";
+        Message = _localizer["Produkt zostaÅ‚ dodany!"];
         MenuItem = new MenuItem();
         DefaultIngredientsInput = string.Empty;
         OptionalIngredientsInput = string.Empty;
+        DefaultIngredientsInputEn = string.Empty;
+        OptionalIngredientsInputEn = string.Empty;
         return Page();
     }
 
-    private IEnumerable<MenuItemIngredient> ParseIngredients(string input, bool isDefault, int menuItemId)
+    private IEnumerable<MenuItemIngredient> ParseIngredients(string input, string inputEn, bool isDefault, int menuItemId)
     {
-        if (string.IsNullOrWhiteSpace(input))
+        var lines = SplitLines(input);
+        var linesEn = SplitLines(inputEn);
+
+        if (!lines.Any())
         {
             return Enumerable.Empty<MenuItemIngredient>();
         }
 
-        return input
-            .Split('\n', System.StringSplitOptions.RemoveEmptyEntries)
-            .Select(i => i.Trim())
-            .Where(i => !string.IsNullOrWhiteSpace(i))
-            .Select(line => CreateIngredient(line, isDefault, menuItemId));
-    }
+        var ingredients = new List<MenuItemIngredient>();
 
-    private MenuItemIngredient CreateIngredient(string line, bool isDefault, int menuItemId)
-    {
-        var parts = line.Split('|', StringSplitOptions.RemoveEmptyEntries);
-        var name = parts.FirstOrDefault()?.Trim() ?? string.Empty;
-        var price = 0m;
-
-        var priceText = parts.Length > 1 ? parts[1].Trim().Replace(',', '.') : string.Empty;
-
-        if (!isDefault && decimal.TryParse(priceText, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var parsed))
+        for (var index = 0; index < lines.Count; index++)
         {
-            price = parsed;
+            var (name, price, hasPrice) = ParseIngredientLine(lines[index], !isDefault);
+            var (nameEn, enPrice, enHasPrice) = ParseIngredientLine(index < linesEn.Count ? linesEn[index] : string.Empty, !isDefault);
+            var finalPrice = hasPrice ? price : (enHasPrice ? enPrice : 0m);
+
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                continue;
+            }
+
+            ingredients.Add(new MenuItemIngredient
+            {
+                MenuItemId = menuItemId,
+                Name = name,
+                NameEn = string.IsNullOrWhiteSpace(nameEn) ? null : nameEn,
+                IsDefault = isDefault,
+                AdditionalPrice = finalPrice
+            });
         }
 
-        return new MenuItemIngredient
+        return ingredients;
+    }
+
+    private static List<string> SplitLines(string input)
+    {
+        return string.IsNullOrWhiteSpace(input)
+            ? new List<string>()
+            : input
+                .Split("\n", StringSplitOptions.RemoveEmptyEntries)
+                .Select(line => line.Trim())
+                .Where(line => !string.IsNullOrWhiteSpace(line))
+                .ToList();
+    }
+
+    private static (string name, decimal price, bool hasPrice) ParseIngredientLine(string line, bool allowPrice)
+    {
+        if (string.IsNullOrWhiteSpace(line))
         {
-            MenuItemId = menuItemId,
-            Name = name,
-            IsDefault = isDefault,
-            AdditionalPrice = price
-        };
+            return (string.Empty, 0m, false);
+        }
+
+        var parts = line.Split('|', StringSplitOptions.RemoveEmptyEntries);
+        var name = parts.FirstOrDefault()?.Trim() ?? string.Empty;
+
+        if (!allowPrice || parts.Length < 2)
+        {
+            return (name, 0m, false);
+        }
+
+        var priceText = parts[1].Trim().Replace(',', '.');
+        if (decimal.TryParse(priceText, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var parsed))
+        {
+            return (name, parsed, true);
+        }
+
+        return (name, 0m, false);
     }
 }

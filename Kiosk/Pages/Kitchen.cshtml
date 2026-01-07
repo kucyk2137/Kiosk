@@ -1,37 +1,65 @@
-@page
+﻿@page
 @model Kiosk.Pages.KitchenModel
 <link rel="stylesheet" href="~/css/Kitchen.css" />
 @{
-    ViewData["Title"] = "Kuchnia";
+    ViewData["Title"] = Localizer["Kuchnia"];
     ViewData["HidePageHeader"] = true;
 }
 
 <div class="kitchen-screen">
     <div class="kitchen-topbar">
         <div>
-            <p class="eyebrow">Panel kuchni</p>
-            <h1>Oczekujące zamówienia</h1>
-            <p class="muted">Nowe zamówienia pojawiają się automatycznie – kliknij "Gotowe" gdy wydasz potrawy.</p>
+            <p class="eyebrow">@Localizer["Panel kuchni"]</p>
+            <h1>@Localizer["Oczekujące zamówienia"]</h1>
+            <p class="muted">@Localizer["Nowe zamówienia pojawiają się automatycznie – kliknij Gotowe gdy wydasz potrawy."]</p>
         </div>
         <div class="kitchen-actions">
-            <div id="order-count" class="pill">0 w kolejce</div>
-            <button id="refresh-orders" type="button" class="ghost-btn">Odśwież</button>
+            <div id="order-count" class="pill">@Localizer["0 w kolejce"]</div>
+            <button id="refresh-orders" type="button" class="ghost-btn">@Localizer["Odśwież"]</button>
         </div>
     </div>
 
     <div id="orders-grid" class="kitchen-grid">
         <div class="empty-state">
-            <p class="eyebrow">Brak zamówień</p>
-            <h3>Wszystkie zamówienia zostały zrealizowane</h3>
-            <p class="muted">Nowe zamówienia pokażą się tutaj natychmiast po złożeniu.</p>
+            <p class="eyebrow">@Localizer["Brak zamówień"]</p>
+            <h3>@Localizer["Wszystkie zamówienia zostały zrealizowane"]</h3>
+            <p class="muted">@Localizer["Nowe zamówienia pokażą się tutaj natychmiast po złożeniu."]</p>
         </div>
     </div>
 
-    <a class="history-fab" href="/KitchenHistory">Historia zamówień</a>
+    <a class="history-fab" href="/KitchenHistory">@Localizer["Historia zamówień"]</a>
 </div>
 
 <script>
-        const ordersGrid = document.getElementById('orders-grid');
+    const i18n = {
+        emptyTitle: '@Localizer["Brak zamówień"]',
+        emptySubtitle: '@Localizer["Wszystkie zamówienia zostały zrealizowane"]',
+        emptyHint: '@Localizer["Nowe zamówienia pokażą się tutaj natychmiast po złożeniu."]',
+        queueSuffix: '@Localizer["w kolejce"]',
+        orderLabel: '@Localizer["Zamówienie"]',
+        defaultOrderType: '@Localizer["Na miejscu"]',
+        ready: '@Localizer["Gotowe"]',
+        pickedUp: '@Localizer["Odebrane"]',
+        markReadyError: '@Localizer["Nie udało się oznaczyć zamówienia jako gotowe."]',
+        closeError: '@Localizer["Nie udało się zamknąć zamówienia."]',
+        closeGenericError: '@Localizer["Wystąpił błąd podczas zamykania zamówienia."]',
+        fetchError: '@Localizer["Nie udało się pobrać zamówień."]',
+        none: '@Localizer["Brak"]',
+        without: '@Localizer["bez -"]',
+        baseIngredients: '@Localizer["Składniki podstawowe"]',
+        extraIngredients: '@Localizer["Dodatki"]'
+    };
+    const orderTypeLabels = {
+        "Na miejscu": i18n.defaultOrderType,
+        "Na wynos": '@Localizer["Na wynos"]'
+    };
+    const paymentMethodLabels = {
+        "Karta": '@Localizer["Karta"]',
+        "Gotówka": '@Localizer["Gotówka"]',
+        "BLIK": "BLIK"
+    };
+
+    const ordersGrid = document.getElementById('orders-grid');
     const orderCount = document.getElementById('order-count');
     const refreshButton = document.getElementById('refresh-orders');
 
@@ -79,11 +107,11 @@
         const toEntries = (list, className = '') => list.map(text => ({ text, className }));
         const renderEntries = (entries) => entries.length
             ? entries.map(({ text, className }) => `<li${className ? ` class=\"${className}\"` : ''}>${text}</li>`).join('')
-            : '<li class="muted">Brak</li>';
+            : `<li class="muted">${i18n.none}</li>`;
 
         const defaultEntries = [
             ...toEntries(selectedDefaults),
-            ...toEntries(removedDefaults.map(name => `bez - ${name}`), 'removed-ingredient')
+            ...toEntries(removedDefaults.map(name => `${i18n.without} ${name}`), 'removed-ingredient')
         ];
         const optionalEntries = toEntries(selectedOptionals);
 
@@ -94,13 +122,13 @@
         return `
                     <div class="item-ingredients">
                         <div class="ingredient-group">
-                            <div class="ingredient-label">Składniki podstawowe</div>
+                            <div class="ingredient-label">${i18n.baseIngredients}</div>
                             <ul class="ingredient-list">
                                 ${renderEntries(defaultEntries)}
                             </ul>
                         </div>
                         <div class="ingredient-group">
-                            <div class="ingredient-label">Dodatki</div>
+                            <div class="ingredient-label">${i18n.extraIngredients}</div>
                             <ul class="ingredient-list">
                                 ${renderEntries(optionalEntries)}
                             </ul>
@@ -113,13 +141,13 @@
         if (!orders.length) {
             ordersGrid.innerHTML = `
                         <div class="empty-state">
-                            <p class="eyebrow">Brak zamówień</p>
-                            <h3>Wszystkie zamówienia zostały zrealizowane</h3>
-                            <p class="muted">Nowe zamówienia pokażą się tutaj natychmiast po złożeniu.</p>
+                            <p class="eyebrow">@Localizer["Brak zamówień"]</p>
+                            <h3>@Localizer["Wszystkie zamówienia zostały zrealizowane"]</h3>
+                            <p class="muted">@Localizer["Nowe zamówienia pokażą się tutaj natychmiast po złożeniu."]</p>
                         </div>`;
         }
 
-        orderCount.textContent = `${orders.length} w kolejce`;
+        orderCount.textContent = `${orders.length} ${i18n.queueSuffix}`;
 
         orders.forEach(order => {
             const card = document.createElement('article');
@@ -131,12 +159,12 @@
             card.innerHTML = `
                         <header class="card-head">
                             <div>
-                                <div class="eyebrow">Zamówienie ${order.orderNumber || `#${order.orderId}`}</div>
-                                <div class="order-time">${order.orderType || 'Na miejscu'} • ${formatTime(order.orderDate)}</div>
+                                <div class="eyebrow">${i18n.orderLabel} ${order.orderNumber || `#${order.orderId}`}</div>
+                                <div class="order-time">${orderTypeLabels[order.orderType] || order.orderType || i18n.defaultOrderType} • ${formatTime(order.orderDate)}</div>
                             </div>
                             <div class="badge-row">
-                                <span class="pill pill--accent">${order.paymentMethod}</span>
-                                    ${order.isReady ? '<span class="pill pill--success">Gotowe</span>' : ''}
+                                <span class="pill pill--accent">${paymentMethodLabels[order.paymentMethod] || order.paymentMethod}</span>
+                                    ${order.isReady ? `<span class="pill pill--success">${i18n.ready}</span>` : ''}
                             </div>
                         </header>
                         <div class="card-body">
@@ -151,7 +179,7 @@
                             `).join('')}
                         </div>
                         <footer class="card-actions">
-                                <button class="done-btn" data-order-id="${order.orderId}">${order.isReady ? 'Odebrane' : 'Gotowe'}</button>
+                                <button class="done-btn" data-order-id="${order.orderId}">${order.isReady ? i18n.pickedUp : i18n.ready}</button>
                         </footer>`;
 
             card.querySelector('.done-btn').addEventListener('click', () => markDone(order.orderId, card));
@@ -168,20 +196,20 @@
             if (!response.ok) {
                 const payload = await response.json().catch(() => ({}));
                 const defaultMessage = isReady
-                    ? 'Nie udało się zamknąć zamówienia.'
-                    : 'Nie udało się oznaczyć zamówienia jako gotowe.';
+                    ? i18n.closeError
+                    : i18n.markReadyError;
                 alert(payload.message || defaultMessage);
             }
             if (!isReady) {
                 card.dataset.isReady = 'true';
                 card.classList.add('is-ready');
-                card.querySelector('.done-btn').textContent = 'Odebrane';
+                card.querySelector('.done-btn').textContent = i18n.pickedUp;
                 card.querySelector('.badge-row')
-                    .insertAdjacentHTML('beforeend', '<span class="pill pill--success">Gotowe</span>');
+                    .insertAdjacentHTML('beforeend', `<span class="pill pill--success">${i18n.ready}</span>`);
             }
             await loadOrders();
         } catch (err) {
-            alert('Wystąpił błąd podczas zamykania zamówienia.');
+            alert(i18n.closeGenericError);
         } finally {
             card.classList.remove('is-processing');
         }
@@ -194,7 +222,7 @@
             const data = await response.json();
             renderOrders(data);
         } catch (err) {
-            ordersGrid.innerHTML = '<p class="muted">Nie udało się pobrać zamówień.</p>';
+            ordersGrid.innerHTML = `<p class="muted">${i18n.fetchError}</p>`;
         } finally {
             ordersGrid.classList.remove('is-loading');
         }

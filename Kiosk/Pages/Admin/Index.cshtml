@@ -1,28 +1,33 @@
 ﻿@page
 @model Kiosk.Pages.Admin.IndexModel
+@using Kiosk.Extensions
+@using System.Globalization
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 <link rel="stylesheet" href="~/css/admin.css" />
+@{
+    var culture = CultureInfo.CurrentUICulture;
+}
 
 <div class="admin-shell">
     <div class="admin-heading">
         <div>
-            <p class="eyebrow">Panel administracyjny</p>
-            <h2>Lista produktów</h2>
-            <p class="muted">Dodawaj, edytuj i usuwaj pozycje menu z jednego miejsca.</p>
+            <p class="eyebrow">@Localizer["Panel administracyjny"]</p>
+            <h2>@Localizer["Lista produktów"]</h2>
+            <p class="muted">@Localizer["Dodawaj, edytuj i usuwaj pozycje menu z jednego miejsca."]</p>
         </div>
         <div class="admin-actions">
-            <a asp-page="AddProduct" class="btn primary">Dodaj nowy produkt</a>
-            <a asp-page="Categories" class="btn ghost">Zarządzaj kategoriami</a>
-            <a asp-page="AddSet" class="btn ghost">Dodaj nowy zestaw</a>
-            <a asp-page="LockScreenBackground" class="btn ghost">Tło ekranu blokady</a>
-            <a asp-page="HeaderBackground" class="btn ghost">Ustaw tło nagłówka</a>
+            <a asp-page="AddProduct" class="btn primary">@Localizer["Dodaj nowy produkt"]</a>
+            <a asp-page="Categories" class="btn ghost">@Localizer["Zarządzaj kategoriami"]</a>
+            <a asp-page="AddSet" class="btn ghost">@Localizer["Dodaj nowy zestaw"]</a>
+            <a asp-page="LockScreenBackground" class="btn ghost">@Localizer["Tło ekranu blokady"]</a>
+            <a asp-page="HeaderBackground" class="btn ghost">@Localizer["Ustaw tło nagłówka"]</a>
         </div>
     </div>
     <div class="admin-card">
         <div class="card-heading">
             <div>
-                <p class="eyebrow">Polecenia</p>
-                <h3>Polecane produkty</h3>
+                <p class="eyebrow">@Localizer["Polecenia"]</p>
+                <h3>@Localizer["Polecane produkty"]</h3>
             </div>
         </div>
 
@@ -33,12 +38,12 @@
                 {
                     <li class="recommended-row">
                         <div>
-                            <div class="cell-title">@item.Name</div>
-                            <p class="muted">@item.Category?.Name</p>
+                            <div class="cell-title">@item.GetDisplayName(culture)</div>
+                            <p class="muted">@item.Category?.GetDisplayName(culture)</p>
                         </div>
                         <form method="post" asp-page-handler="RemoveRecommended" class="inline-form">
                             <input type="hidden" name="menuItemId" value="@item.Id" />
-                            <button type="submit" class="btn danger">Usuń</button>
+                            <button type="submit" class="btn danger">@Localizer["Usuń"]</button>
                         </form>
                     </li>
                 }
@@ -46,40 +51,40 @@
         }
         else
         {
-            <p class="muted">Nie dodano jeszcze żadnych produktów polecanych.</p>
+            <p class="muted">@Localizer["Nie dodano jeszcze żadnych produktów polecanych."]</p>
         }
 
         <form method="post" asp-page-handler="AddRecommended" class="admin-form compact">
             <div class="form-grid">
                 <div class="form-field">
-                    <label for="recommended-select">Dodaj produkt do polecanych</label>
+                    <label for="recommended-select">@Localizer["Dodaj produkt do polecanych"]</label>
                     <select id="recommended-select" name="menuItemId" required>
-                        <option value="">Wybierz produkt</option>
+                        <option value="">@Localizer["Wybierz produkt"]</option>
                         @foreach (var item in Model.AvailableForRecommendation)
                         {
-                            <option value="@item.Id">@item.Name (@item.Category?.Name)</option>
+                            <option value="@item.Id">@item.GetDisplayName(culture) (@item.Category?.GetDisplayName(culture))</option>
                         }
                     </select>
                 </div>
             </div>
-            <button type="submit" class="btn primary full-width">Dodaj do polecanych</button>
+            <button type="submit" class="btn primary full-width">@Localizer["Dodaj do polecanych"]</button>
         </form>
     </div>
     <div class="admin-card">
         <div class="card-heading">
             <div>
-                <p class="eyebrow">Menu</p>
-                <h3>Aktualne produkty</h3>
+                <p class="eyebrow">@Localizer["Menu"]</p>
+                <h3>@Localizer["Aktualne produkty"]</h3>
             </div>
         </div>
 
         <table class="admin-table">
             <thead>
                 <tr>
-                    <th>Nazwa</th>
-                    <th>Kategoria</th>
-                    <th>Cena</th>
-                    <th class="text-right">Opcje</th>
+                    <th>@Localizer["Nazwa"]</th>
+                    <th>@Localizer["Kategoria"]</th>
+                    <th>@Localizer["Cena"]</th>
+                    <th class="text-right">@Localizer["Opcje"]</th>
                 </tr>
             </thead>
             <tbody>
@@ -87,17 +92,17 @@
                 {
                     <tr>
                         <td>
-                            <div class="cell-title">@item.Name</div>
-                            <p class="muted">@item.Description</p>
+                            <div class="cell-title">@item.GetDisplayName(culture)</div>
+                            <p class="muted">@item.GetDisplayDescription(culture)</p>
                         </td>
-                        <td>@item.Category.Name</td>
+                        <td>@item.Category.GetDisplayName(culture)</td>
                         <td>@item.Price.ToString("0.00") zł</td>
                         <td class="text-right">
                             <div class="table-actions">
-                                <a asp-page="EditProduct" asp-route-id="@item.Id" class="btn ghost">Edytuj</a>
+                                <a asp-page="EditProduct" asp-route-id="@item.Id" class="btn ghost">@Localizer["Edytuj"]</a>
                                 <form method="post" asp-page-handler="Delete" class="inline-form">
                                     <input type="hidden" name="MenuItemId" value="@item.Id" />
-                                    <button type="submit" class="btn danger">Usuń</button>
+                                    <button type="submit" class="btn danger">@Localizer["Usuń"]</button>
                                 </form>
                             </div>
                         </td>
