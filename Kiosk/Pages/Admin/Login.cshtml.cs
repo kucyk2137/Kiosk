@@ -20,7 +20,6 @@ namespace Kiosk.Pages.Admin
 
         public IActionResult OnPost()
         {
-            // Prosta weryfikacja admina (login i has³o na sta³e)
             if (Username == "admin" && Password == "admin123")
             {
                 HttpContext.Session.SetString("IsAdmin", "true");

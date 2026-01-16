@@ -4,9 +4,7 @@
     padding: 0;
     font-family: "Segoe UI", Arial, sans-serif;
 }
-/* =======================
-   STRONA MENU  LAYOUT
-   ======================= */
+
 .menu-page {
     display: flex;
     height: 100vh;
@@ -17,7 +15,6 @@
     gap: 22px;
 }
 
-/* Lewy panel  kategorie */
 .categories {
     width: 240px;
     max-width: 260px;
@@ -170,9 +167,6 @@
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
     }
 
-/* =======================
-   PRAWA STRONA MENU
-   ======================= */
 .menu-page main[role="main"] {
     flex: 1;
     padding: 20px 28px;

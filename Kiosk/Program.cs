@@ -8,15 +8,15 @@ using System.Threading.Tasks;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// EF Core
+
 builder.Services.AddDbContext<KioskDbContext>(options =>
 options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection"),
         sqlOptions => sqlOptions.EnableRetryOnFailure()));
 
 builder.Services.AddRazorPages();
-builder.Services.AddSession(); // potrzebne dla koszyka
-builder.Services.AddSingleton<OrderUpdateNotifier>(); //odœwie¿anie widoku orderdisplay
+builder.Services.AddSession(); 
+builder.Services.AddSingleton<OrderUpdateNotifier>(); 
 builder.Services.AddScoped<SiteSettingsService>();
 var app = builder.Build();
 
@@ -113,7 +113,7 @@ app.MapGet("/api/orders/updates", async (HttpContext context, OrderUpdateNotifie
     }
     catch (OperationCanceledException)
     {
-        // Client disconnected
+       
     }
     finally
     {

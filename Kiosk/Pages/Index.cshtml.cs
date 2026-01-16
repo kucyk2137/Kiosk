@@ -7,7 +7,7 @@ namespace Kiosk.Pages
     {
         public IActionResult OnGet()
         {
-            // Przekierowanie do strony LockScreen
+
             return RedirectToPage("/LockScreen");
         }
     }

@@ -44,10 +44,9 @@
         }
     });
 
-    // ⬇⬇⬇ NOWY KOD: dodawanie polecanych bez zamykania popupu
     document.querySelectorAll('.recommended-add-form').forEach(form => {
         form.addEventListener('submit', (event) => {
-            event.preventDefault(); // nie przeładowuj strony
+            event.preventDefault(); 
 
             const formData = new FormData(form);
 
@@ -59,7 +58,6 @@
                 }
             })
                 .then(() => {
-                    // opcjonalnie: jakiś feedback, np. zmiana tekstu przycisku
                     const btn = form.querySelector('.recommend-add-btn');
                     if (btn) {
                         btn.textContent = 'Dodano!';
