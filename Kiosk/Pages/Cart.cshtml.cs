@@ -85,7 +85,7 @@ namespace Kiosk.Pages
 
             return RedirectToPage("/Payment");
         }
-        // sk³adniki dla popupu edycji
+
         public IActionResult OnGetIngredients(int menuItemId)
         {
             var product = _context.MenuItems
@@ -107,7 +107,6 @@ namespace Kiosk.Pages
             return new JsonResult(product);
         }
 
-        // zapis zmian z popupu (sk³adniki + iloœæ)
         public IActionResult OnPostUpdate(int menuItemId, string oldSelectedIngredients, string newSelectedIngredients, int quantity)
         {
             var cart = HttpContext.Session.GetObjectFromJson<List<OrderItem>>("Cart") ?? new List<OrderItem>();

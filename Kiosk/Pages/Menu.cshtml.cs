@@ -79,12 +79,10 @@ namespace Kiosk.Pages
             }
         }
 
-        /// <summary>
-        /// Dodawanie produktu do koszyka (zarówno z widoku kategorii, jak i z popupu polecanych).
-        /// </summary>
+
         public IActionResult OnPost(int menuItemId, int categoryId, string selectedIngredients, int quantity)
         {
-            // JEŒLI selectedIngredients jest puste (np. z produktu polecanego) ? uzupe³niamy domyœlne sk³adniki
+
             if (string.IsNullOrWhiteSpace(selectedIngredients) || selectedIngredients == "[]")
             {
                 var defaultIngredientNames = _context.MenuItemIngredients
@@ -97,7 +95,7 @@ namespace Kiosk.Pages
 
             var cart = HttpContext.Session.GetObjectFromJson<List<OrderItem>>("Cart") ?? new List<OrderItem>();
 
-            // Proste dodanie pozycji do koszyka (mo¿na rozbudowaæ o ³¹czenie pozycji)
+
             cart.Add(new OrderItem
             {
                 MenuItemId = menuItemId,
@@ -110,12 +108,10 @@ namespace Kiosk.Pages
             return RedirectToPage(new { categoryId });
         }
 
-        /// <summary>
-        /// Endpoint AJAX dla popupu wyboru sk³adników – zwraca listê domyœlnych i opcjonalnych.
-        /// </summary>
+
         public IActionResult OnGetIngredients(int menuItemId)
         {
-            // 1. SprawdŸ, czy to jest zestaw (SetMenuItem)
+        
             var productSet = _context.ProductSets
                 .Include(ps => ps.Items)
                     .ThenInclude(psi => psi.MenuItem)
@@ -124,7 +120,6 @@ namespace Kiosk.Pages
 
             if (productSet != null)
             {
-                // Zbierz sk³adniki ze wszystkich produktów w zestawie
                 var defaultList = new List<object>();
                 var optionalList = new List<object>();
 
@@ -162,7 +157,7 @@ namespace Kiosk.Pages
                 });
             }
 
-            // 2. Zwyk³y produkt – dotychczasowe zachowanie
+   
             var singleProduct = _context.MenuItems
                .Where(m => m.Id == menuItemId)
                .Select(m => new

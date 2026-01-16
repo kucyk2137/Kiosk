@@ -23,7 +23,7 @@ namespace Kiosk.Models
         [Required(ErrorMessage = "Kategoria jest wymagana")]
         public int CategoryId { get; set; }
 
-        public Category? Category { get; set; }   // 👈 TU ZMIANA
+        public Category? Category { get; set; }   
 
         public List<MenuItemIngredient> Ingredients { get; set; } = new();
     }

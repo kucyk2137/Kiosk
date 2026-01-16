@@ -160,8 +160,7 @@
                 addModal.style.display = 'flex';
             })
             .catch(err => {
-                console.error(err);
-                // awaryjnie: można po prostu od razu submitować formularz bez popupu
+                console.error(err);               
             });
     }
 
@@ -235,20 +234,20 @@
         if (ingredientsInput) ingredientsInput.value = '[]';
         if (qtyInput) qtyInput.value = '1';
 
-        // od tej chwili edytujemy składniki dla pozycji zestawu (MenuItem zestawu)
+
         currentMenuItemId = setData.id;
 
         if (setListModal) {
             setListModal.style.display = 'none';
         }
 
-        // zamiast od razu dodać do koszyka -> otwieramy popup składników
+
         openIngredientModal();
     }
 
     function loadSetsForProduct(menuItemId) {
         if (!setListContainer || !setListModal) {
-            // awaryjnie – brak modala, zachowujemy się jak zwykły produkt
+
             openIngredientModal();
             return;
         }
@@ -264,7 +263,7 @@
             })
             .then(data => {
                 if (!data || data.length === 0) {
-                    // brak zestawów – wracamy do zwykłego popupu składników
+
                     setListModal.style.display = 'none';
                     openIngredientModal();
                     return;
@@ -284,7 +283,7 @@
             });
     }
 
-    // --- Obsługa modala składników ---
+
 
     if (qtyMinus && qtyValue) {
         qtyMinus.addEventListener('click', () => {
@@ -339,7 +338,7 @@
         currentForm.submit();
     });
 
-    // --- Obsługa wyboru: bez zestawu / w zestawie ---
+
 
     setWithoutBtn?.addEventListener('click', () => {
         if (setChoiceModal) setChoiceModal.style.display = 'none';
@@ -367,7 +366,7 @@
         }
     });
 
-    // --- Podpięcie przycisków "Dodaj do koszyka" ---
+
 
     document.querySelectorAll('.open-ingredient-modal').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -377,17 +376,15 @@
             const hasSet = (btn.dataset.hasSet || '').toLowerCase() === 'true';
             const isSetItem = (btn.dataset.isSet || '').toLowerCase() === 'true';
 
-            // 1) Produkt jest już zestawem lub nie ma zestawów -> od razu popup składników
+
             if (isSetItem || !hasSet) {
                 openIngredientModal();
                 return;
             }
 
-            // 2) Produkt ma zestawy -> pokaż wybór
             if (setChoiceModal) {
                 setChoiceModal.style.display = 'flex';
             } else {
-                // fallback: jak zwykły produkt
                 openIngredientModal();
             }
         });

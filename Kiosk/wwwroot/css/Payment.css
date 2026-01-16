@@ -3,10 +3,11 @@
     --payment-panel: #ffffff;
     --payment-border: #e6ecf5;
     --payment-shadow: 0 18px 40px rgba(46, 64, 105, 0.12);
-    --payment-shadow-strong: 0 20px 46px rgba(255, 122, 0, 0.24);
     --payment-accent: #ff8c3f;
     --payment-accent-strong: #ff7a00;
     --payment-muted: #7a889b;
+    --payment-header-bg: #fffaf4;
+    --payment-header-border: #ffd2a2;
 }
 
 .payment-page {
@@ -45,9 +46,9 @@
     }
 
     .payment-header .pill {
-        background: #fffaf4;
+        background: var(--payment-header-bg);
         color: #ef7a0b;
-        border: 1px solid #ffd2a2;
+        border: 1px solid var(--payment-header-border);
         padding: 10px 18px;
         border-radius: 14px;
         font-weight: 700;
@@ -56,7 +57,7 @@
 
 .payment-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(3, minmax(240px, 1fr));
     gap: 20px 24px;
     align-items: stretch;
 }
@@ -119,18 +120,17 @@
 
     .payment-tile.is-selected {
         border-color: var(--payment-accent);
-        box-shadow: var(--payment-shadow-strong);
+        box-shadow: 0 20px 46px rgba(255, 122, 0, 0.24);
         outline: none;
     }
 
 .payment-summary {
-    padding: 18px 20px 16px;
+    grid-column: 1 / -1;
+    padding: 20px 22px;
     display: flex;
     flex-direction: column;
     gap: 10px;
     min-height: 200px;
-    max-width: 380px;
-    justify-self: end;
 }
 
     .payment-summary h3 {
@@ -152,10 +152,13 @@
 
 .summary-actions {
     margin-top: auto;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
+    display: flex;
+    justify-content: center;
 }
+
+    .summary-actions .btn {
+        min-width: 200px;
+    }
 
 .eyebrow {
     text-transform: uppercase;
@@ -176,7 +179,6 @@
     }
 
     .payment-summary {
-        max-width: none;
-        justify-self: stretch;
+        grid-column: 1;
     }
 }

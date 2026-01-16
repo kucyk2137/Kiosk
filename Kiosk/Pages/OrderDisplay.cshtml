@@ -7,76 +7,99 @@
 }
 
 <div class="order-display-screen">
-    <div class="order-display__header">
-        <div>
-            <p class="eyebrow">Numerki zamówień</p>
-            <h1>Sprawdź status swojego zamówienia</h1>
-            <p class="muted">Gdy kuchnia oznaczy Twoje zamówienie jako gotowe, numer podświetli się na zielono.</p>
-        </div>
-        <button id="refresh-board" class="btn ghost pill">Odśwież</button>
-    </div>
+    <div class="order-display__columns">
+        <section class="order-display__column">
+            <h2 class="order-display__heading">Zamówienia przygotowywane</h2>
+            <div id="preparing-orders" class="order-display__grid is-compact">
+                <div class="empty-state">
+                </div>
+            </div>
+        </section>
 
-    <div id="orders-board" class="order-display__grid">
-        <div class="empty-state">
-            <p class="eyebrow">Brak zamówień</p>
-            <h3>Listę zamówień uzupełnimy gdy pojawią się nowe.</h3>
-        </div>
+        <section class="order-display__column">
+            <h2 class="order-display__heading">Zamówienia przygotowane</h2>
+            <div id="ready-orders" class="order-display__grid">
+                <div class="empty-state">
+                </div>
+            </div>
+        </section>
     </div>
 </div>
 
 @section Scripts {
-        <script>
-            const board = document.getElementById('orders-board');
-            const refreshBoard = document.getElementById('refresh-board');
+    <script>
+        const readyBoard = document.getElementById('ready-orders');
+        const preparingBoard = document.getElementById('preparing-orders');
 
-            const renderOrders = (orders) => {
-                const active = orders.filter(order => !order.isClosed);
-                board.innerHTML = '';
+        const setEmptyState = (container, heading, message) => {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <h3>${message}</h3>
+                </div>`;
+        };
 
-                if (!active.length) {
-                    board.innerHTML = `
-                        <div class="empty-state">
-                            <p class="eyebrow">Brak zamówień</p>
-                            <h3>Listę zamówień uzupełnimy gdy pojawią się nowe.</h3>
-                            <p class="muted">Gdy tylko zamówienie trafi do kuchni, numer pokaże się na liście.</p>
-                        </div>`;
-                    return;
+        const renderList = (container, orders, statusLabel) => {
+            container.innerHTML = '';
+
+            if (!orders.length) {
+                setEmptyState(container, 'Brak zamówień', statusLabel);
+                return;
+            }
+
+            orders.forEach(order => {
+                const card = document.createElement('div');
+                card.className = 'order-number-card';
+                if (order.isReady) {
+                    card.classList.add('is-ready');
                 }
 
-                active.forEach(order => {
-                    const card = document.createElement('div');
-                    card.className = 'order-number-card';
-                    if (order.isReady) {
-                        card.classList.add('is-ready');
-                    }
+                card.innerHTML = `
+                    <div class="order-number">${order.orderNumber || `#${order.orderId}`}</div>
+                    <div class="order-status">${order.isReady ? 'Gotowe do odbioru' : 'Przygotowywane'}</div>
+                `;
 
-                    card.innerHTML = `
-                        <div class="order-number">${order.orderNumber || `#${order.orderId}`}</div>
-                        <div class="order-status">${order.isReady ? 'Gotowe do odbioru' : 'Przygotowywane'}</div>
-                    `;
+                container.appendChild(card);
+            });
+        };
 
-                    board.appendChild(card);
-                });
-            };
+        const renderOrders = (orders) => {
+            const active = orders.filter(order => !order.isClosed);
+            const readyOrders = active.filter(order => order.isReady);
+            const preparingOrders = active.filter(order => !order.isReady);
 
-            const loadOrders = async () => {
-                board.classList.add('is-loading');
-                try {
-                    const response = await fetch('/api/orders');
-                    const data = await response.json();
-                    renderOrders(data);
-                } catch (err) {
-                    board.innerHTML = '<p class="muted">Nie udało się pobrać listy zamówień.</p>';
-                } finally {
-                    board.classList.remove('is-loading');
-                }
-            };
+            renderList(
+                readyBoard,
+                readyOrders,
+                'Brak Zamówień'
+            );
 
-            refreshBoard.addEventListener('click', loadOrders);
-            loadOrders();
-            setInterval(loadOrders, 8000);
-            const updates = new EventSource('/api/orders/updates');
-            updates.onmessage = () => loadOrders();
-            updates.onerror = () => updates.close();
-        </script>
+            renderList(
+                preparingBoard,
+                preparingOrders, 
+                'Brak zamówień'
+            );
+        };
+
+        const loadOrders = async () => {
+            readyBoard.classList.add('is-loading');
+            preparingBoard.classList.add('is-loading');
+            try {
+                const response = await fetch('/api/orders');
+                const data = await response.json();
+                renderOrders(data);
+            } catch (err) {
+                setEmptyState(readyBoard, 'Błąd', 'Nie udało się pobrać listy zamówień.');
+                setEmptyState(preparingBoard, 'Błąd', 'Spróbuj ponownie za chwilę.');
+            } finally {
+                readyBoard.classList.remove('is-loading');
+                preparingBoard.classList.remove('is-loading');
+            }
+        };
+
+        loadOrders();
+        setInterval(loadOrders, 8000);
+        const updates = new EventSource('/api/orders/updates');
+        updates.onmessage = () => loadOrders();
+        updates.onerror = () => updates.close();
+    </script>
 }
