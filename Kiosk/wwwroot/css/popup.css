@@ -62,6 +62,10 @@
     position: relative;
 }
 
+    .edit-modal-section.is-hidden {
+        display: none !important;
+    }
+
 .addon-counter {
     align-self: flex-start;
     font-size: 0.95rem;
@@ -201,6 +205,10 @@
 }
 .inactivity-countdown {
     margin: 0;
+}
+
+.is-hidden {
+    display: none !important;
 }
 
     .modal-actions button {

@@ -131,6 +131,10 @@
     flex-direction: column;
     gap: 10px;
     min-height: 200px;
+    width: 100%;
+    max-width: 520px;
+    justify-self: center;
+}
 }
 
     .payment-summary h3 {

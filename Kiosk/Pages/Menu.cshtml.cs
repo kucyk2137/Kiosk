@@ -85,12 +85,7 @@ namespace Kiosk.Pages
 
             if (string.IsNullOrWhiteSpace(selectedIngredients) || selectedIngredients == "[]")
             {
-                var defaultIngredientNames = _context.MenuItemIngredients
-                    .Where(i => i.MenuItemId == menuItemId && i.IsDefault)
-                    .Select(i => i.Name)
-                    .ToList();
-
-                selectedIngredients = JsonSerializer.Serialize(defaultIngredientNames);
+                selectedIngredients = string.IsNullOrWhiteSpace(selectedIngredients) ? "[]" : selectedIngredients;
             }
 
             var cart = HttpContext.Session.GetObjectFromJson<List<OrderItem>>("Cart") ?? new List<OrderItem>();

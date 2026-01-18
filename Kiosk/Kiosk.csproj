@@ -32,6 +32,7 @@
     <Folder Include="wwwroot\images\categories\" />
     <Folder Include="wwwroot\images\lockscreen\" />
     <Folder Include="wwwroot\images\products\" />
+    <Folder Include="wwwroot\uploads\screensaver\" />
   </ItemGroup>
 
 </Project>

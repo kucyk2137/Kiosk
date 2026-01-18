@@ -17,7 +17,7 @@ namespace Kiosk.Models
         [Range(0.01, double.MaxValue, ErrorMessage = "Cena musi być większa od 0")]
         public decimal Price { get; set; }
 
-        [Required(ErrorMessage = "Adres obrazu jest wymagany")]
+        [Required(ErrorMessage = "Zdjęcie jest wymagane")]
         public string? Image { get; set; }
 
         [Required(ErrorMessage = "Kategoria jest wymagana")]

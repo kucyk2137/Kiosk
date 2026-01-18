@@ -25,13 +25,13 @@ public class AddProductModel : PageModel
     public MenuItem MenuItem { get; set; }
 
     [BindProperty]
-    public string DefaultIngredientsInput { get; set; }
+    public string? DefaultIngredientsInput { get; set; }
 
     [BindProperty]
-    public string OptionalIngredientsInput { get; set; }
+    public string? OptionalIngredientsInput { get; set; }
 
     [BindProperty]
-    public IFormFile ImageFile { get; set; }
+    public IFormFile? ImageFile { get; set; }
 
     public SelectList CategorySelectList { get; set; }
 
