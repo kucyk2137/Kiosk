@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Kiosk.Migrations
 {
     /// <inheritdoc />
-    public partial class ITAm : Migration
+    public partial class KIOSK : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -102,7 +102,8 @@ namespace Kiosk.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsDefault = table.Column<bool>(type: "bit", nullable: false),
                     MenuItemId = table.Column<int>(type: "int", nullable: false),
-                    AdditionalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    AdditionalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {

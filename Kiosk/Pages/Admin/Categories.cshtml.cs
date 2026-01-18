@@ -46,7 +46,7 @@ namespace Kiosk.Pages.Admin
                 _context.Categories.Remove(category);
                 _context.SaveChanges();
             }
-            return RedirectToPage();
+            return RedirectToPage("Index");
         }
     }
 }

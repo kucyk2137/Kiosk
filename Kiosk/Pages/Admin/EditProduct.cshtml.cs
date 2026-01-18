@@ -46,11 +46,11 @@ namespace Kiosk.Pages.Admin
 
             DefaultIngredientsInput = string.Join("\n", _context.MenuItemIngredients
                 .Where(i => i.MenuItemId == id && i.IsDefault)
-                .Select(i => i.Name));
+                .Select(i => $"{i.Name} | {i.Quantity}"));
 
             OptionalIngredientsInput = string.Join("\n", _context.MenuItemIngredients
                 .Where(i => i.MenuItemId == id && !i.IsDefault)
-                .Select(i => i.Name));
+                .Select(i => $"{i.Name} | {i.AdditionalPrice.ToString("0.##", CultureInfo.InvariantCulture)} | {i.Quantity}"));
 
             return Page();
         }
@@ -112,7 +112,7 @@ namespace Kiosk.Pages.Admin
             var defaults = DefaultIngredientsInput?.Split('\n', System.StringSplitOptions.RemoveEmptyEntries)
                 .Select(i => i.Trim())
                 .Where(i => !string.IsNullOrWhiteSpace(i))
-                .Select(name => new MenuItemIngredient { MenuItemId = Product.Id, Name = name, IsDefault = true, AdditionalPrice = 0 });
+                .Select(line => ParseDefaultIngredient(line, Product.Id));
 
             var optionals = OptionalIngredientsInput?.Split('\n', System.StringSplitOptions.RemoveEmptyEntries)
                 .Select(i => i.Trim())
@@ -133,17 +133,46 @@ namespace Kiosk.Pages.Admin
 
             return RedirectToPage("Index");
         }
+
+        private MenuItemIngredient ParseDefaultIngredient(string line, int menuItemId)
+        {
+            var parts = line.Split('|', StringSplitOptions.RemoveEmptyEntries);
+            var name = parts.FirstOrDefault()?.Trim() ?? string.Empty;
+            var quantity = 1;
+            var quantityText = parts.Length > 1 ? parts[1].Trim() : string.Empty;
+
+            if (int.TryParse(quantityText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsedQuantity))
+            {
+                quantity = parsedQuantity > 0 ? parsedQuantity : 1;
+            }
+
+            return new MenuItemIngredient
+            {
+                MenuItemId = menuItemId,
+                Name = name,
+                IsDefault = true,
+                AdditionalPrice = 0,
+                Quantity = quantity
+            };
+        }
         private MenuItemIngredient ParseOptionalIngredient(string line, int menuItemId)
         {
             var parts = line.Split('|', StringSplitOptions.RemoveEmptyEntries);
             var name = parts.FirstOrDefault()?.Trim() ?? string.Empty;
             var price = 0m;
+            var quantity = 1;
 
             var priceText = parts.Length > 1 ? parts[1].Trim().Replace(',', '.') : string.Empty;
+            var quantityText = parts.Length > 2 ? parts[2].Trim() : string.Empty;
 
             if (decimal.TryParse(priceText, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var parsed))
             {
                 price = parsed;
+            }
+
+            if (int.TryParse(quantityText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsedQuantity))
+            {
+                quantity = parsedQuantity > 0 ? parsedQuantity : 1;
             }
 
             return new MenuItemIngredient
@@ -151,7 +180,8 @@ namespace Kiosk.Pages.Admin
                 MenuItemId = menuItemId,
                 Name = name,
                 IsDefault = false,
-                AdditionalPrice = price
+                AdditionalPrice = price,
+                Quantity = quantity
             };
         }
     }

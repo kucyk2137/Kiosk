@@ -136,7 +136,7 @@
 
         <div class="edit-modal-section" id="edit-optional-section">
             <h4>Dodatki</h4>
-            <div class="addon-counter">Wybrane dodatki: <span id="edit-optional-count">0/3</span></div>
+            <div class="addon-counter">Wybrane dodatki: <span id="edit-optional-count">0</span></div>
             <div id="edit-optional-ingredients" class="ingredients-list"></div>
         </div>
 
@@ -182,7 +182,7 @@
     let optionalSelectedCount = 0;
 
     const updateOptionalCounter = () => {
-        editOptionalCount.textContent = `${optionalSelectedCount}/${maxOptionalAddons}`;
+        editOptionalCount.textContent = `${optionalSelectedCount}`;
     };
 
     const setSectionVisibility = (section, isVisible) => {
@@ -212,12 +212,15 @@
         return numericPrice > 0 ? `${name} (+${numericPrice.toFixed(2)} zł)` : name;
     };
 
-    const createChip = (name, price, initialCount, isOptional = false) => {
+     const createChip = (name, price, initialCount, maxCount, isOptional = false) => {
         const div = document.createElement('div');
         div.classList.add('ingredient-chip');
         div.dataset.name = name;
         div.dataset.price = Number(price || 0);
-        div.dataset.count = Math.max(0, initialCount || 0);
+        const normalizedMax = Math.max(1, maxCount || 1);
+        const normalizedInitial = Math.min(Math.max(0, initialCount || 0), normalizedMax);
+        div.dataset.count = normalizedInitial;
+        div.dataset.max = normalizedMax;
 
         const label = document.createElement('span');
         label.classList.add('ingredient-name');
@@ -257,11 +260,11 @@
 
             updateDisplay();
         });
-
         plus.addEventListener('click', () => {
-            let count = parseInt(div.dataset.count || '0');
+                let count = parseInt(div.dataset.count || '0');
+                const maxAllowed = parseInt(div.dataset.max || '1');
 
-            if (isOptional && optionalSelectedCount >= maxOptionalAddons) return;
+                if (count >= maxAllowed) return;
 
             count += 1;
             div.dataset.count = count;
@@ -327,7 +330,8 @@
                         if (typeof item === 'string') return { name: item, price: 0 };
                         return {
                             name: item.name || item.Name,
-                            price: item.price ?? item.Price ?? item.additionalPrice ?? item.AdditionalPrice ?? 0
+                            price: item.price ?? item.Price ?? item.additionalPrice ?? item.AdditionalPrice ?? 0,
+                            quantity: item.quantity ?? item.Quantity ?? 1
                         };
                     };
 
@@ -338,13 +342,13 @@
                         .map(normalize)
                         .filter(item => item.name && item.name.trim() !== '');
 
-                    normalizedDefaults.forEach(({ name, price }) => {
-                        const chip = createChip(name, price, counts[name] ?? 0);
+                    normalizedDefaults.forEach(({ name, price, quantity }) => {
+                        const chip = createChip(name, price, counts[name] ?? 0, quantity);
                         defaultContainer.appendChild(chip);
                     });
 
-                    normalizedOptionals.forEach(({ name, price }) => {
-                        const chip = createChip(name, price, counts[name] ?? 0, true);
+                    normalizedOptionals.forEach(({ name, price, quantity }) => {
+                        const chip = createChip(name, price, counts[name] ?? 0, quantity, true);
                         optionalContainer.appendChild(chip);
                     });
 
