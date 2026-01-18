@@ -167,6 +167,7 @@
     gap: 12px;
     margin-top: 4px;
 }
+
 .checkbox-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -186,10 +187,11 @@
     .checkbox-row input {
         margin-top: 4px;
     }
-    .form-actions.stacked {
-        flex-direction: column;
-        align-items: stretch;
-    }
+
+.form-actions.stacked {
+    flex-direction: column;
+    align-items: stretch;
+}
 
 .success {
     color: var(--success);
@@ -202,6 +204,7 @@
     margin: 6px 0 0;
     text-align: center;
 }
+
 .preview-section {
     margin-top: 18px;
 }
@@ -222,6 +225,7 @@
         object-fit: cover;
         margin-bottom: 8px;
     }
+
 .recommended-list {
     list-style: none;
     padding: 0;

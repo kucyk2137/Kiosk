@@ -8,6 +8,7 @@
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.9)), var(--order-type-background) center/cover;
     background-repeat: no-repeat;
 }
+
 .order-type-card {
     width: min(960px, 100%);
     padding: 32px;
