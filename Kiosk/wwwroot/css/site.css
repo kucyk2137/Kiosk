@@ -13,6 +13,7 @@
     --radius-lg: 20px;
     --radius-xl: 28px;
 }
+
 *,
 *::before,
 *::after {
@@ -25,24 +26,11 @@ html, body {
     height: 100%;
 }
 
-html {
-    font-size: clamp(14px, 0.9vw + 10px, 18px);
-}
-
-
 body {
     font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     background: radial-gradient(circle at 20% 20%, #fff 0%, #f5f7fb 55%, #eef2f9 100%);
     color: var(--text-main);
 }
-
-img,
-svg,
-video {
-    max-width: 100%;
-    height: auto;
-}
-
 
 .btn {
     display: inline-flex;
@@ -176,38 +164,4 @@ video {
     font-weight: 700;
     letter-spacing: 0.04em;
     text-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
-}
-
-@media (max-width: 1024px) {
-    .page-hero {
-        width: calc(100% - 24px);
-        margin: 12px auto 8px;
-    }
-
-    .page-hero__content {
-        padding: 22px 18px;
-    }
-
-    .page-hero__title {
-        font-size: clamp(1.6rem, 3.8vw, 2rem);
-    }
-
-    .btn {
-        padding: 10px 14px;
-    }
-}
-
-@media (max-width: 768px) {
-    .page-hero {
-        min-height: 96px;
-        border-radius: var(--radius-lg);
-    }
-
-    .page-hero__content {
-        padding: 18px 14px;
-    }
-
-    .btn {
-        width: 100%;
-    }
 }
