@@ -36,7 +36,7 @@ namespace Kiosk.Pages.Admin
                 return Page();
             }
 
-            var uploadsDirectory = Path.Combine(_environment.WebRootPath, "uploads", "headers");
+            var uploadsDirectory = Path.Combine(_environment.WebRootPath, "images", "headers");
             Directory.CreateDirectory(uploadsDirectory);
 
             var extension = Path.GetExtension(HeaderImage.FileName);
@@ -59,7 +59,7 @@ namespace Kiosk.Pages.Admin
                 }
             }
 
-            var relativePath = $"/uploads/headers/{fileName}";
+            var relativePath = $"/images/headers/{fileName}";
             await _siteSettingsService.UpdateHeaderBackgroundAsync(relativePath);
             TempData["StatusMessage"] = "Zdjêcie nag³ówka zosta³o zaktualizowane.";
 

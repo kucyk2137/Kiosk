@@ -5,19 +5,23 @@
     font-family: "Segoe UI", Arial, sans-serif;
 }
 
+html {
+    font-size: clamp(14px, 0.9vw + 10px, 18px);
+}
+
 .menu-page {
     display: flex;
     height: 100vh;
     width: 100vw;
     overflow: hidden;
     background: radial-gradient(circle at 15% 10%, rgba(255, 195, 141, 0.35) 0%, rgba(255, 195, 141, 0) 35%), linear-gradient(180deg, #ffffff 0%, #f5f7fb 100%);
-    padding: 18px 22px;
-    gap: 22px;
+    padding: clamp(12px, 2vw, 22px);
+    gap: clamp(12px, 2vw, 22px);
 }
 
 .categories {
-    width: 240px;
-    max-width: 260px;
+    width: clamp(200px, 24vw, 260px);
+    max-width: 100%;
     padding: 22px 16px 16px 16px;
     display: flex;
     flex-direction: column;
@@ -28,7 +32,11 @@
     box-shadow: var(--panel-shadow);
     position: relative;
     overflow: hidden;
+    max-height: 100%;
+    overflow-y: auto;
 }
+
+
 
     .categories::before {
         content: "";
@@ -186,15 +194,27 @@
     margin-bottom: 12px;
 }
 
+
 .products {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(clamp(180px, 22vw, 220px), 1fr));
     gap: 16px;
     padding: 8px 4px 24px;
 }
 
+.products-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    width: 100%;
+    align-items: stretch;
+    justify-content: flex-start;
+}
+
 .menu-item,
 .product-card {
+    flex: 1 1 240px;
+    max-width: 320px;
     background: var(--bg-contrast);
     border-radius: var(--radius-lg);
     padding: 14px 14px 18px;
@@ -204,6 +224,14 @@
     flex-direction: column;
     gap: 8px;
     transition: transform 0.12s ease-out, box-shadow 0.12s ease-out, border-color 0.12s ease-out;
+}
+
+@media (max-width: 720px) {
+    .menu-item,
+    .product-card {
+        max-width: 100%;
+        flex-basis: 100%;
+    }
 }
 
     .menu-item:hover,
@@ -277,19 +305,15 @@
 
 @media (max-width: 1100px) {
     .menu-page {
-        flex-direction: column;
-        height: auto;
+        flex-direction: row;
     }
 
     .categories {
-        width: 100%;
+        width: clamp(180px, 28vw, 220px);
         max-width: 100%;
-        flex-direction: row;
-        align-items: center;
-        overflow-x: auto;
-        overflow-y: hidden;
-        padding: 16px;
+        padding: 16px 12px;
         gap: 12px;
+        overflow-y: auto;
     }
 
         .categories h3 {
@@ -297,14 +321,13 @@
         }
 
     .category-buttons {
-        flex-direction: row;
+        flex-direction: column;
         flex: 1;
     }
 
     .category-btn {
         border-radius: 14px;
         padding-inline: 16px;
-        white-space: nowrap;
         font-size: 0.98rem;
     }
 
@@ -316,5 +339,28 @@
 
     .menu-page main[role="main"] {
         padding: 10px 12px 22px;
+    }
+}
+
+@media (max-width: 768px) {
+    .menu-page {
+        padding: 12px;
+        gap: 12px;
+    }
+
+    .categories {
+        width: clamp(160px, 32vw, 200px);
+        padding: 12px 10px;
+    }
+
+    .cart-btn {
+        position: static;
+        width: 100%;
+        margin-top: 8px;
+    }
+
+    .products {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 12px;
     }
 }

@@ -1,6 +1,8 @@
 ﻿        const editModal = document.getElementById('edit-item-modal');
         const defaultContainer = document.getElementById('edit-default-ingredients');
         const optionalContainer = document.getElementById('edit-optional-ingredients');
+        const defaultSection = document.getElementById('edit-default-section');
+        const optionalSection = document.getElementById('edit-optional-section');
         const qtyMinus = document.getElementById('qty-minus');
         const qtyPlus = document.getElementById('qty-plus');
         const qtyValue = document.getElementById('qty-value');
@@ -16,6 +18,22 @@
 
         const updateOptionalCounter = () => {
             editOptionalCount.textContent = `${optionalSelectedCount}/${maxOptionalAddons}`;
+        };
+
+        const setSectionVisibility = (section, isVisible) => {
+            if (!section) return;
+            section.classList.toggle('is-hidden', !isVisible);
+            section.hidden = !isVisible;
+            if (isVisible) {
+                section.style.removeProperty('display');
+            } else {
+                section.style.display = 'none';
+            }
+        };
+
+        const toggleIngredientSections = (hasDefaults, hasOptionals) => {
+            setSectionVisibility(defaultSection, hasDefaults);
+            setSectionVisibility(optionalSection, hasOptionals);
         };
 
         const countOccurrences = (list) => {
@@ -132,6 +150,7 @@
                 updateOptionalCounter();
                 defaultContainer.innerHTML = '';
                 optionalContainer.innerHTML = '';
+                toggleIngredientSections(false, false);
 
                 fetch(`?handler=Ingredients&menuItemId=${menuItemId}`)
                     .then(r => r.json())
@@ -147,17 +166,25 @@
                             };
                         };
 
-                        defaults.map(normalize).forEach(({ name, price }) => {
+                        const normalizedDefaults = defaults
+                            .map(normalize)
+                            .filter(item => item.name && item.name.trim() !== '');
+                        const normalizedOptionals = optionals
+                            .map(normalize)
+                            .filter(item => item.name && item.name.trim() !== '');
+
+                        normalizedDefaults.forEach(({ name, price }) => {
                             const chip = createChip(name, price, counts[name] ?? 0);
                             defaultContainer.appendChild(chip);
                         });
 
-                        optionals.map(normalize).forEach(({ name, price }) => {
+                        normalizedOptionals.forEach(({ name, price }) => {
                             const chip = createChip(name, price, counts[name] ?? 0, true);
                             optionalContainer.appendChild(chip);
                         });
 
                         updateOptionalCounter();
+                        toggleIngredientSections(normalizedDefaults.length > 0, normalizedOptionals.length > 0);
                         editModal.style.display = 'flex';
                     });
             });
