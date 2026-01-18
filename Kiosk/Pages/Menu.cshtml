@@ -63,7 +63,7 @@
                                 Dodaj do koszyka
                             </button>
                         </form>
-                    </div>
+                    </div>                  
                 }
             </div>
         }
@@ -153,7 +153,7 @@
 
         <div class="edit-modal-section" id="add-optional-section">
             <h4>Dodatki</h4>
-            <div class="addon-counter">Wybrane dodatki: <span id="add-optional-count">0/3</span></div>
+            <div class="addon-counter">Wybrane dodatki: <span id="add-optional-count">0</span></div>
             <div id="add-optional-ingredients" class="ingredients-list"></div>
         </div>
 
@@ -195,14 +195,13 @@
         const setListContainer = document.getElementById('set-list-container');
         const setListClose = document.getElementById('set-list-close');
 
-        const maxOptionalAddons = 3;
         let optionalSelectedCount = 0;
         let currentForm = null;
         let currentMenuItemId = null;
 
         function updateOptionalCounter() {
             if (!addOptionalCount) return;
-            addOptionalCount.textContent = `${optionalSelectedCount}/${maxOptionalAddons}`;
+            addOptionalCount.textContent = `${optionalSelectedCount}`;
         }
 
         function formatLabel(name, price) {
@@ -210,12 +209,15 @@
             return numericPrice > 0 ? `${name} (+${numericPrice.toFixed(2)} zł)` : name;
         }
 
-        function createChip(name, price, initialCount, isOptional = false) {
+        function createChip(name, price, initialCount, maxCount, isOptional = false) {
             const div = document.createElement('div');
             div.classList.add('ingredient-chip');
             div.dataset.name = name;
             div.dataset.price = Number(price || 0);
-            div.dataset.count = Math.max(0, initialCount || 0);
+            const normalizedMax = Math.max(1, maxCount || 1);
+            const normalizedInitial = Math.min(Math.max(0, initialCount || 0), normalizedMax);
+            div.dataset.count = normalizedInitial;
+            div.dataset.max = normalizedMax;
 
             const label = document.createElement('span');
             label.classList.add('ingredient-name');
@@ -256,10 +258,11 @@
                 updateDisplay();
             });
 
-            plus.addEventListener('click', () => {
+           plus.addEventListener('click', () => {
                 let count = parseInt(div.dataset.count || '0', 10);
+                const maxAllowed = parseInt(div.dataset.max || '1', 10);
 
-                if (isOptional && optionalSelectedCount >= maxOptionalAddons) return;
+                if (count >= maxAllowed) return;
 
                 count += 1;
                 div.dataset.count = count;
@@ -338,7 +341,8 @@
                         }
                         return {
                             name: item.name || item.Name,
-                            price: item.price ?? item.Price ?? item.additionalPrice ?? item.AdditionalPrice ?? 0
+                            price: item.price ?? item.Price ?? item.additionalPrice ?? item.AdditionalPrice ?? 0,
+                            quantity: item.quantity ?? item.Quantity ?? 1
                         };
                     };
 
@@ -349,13 +353,13 @@
                         .map(normalize)
                         .filter(item => item.name && item.name.trim() !== '');
 
-                    normalizedDefaults.forEach(({ name, price }) => {
-                        const chip = createChip(name, price, 1, false);
+                     normalizedDefaults.forEach(({ name, price, quantity }) => {
+                        const chip = createChip(name, price, 1, quantity, false);
                         defaultContainer.appendChild(chip);
                     });
 
-                    normalizedOptionals.forEach(({ name, price }) => {
-                        const chip = createChip(name, price, 0, true);
+                    normalizedOptionals.forEach(({ name, price, quantity }) => {
+                        const chip = createChip(name, price, 0, quantity, true);
                         optionalContainer.appendChild(chip);
                     });
 

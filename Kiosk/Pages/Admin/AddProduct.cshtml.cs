@@ -93,7 +93,7 @@ public class AddProductModel : PageModel
         MenuItem = new MenuItem();
         DefaultIngredientsInput = string.Empty;
         OptionalIngredientsInput = string.Empty;
-        return Page();
+        return RedirectToPage("Index");
     }
 
     private IEnumerable<MenuItemIngredient> ParseIngredients(string input, bool isDefault, int menuItemId)
@@ -115,12 +115,24 @@ public class AddProductModel : PageModel
         var parts = line.Split('|', StringSplitOptions.RemoveEmptyEntries);
         var name = parts.FirstOrDefault()?.Trim() ?? string.Empty;
         var price = 0m;
+        var quantity = 1;
 
         var priceText = parts.Length > 1 ? parts[1].Trim().Replace(',', '.') : string.Empty;
+        var quantityText = parts.Length > 2 ? parts[2].Trim() : string.Empty;
+
+        if (isDefault)
+        {
+            quantityText = parts.Length > 1 ? parts[1].Trim() : string.Empty;
+        }
 
         if (!isDefault && decimal.TryParse(priceText, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var parsed))
         {
             price = parsed;
+        }
+
+        if (int.TryParse(quantityText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsedQuantity))
+        {
+            quantity = parsedQuantity > 0 ? parsedQuantity : 1;
         }
 
         return new MenuItemIngredient
@@ -128,7 +140,8 @@ public class AddProductModel : PageModel
             MenuItemId = menuItemId,
             Name = name,
             IsDefault = isDefault,
-            AdditionalPrice = price
+            AdditionalPrice = price,
+            Quantity = quantity
         };
     }
 }

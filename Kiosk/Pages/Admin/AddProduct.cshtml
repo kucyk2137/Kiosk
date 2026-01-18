@@ -55,13 +55,13 @@
                 </div>
 
                 <div class="form-field full-width">
-                    <label>Domyślne składniki (jeden na linię)</label>
-                    <textarea asp-for="DefaultIngredientsInput" placeholder="np. pomidor&#x0a;ogórek" rows="3"></textarea>
+                    <label>Domyślne składniki (nazwa | ilość, jeden na linię)</label>
+                    <textarea asp-for="DefaultIngredientsInput" placeholder="np. pomidor | 1&#x0a;ogórek | 2" rows="3"></textarea>
                 </div>
 
                 <div class="form-field full-width">
-                    <label>Opcjonalne dodatki (nazwa | cena w zł, jeden na linię)</label>
-                    <textarea asp-for="OptionalIngredientsInput" placeholder="np. bekon | 2.50&#x0a;sos BBQ | 1.00" rows="3"></textarea>
+                    <label>Opcjonalne dodatki (nazwa | cena w zł | maks. ilość, jeden na linię)</label>
+                    <textarea asp-for="OptionalIngredientsInput" placeholder="np. bekon | 2.50 | 2&#x0a;sos BBQ | 1.00 | 1" rows="3"></textarea>
                 </div>
             </div>
 

@@ -64,7 +64,8 @@ namespace Kiosk.Pages
                                     Name = i.Name,
                                     IsDefault = i.IsDefault,
                                     MenuItemId = i.MenuItemId,
-                                    AdditionalPrice = i.AdditionalPrice
+                                    AdditionalPrice = i.AdditionalPrice,
+                                    Quantity = i.Quantity
                                 })
                                 .ToList()
                         })
@@ -130,7 +131,8 @@ namespace Kiosk.Pages
                         .Select(i => new
                         {
                             name = $"{productName}: {i.Name}",
-                            price = i.AdditionalPrice
+                            price = i.AdditionalPrice,
+                            quantity = i.Quantity
                         });
 
                     var optionals = product.Ingredients
@@ -138,7 +140,8 @@ namespace Kiosk.Pages
                         .Select(i => new
                         {
                             name = $"{productName}: {i.Name}",
-                            price = i.AdditionalPrice
+                            price = i.AdditionalPrice,
+                            quantity = i.Quantity
                         });
 
                     defaultList.AddRange(defaults);
@@ -152,17 +155,17 @@ namespace Kiosk.Pages
                 });
             }
 
-   
+
             var singleProduct = _context.MenuItems
-               .Where(m => m.Id == menuItemId)
-               .Select(m => new
-               {
-                   defaults = m.Ingredients.Where(i => i.IsDefault)
-                       .Select(i => new { name = i.Name, price = i.AdditionalPrice }).ToList(),
-                   optionals = m.Ingredients.Where(i => !i.IsDefault)
-                       .Select(i => new { name = i.Name, price = i.AdditionalPrice }).ToList()
-               })
-               .FirstOrDefault();
+                .Where(m => m.Id == menuItemId)
+                .Select(m => new
+                {
+                    defaults = m.Ingredients.Where(i => i.IsDefault)
+                        .Select(i => new { name = i.Name, price = i.AdditionalPrice, quantity = i.Quantity }).ToList(),
+                    optionals = m.Ingredients.Where(i => !i.IsDefault)
+                        .Select(i => new { name = i.Name, price = i.AdditionalPrice, quantity = i.Quantity }).ToList()
+                })
+                .FirstOrDefault();
 
             if (singleProduct == null)
             {
